@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Séances{% endblock %}
+
+{% block body %}
+<h1>Toutes les Séances</h1>
+
+<form method="get">
+    <label for="titre">Filtrer par titre :</label>
+    <select name="titre" id="titre" onchange="this.form.submit()">
+        <option value="">-- Tous --</option>
+        {% for titre in titres %}
+            <option value="{{ titre }}" {% if titre == selectedTitre %}selected{% endif %}>{{ titre }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<div class="seances-grid">
+    {% for seance in seances %}
+        <div class="seance-card">
+            <h2>{{ seance.titre }}</h2>
+            <p>{{ seance.lieu }}</p>
+            <p>{{ seance.dateDebut|date('d/m/Y H:i') }} - {{ seance.dateFin|date('d/m/Y H:i') }}</p>
+            {% if seance.image %}
+                <img src="{{ asset('uploads/images/' ~ seance.image) }}" alt="{{ seance.titre }}" width="180">
+            {% endif %}
+            <a href="{{ path('app_seance_show', {'id': seance.id}) }}">Voir détails</a>
+        </div>
+    {% else %}
+        <p>Aucune séance disponible.</p>
+    {% endfor %}
+</div>
+
+<style>
+.seances-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.seance-card {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    width: 200px;
+    border-radius: 8px;
+    text-align: center;
+}
+.seance-card img {
+    margin-top: 0.5rem;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}

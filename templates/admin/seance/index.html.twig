@@ -1,0 +1,70 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin - Séances{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Gestion des Séances</h1>
+        <a href="{{ path('app_admin_seance_new') }}" class="btn btn-success">Ajouter une séance</a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Date début</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for seance in seances %}
+                        <tr>
+                            <td>{{ seance.titre }}</td>
+                            <td>{{ seance.dateDebut ? seance.dateDebut|date('d/m/Y H:i') : '' }}</td>
+                            <td>
+                                <a href="{{ path('app_admin_seance_show', {'id': seance.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                                <a href="{{ path('app_admin_seance_edit', {'id': seance.id}) }}" class="btn btn-sm btn-outline-warning">Modifier</a>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ seance.id }}">
+                                    Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center text-muted">Aucune séance trouvée</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% for seance in seances %}
+    <!-- Modal de confirmation de suppression -->
+    <div class="modal fade" id="deleteModal{{ seance.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ seance.id }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel{{ seance.id }}">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer la séance <strong>"{{ seance.titre }}"</strong> ?</p>
+                    <p class="text-danger">Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_admin_seance_delete', {'id': seance.id}) }}" style="display: inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ seance.id) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock %}
