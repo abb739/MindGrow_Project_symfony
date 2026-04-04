@@ -1,0 +1,39 @@
+{% extends 'seance/base.html.twig' %}
+
+{% block title %}Séances {{ titre }} - MindGrow{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Séances « {{ titre }} »</h2>
+        <a href="{{ path('app_seances') }}" class="btn btn-outline-secondary">Retour aux titres</a>
+    </div>
+
+    <div class="row">
+        {% for seance in seances %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if seance.image %}
+                <img src="/uploads/seances/{{ seance.image }}" class="card-img-top" alt="{{ seance.titre }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ seance.titre }}</h5>
+                    <p class="card-text">{{ seance.description|length > 120 ? seance.description|slice(0, 120) ~ '...' : seance.description }}</p>
+                    <ul class="list-unstyled mb-3">
+                        <li><strong>Lieu :</strong> {{ seance.lieu }}</li>
+                        <li><strong>Début :</strong> {{ seance.dateDebut|date('d/m/Y H:i') }}</li>
+                        <li><strong>Fin :</strong> {{ seance.dateFin|date('d/m/Y H:i') }}</li>
+                        <li><strong>Capacité :</strong> {{ seance.capacite }}</li>
+                    </ul>
+                    <a href="{{ path('app_seance_reserve', {'id': seance.id}) }}" class="btn btn-primary me-2">Réserver</a>
+                    <a href="{{ path('app_seance_detail', {'titre': seance.titre}) }}" class="btn btn-outline-primary">Voir ce titre</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% if seances is empty %}
+    <div class="alert alert-info">Aucune séance disponible pour ce titre.</div>
+    {% endif %}
+</div>
+{% endblock %}

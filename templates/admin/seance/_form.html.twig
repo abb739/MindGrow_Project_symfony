@@ -1,0 +1,52 @@
+{{ form_start(form, {'attr': {'novalidate': 'novalidate', 'enctype': 'multipart/form-data'}}) }}
+    
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.titre) }}</label>
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">{{ form_errors(form.titre) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.lieu) }}</label>
+            {{ form_widget(form.lieu, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">{{ form_errors(form.lieu) }}</div>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">{{ form_label(form.description) }}</label>
+            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
+            <div class="text-danger">{{ form_errors(form.description) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.dateDebut) }}</label>
+            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">{{ form_errors(form.dateDebut) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.dateFin) }}</label>
+            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">{{ form_errors(form.dateFin) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.capacite) }}</label>
+            {{ form_widget(form.capacite, {'attr': {'class': 'form-control'}}) }}
+            <div class="text-danger">{{ form_errors(form.capacite) }}</div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">{{ form_label(form.image) }}</label>
+            {{ form_widget(form.image, {'attr': {'class': 'form-control', 'accept': '.jpg,.jpeg'}}) }}
+            <div class="text-danger">{{ form_errors(form.image) }}</div>
+            <small class="form-text text-muted">Formats acceptés: JPG, JPEG. Taille max: 1 Mo</small>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-success">{{ button_label|default('Enregistrer') }}</button>
+        </div>
+    </div>
+
+{{ form_end(form) }}
