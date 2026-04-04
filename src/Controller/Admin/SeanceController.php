@@ -16,17 +16,46 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 final class SeanceController extends AbstractController
 {
-    #[Route(name: 'app_admin_seance_index', methods: ['GET'])]
-    public function index(EntityManagerInterface $entityManager): Response
-    {
-        $seances = $entityManager
-            ->getRepository(Seance::class)
-            ->findAll();
+   #[Route(name: 'app_admin_seance_index', methods: ['GET'])]
+public function index(Request $request, EntityManagerInterface $entityManager): Response
+{
+    $titreSearch = $request->query->get('titre', '');
+    $dateSearch = $request->query->get('date', '');
 
-        return $this->render('admin/seance/index.html.twig', [
-            'seances' => $seances,
-        ]);
+    $repo = $entityManager->getRepository(Seance::class);
+    $qb = $repo->createQueryBuilder('s');
+
+    // Filtre par titre
+    if ($titreSearch) {
+        $qb->andWhere('s.titre LIKE :titre')
+           ->setParameter('titre', '%'.$titreSearch.'%');
     }
+
+    // Filtre par date (corrigé)
+    if ($dateSearch) {
+        $date = \DateTime::createFromFormat('Y-m-d', $dateSearch);
+        if ($date) {
+            // Début et fin de journée
+            $startOfDay = (clone $date)->setTime(0, 0, 0);
+            $endOfDay = (clone $date)->setTime(23, 59, 59);
+
+            $qb->andWhere('s.dateDebut BETWEEN :start AND :end')
+               ->setParameter('start', $startOfDay)
+               ->setParameter('end', $endOfDay);
+        }
+    }
+
+    $qb->orderBy('s.dateDebut', 'ASC');
+    $seances = $qb->getQuery()->getResult();
+
+    return $this->render('admin/seance/index.html.twig', [
+        'seances' => $seances,
+        'titreSearch' => $titreSearch,
+        'dateSearch' => $dateSearch,
+    ]);
+}
+
+
 
     #[Route('/new', name: 'app_admin_seance_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response

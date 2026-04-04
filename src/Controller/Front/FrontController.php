@@ -3,6 +3,7 @@
 namespace App\Controller\Front;
 
 use App\Entity\Seance;
+use App\Entity\Reservation;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,13 +35,21 @@ class FrontController extends AbstractController
             $seancesGrouped[$titre][] = $seance;
         }
 
-        // Si tu veux intégrer les réservations pour l'utilisateur connecté :
-        // $reservations = $this->getUser() ? $this->getUser()->getReservations() : [];
+        // Récupère les réservations de l'utilisateur connecté si disponible
+        $user = $this->getUser();
+        $reservations = [];
 
-        // Rend le template seances.html.twig
+        if ($user) {
+            // Vérifie que l'entité Reservation existe et est liée à l'utilisateur
+            $reservations = $em->getRepository(Reservation::class)->findBy([
+                'user' => $user
+            ]);
+        }
+
+        // Rend le template seances.html.twig avec toutes les variables nécessaires
         return $this->render('seance/seances.html.twig', [
             'seancesGrouped' => $seancesGrouped,
-            // 'reservations' => $reservations, // Décommenter si tu as les réservations
+            'reservations' => $reservations, // Toujours défini pour éviter l'erreur Twig
         ]);
     }
 }
