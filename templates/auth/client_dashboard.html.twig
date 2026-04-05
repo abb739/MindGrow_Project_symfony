@@ -1,0 +1,242 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mon Espace — MindGrow{% endblock %}
+{% block body %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+* { box-sizing: border-box; }
+
+.client-wrap {
+    font-family: 'DM Sans', sans-serif;
+    padding: 0 0 60px;
+}
+
+/* ── HERO ── */
+.client-hero {
+    background: linear-gradient(135deg, #064e3b 0%, #059669 60%, #34d399 100%);
+    border-radius: 24px;
+    padding: 40px 48px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.client-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 75% 40%, rgba(255,255,255,.1) 0%, transparent 55%);
+}
+.client-hero::after {
+    content: '';
+    position: absolute; right: -80px; bottom: -80px;
+    width: 280px; height: 280px;
+    background: rgba(255,255,255,.06); border-radius: 50%;
+}
+.hero-left { position: relative; z-index: 1; }
+.hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800; color: white;
+    line-height: 1.2; margin-bottom: 8px;
+}
+.hero-title span { color: #a7f3d0; }
+.hero-tagline {
+    font-size: 14px; color: rgba(255,255,255,.75);
+    max-width: 360px; line-height: 1.6;
+}
+.hero-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    color: white; font-size: 12px; font-weight: 600;
+    padding: 5px 14px; border-radius: 20px;
+    margin-bottom: 14px;
+}
+.hero-right { position: relative; z-index: 1; }
+.wellness-card {
+    background: rgba(255,255,255,.13);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 20px; padding: 24px 28px;
+    text-align: center; min-width: 160px;
+    backdrop-filter: blur(12px);
+}
+.wellness-emoji { font-size: 40px; margin-bottom: 8px; }
+.wellness-msg {
+    font-size: 14px; font-weight: 600; color: white;
+    line-height: 1.4;
+}
+
+/* ── SECTION ── */
+.section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 1.5px; margin: 0 0 16px;
+}
+
+/* ── SERVICE CARDS ── */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+    margin-bottom: 36px;
+}
+.service-card {
+    border-radius: 20px; padding: 28px 24px;
+    border: 2px solid #f1f5f9;
+    background: white;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    text-decoration: none;
+    display: flex; flex-direction: column; gap: 14px;
+    position: relative; overflow: hidden;
+}
+.service-card::after {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--stripe, #059669);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .3s;
+}
+.service-card:hover {
+    border-color: var(--stripe, #059669);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(5,150,105,.1);
+    text-decoration: none;
+}
+.service-card:hover::after { transform: scaleX(1); }
+
+.svc-icon {
+    width: 54px; height: 54px;
+    background: var(--icon-bg, #d1fae5);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+}
+.svc-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700; color: #1e293b;
+}
+.svc-desc {
+    font-size: 13px; color: #94a3b8; line-height: 1.5; flex: 1;
+}
+.svc-cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 700;
+    color: var(--stripe, #059669);
+    margin-top: 4px;
+}
+
+/* ── TIPS BAND ── */
+.tips-band {
+    background: linear-gradient(135deg, #f0fdfb, #e0f5f8);
+    border: 1px solid #b2e8f0;
+    border-radius: 20px;
+    padding: 28px 32px;
+    display: flex; align-items: center; gap: 24px;
+    flex-wrap: wrap;
+}
+.tip-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: #0b4f5e; font-weight: 500;
+}
+.tip-icon {
+    width: 36px; height: 36px;
+    background: white; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(11,122,143,.1);
+}
+
+/* Animations */
+.fade-up {
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .5s forwards;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+</style>
+
+<div class="client-wrap">
+
+    <!-- HERO -->
+    <div class="client-hero fade-up">
+        <div class="hero-left">
+            <div class="hero-pill">🌿 ESPACE BIEN-ÊTRE</div>
+            <div class="hero-title">
+                Bienvenue,<br><span>{{ app.session.get('user_nom') ?? 'vous' }}</span> !
+            </div>
+            <p class="hero-tagline">
+                Votre espace personnel MindGrow — explorez nos séances, programmes et abonnements pour prendre soin de vous.
+            </p>
+        </div>
+        <div class="hero-right">
+            <div class="wellness-card">
+                <div class="wellness-emoji">🧘</div>
+                <div class="wellness-msg">Prenez soin<br>de vous aujourd'hui</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SERVICES -->
+    <p class="section-title fade-up" style="animation-delay:.1s">Mes services</p>
+    <div class="services-grid">
+
+        <a href="{{ path('abonnements') }}" class="service-card fade-up"
+           style="--stripe:#0b7a8f; --icon-bg:#e0f5f8; animation-delay:.15s">
+            <div class="svc-icon">💳</div>
+            <div class="svc-name">Abonnements</div>
+            <div class="svc-desc">Choisissez votre plan et profitez de l'accès illimité à nos services bien-être.</div>
+            <div class="svc-cta">Voir les plans →</div>
+        </a>
+
+        <a href="{{ path('seances') }}" class="service-card fade-up"
+           style="--stripe:#7c3aed; --icon-bg:#ede9fe; animation-delay:.2s">
+            <div class="svc-icon">🎯</div>
+            <div class="svc-name">Séances</div>
+            <div class="svc-desc">Réservez vos séances de coaching avec nos experts certifiés.</div>
+            <div class="svc-cta" style="color:#7c3aed">Explorer →</div>
+        </a>
+
+        <a href="{{ path('programmes') }}" class="service-card fade-up"
+           style="--stripe:#059669; --icon-bg:#d1fae5; animation-delay:.25s">
+            <div class="svc-icon">📚</div>
+            <div class="svc-name">Programmes</div>
+            <div class="svc-desc">Suivez un programme personnalisé adapté à vos objectifs de bien-être.</div>
+            <div class="svc-cta" style="color:#059669">Découvrir →</div>
+        </a>
+
+        <a href="{{ path('therapeutes') }}" class="service-card fade-up"
+           style="--stripe:#d97706; --icon-bg:#fef3c7; animation-delay:.3s">
+            <div class="svc-icon">👨‍⚕️</div>
+            <div class="svc-name">Thérapeutes</div>
+            <div class="svc-desc">Consultez les profils de nos thérapeutes et choisissez votre accompagnant.</div>
+            <div class="svc-cta" style="color:#d97706">Voir les profils →</div>
+        </a>
+
+        <a href="{{ path('mes_reservations') }}" class="service-card fade-up"
+           style="--stripe:#dc2626; --icon-bg:#fee2e2; animation-delay:.35s">
+            <div class="svc-icon">📅</div>
+            <div class="svc-name">Mes réservations</div>
+            <div class="svc-desc">Consultez et gérez toutes vos réservations de séances en un seul endroit.</div>
+            <div class="svc-cta" style="color:#dc2626">Gérer →</div>
+        </a>
+
+    </div>
+
+    <!-- TIPS -->
+    <div class="tips-band fade-up" style="animation-delay:.4s">
+        <div class="tip-item">
+            <div class="tip-icon">💡</div>
+            <span>Complétez votre profil pour une expérience personnalisée</span>
+        </div>
+        <div class="tip-item">
+            <div class="tip-icon">🔔</div>
+            <span>Réservez vos séances à l'avance pour garantir votre place</span>
+        </div>
+        <div class="tip-item">
+            <div class="tip-icon">⭐</div>
+            <span>Laissez un avis après chaque séance pour aider la communauté</span>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

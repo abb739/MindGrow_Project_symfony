@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Programmes{% endblock %}
+{% block body %}
+<h1 class="page-title">📚 Gestion des Programmes</h1>
+
+<div style="display:flex; gap:24px; flex-wrap:wrap;">
+<div class="card" style="flex:1; min-width:280px;">
+    <h3 style="font-size:16px; font-weight:600; margin-bottom:16px; color:var(--label);">📁 Catégories</h3>
+    <form method="post" action="{{ path('admin_categorie_new') }}">
+        <label>Nom * (lettres seulement)</label>
+        <input type="text" name="nom" required placeholder="Nom catégorie" pattern="[a-zA-ZÀ-ÿ\s]+">
+        <label>Description</label>
+        <input type="text" name="description" placeholder="Description">
+        <button type="submit" class="btn btn-success">➕ Ajouter catégorie</button>
+    </form>
+    <div style="margin-top:20px;">
+    {% for cat in categories %}
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg3); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+        <span style="font-weight:500; font-size:14px; color:var(--text);">{{ cat.nom }}</span>
+        <a href="{{ path('admin_categorie_delete', {id: cat.id}) }}"
+           onclick="return confirm('Supprimer ?')" class="btn btn-danger btn-sm">🗑️</a>
+    </div>
+    {% endfor %}
+    </div>
+</div>
+
+<div class="card" style="flex:2; min-width:320px;">
+    <h3 style="font-size:16px; font-weight:600; margin-bottom:16px; color:var(--label);">➕ Ajouter un programme</h3>
+    <form method="post" action="{{ path('admin_programme_new') }}">
+        <label>Titre * (lettres/chiffres)</label>
+        <input type="text" name="titre" required placeholder="Titre du programme" pattern="[a-zA-Z0-9\s]+">
+        <label>Catégorie *</label>
+        <select name="idCategorie" required>
+            <option value="">Choisir une catégorie...</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.nom }}</option>
+            {% endfor %}
+        </select>
+        <label>Description (max 200 caractères)</label>
+        <textarea name="description" maxlength="200" placeholder="Description du programme" rows="3"></textarea>
+        <label>Image (URL)</label>
+        <input type="text" name="image" placeholder="https://...">
+        <label>Vidéo (URL)</label>
+        <input type="text" name="video" placeholder="https://...">
+        <button type="submit" class="btn btn-success">➕ Ajouter programme</button>
+    </form>
+</div>
+</div>
+
+<div class="card">
+    <h3 style="font-size:16px; font-weight:600; margin-bottom:16px; color:var(--label);">📋 Liste des Programmes</h3>
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Titre</th><th>Catégorie</th><th>Description</th><th>Actions</th></tr>
+        </thead>
+        <tbody>
+        {% for prog in programmes %}
+        <tr>
+            <td><span class="badge badge-primary">#{{ prog.id }}</span></td>
+            <td style="font-weight:600;">{{ prog.titre }}</td>
+            <td><span class="badge badge-success">Cat. #{{ prog.idCategorie }}</span></td>
+            <td style="color:var(--text2); font-size:13px;">{{ prog.description|slice(0,50) }}{% if prog.description|length > 50 %}...{% endif %}</td>
+            <td>
+                <form method="post" action="{{ path('admin_programme_edit', {id: prog.id}) }}" style="display:inline-flex; gap:6px; align-items:center;">
+                    <input type="text" name="titre" value="{{ prog.titre }}" style="width:90px; padding:6px; margin:0; font-size:13px;">
+                    <select name="idCategorie" style="width:90px; padding:6px; margin:0; font-size:13px;">
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {{ prog.idCategorie == cat.id ? 'selected' : '' }}>{{ cat.nom }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn btn-warning btn-sm">✏️</button>
+                </form>
+                <a href="{{ path('admin_programme_delete', {id: prog.id}) }}"
+                   onclick="return confirm('Supprimer ?')" class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

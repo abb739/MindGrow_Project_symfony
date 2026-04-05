@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion{% endblock %}
+{% block body %}
+<div style="max-width:450px; margin:60px auto;">
+    <div class="card">
+        <h2 style="text-align:center; color:#0b7a8f; margin-bottom:20px;">🌱 Connexion MindGrow</h2>
+        {% if error %}
+            <div class="alert-error">{{ error }}</div>
+        {% endif %}
+        <form method="post">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required placeholder="votre@email.com">
+            </div>
+            <div class="form-group">
+                <label>Mot de passe</label>
+                <input type="password" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:16px;">Se connecter</button>
+        </form>
+        <p style="text-align:center; margin-top:15px;">
+            Pas de compte ? <a href="{{ path('register') }}" style="color:#0b7a8f;">S'inscrire</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

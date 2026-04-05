@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin Réservations{% endblock %}
+{% block body %}
+<h1 style="margin-bottom:20px;">Gestion des Réservations</h1>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Séance</th><th>Utilisateur</th><th>Date</th><th>Statut</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for res in reservations %}
+    <tr>
+        <td>{{ res.id }}</td>
+        <td>{{ seances[res.id] ? seances[res.id].titre : 'N/A' }}</td>
+        <td>{{ res.idUtilisateur }}</td>
+        <td>{{ res.dateReservation ? res.dateReservation|date('d/m/Y H:i') : 'N/A' }}</td>
+        <td>{{ res.statut }}</td>
+        <td>
+            {% if res.statut == 'en attente' %}
+            <a href="{{ path('admin_reservation_confirmer', {id: res.id}) }}" class="btn btn-success" style="padding:4px 8px;">Confirmer</a>
+            {% endif %}
+            <a href="{{ path('admin_reservation_delete', {id: res.id}) }}"
+               onclick="return confirm('Supprimer ?')" class="btn btn-danger" style="padding:4px 8px;">Supprimer</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+{% block title %}Programmes{% endblock %}
+{% block body %}
+<div style="text-align:center; margin-bottom:40px;">
+    <h1 style="font-size:36px; font-weight:700; color:#0b7a8f;">Nos Programmes</h1>
+    <p style="color:#64748b; font-size:16px; margin-top:8px;">Découvrez nos programmes de bien-être</p>
+</div>
+
+<div style="background:white; border-radius:16px; padding:20px 24px; margin-bottom:28px; box-shadow:0 2px 12px rgba(0,0,0,0.06); display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+    <form method="get" style="display:flex; gap:12px; flex-wrap:wrap; width:100%;">
+        <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher un programme..."
+               style="flex:2; min-width:200px; margin:0;">
+        <select name="categorie" style="flex:1; min-width:160px; margin:0;">
+            <option value="">Toutes les catégories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {{ catId == cat.id ? 'selected' : '' }}>{{ cat.nom }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        {% if search or catId %}
+        <a href="{{ path('programmes') }}" class="btn" style="background:#f1f5f9; color:#475569;">✕ Reset</a>
+        {% endif %}
+    </form>
+</div>
+
+<div style="display:flex; flex-wrap:wrap; gap:24px; justify-content:center;">
+{% for prog in programmes %}
+<div style="background:white; border-radius:20px; width:280px; overflow:hidden;
+     box-shadow:0 4px 24px rgba(0,0,0,0.08); transition:all 0.3s; border:2px solid transparent;"
+     onmouseenter="this.style.borderColor='#0b7a8f'; this.style.transform='translateY(-6px)'"
+     onmouseleave="this.style.borderColor='transparent'; this.style.transform='translateY(0)'">
+    <div style="background:linear-gradient(135deg,#0b7a8f,#065f6e); padding:20px; color:white; min-height:80px; display:flex; align-items:center;">
+        <h2 style="font-size:18px; font-weight:700;">{{ prog.titre }}</h2>
+    </div>
+    <div style="padding:20px;">
+        <span style="background:#f0fdf4; color:#166534; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; display:inline-block; margin-bottom:12px;">
+            📁 Catégorie #{{ prog.idCategorie }}
+        </span>
+        <p style="color:#64748b; font-size:13px; line-height:1.6;">{{ prog.description }}</p>
+    </div>
+</div>
+{% else %}
+<div style="text-align:center; padding:60px; color:#94a3b8; width:100%;">
+    <div style="font-size:48px; margin-bottom:16px;">🔍</div>
+    <p style="font-size:16px;">Aucun programme trouvé</p>
+</div>
+{% endfor %}
+</div>
+{% endblock %}

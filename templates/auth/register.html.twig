@@ -1,0 +1,106 @@
+{% extends 'base.html.twig' %}
+{% block title %}Inscription{% endblock %}
+{% block body %}
+<div style="max-width:480px; margin:60px auto;">
+    <div class="card">
+        <h2 style="text-align:center; color:#0b7a8f; margin-bottom:24px;">🌱 Créer un compte</h2>
+
+        {% if errors is defined and errors %}
+            {% for error in errors %}
+                <div class="alert-error">⚠️ {{ error }}</div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{{ path('register') }}">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                <div class="form-group">
+                    <label>Nom * (min. 2 caract.)</label>
+                    <input type="text" name="nom" value="{{ nom ?? '' }}" required minlength="2"
+                           placeholder="Ben Ali" autocomplete="family-name">
+                </div>
+                <div class="form-group">
+                    <label>Prénom * (min. 2 caract.)</label>
+                    <input type="text" name="prenom" value="{{ prenom ?? '' }}" required minlength="2"
+                           placeholder="Ahmed" autocomplete="given-name">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email *</label>
+                <input type="email" name="email" value="{{ email ?? '' }}" required
+                       placeholder="ahmed@exemple.com" autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label>Mot de passe * (min. 6 caract.)</label>
+                <input type="password" name="password" required minlength="6"
+                       placeholder="••••••••" autocomplete="new-password">
+            </div>
+
+            <div class="form-group">
+                <label>Confirmer le mot de passe *</label>
+                <input type="password" name="confirm" required minlength="6"
+                       placeholder="••••••••" autocomplete="new-password">
+            </div>
+
+            {# ===== CHOIX DU RÔLE ===== #}
+            <div class="form-group">
+                <label>Rôle *</label>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:6px;">
+
+                    <label for="role_client" style="
+                        display:flex; align-items:center; gap:10px;
+                        border:2px solid #e2e8f0; border-radius:12px; padding:14px;
+                        cursor:pointer; transition:.2s; background:white;
+                        " id="card_client">
+                        <input type="radio" name="role" id="role_client" value="client"
+                               {{ (role ?? 'client') == 'client' ? 'checked' : '' }}
+                               required onchange="highlightRole()">
+                        <div>
+                            <div style="font-weight:700; color:#1e293b; font-size:14px;">👤 Client</div>
+                            <div style="font-size:11px; color:#94a3b8; margin-top:2px;">Accès aux séances et abonnements</div>
+                        </div>
+                    </label>
+
+                    <label for="role_admin" style="
+                        display:flex; align-items:center; gap:10px;
+                        border:2px solid #e2e8f0; border-radius:12px; padding:14px;
+                        cursor:pointer; transition:.2s; background:white;
+                        " id="card_admin">
+                        <input type="radio" name="role" id="role_admin" value="admin"
+                               {{ (role ?? '') == 'admin' ? 'checked' : '' }}
+                               onchange="highlightRole()">
+                        <div>
+                            <div style="font-weight:700; color:#1e293b; font-size:14px;">🛡️ Admin</div>
+                            <div style="font-size:11px; color:#94a3b8; margin-top:2px;">Gestion complète de la plateforme</div>
+                        </div>
+                    </label>
+
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:15px; margin-top:4px;">
+                Créer mon compte →
+            </button>
+        </form>
+
+        <p style="text-align:center; margin-top:20px; font-size:14px; color:#64748b;">
+            Déjà un compte ? <a href="{{ path('login') }}" style="color:#0b7a8f; font-weight:600;">Se connecter</a>
+        </p>
+    </div>
+</div>
+
+<script>
+function highlightRole() {
+    const client = document.getElementById('role_client').checked;
+    const cardC  = document.getElementById('card_client');
+    const cardA  = document.getElementById('card_admin');
+    cardC.style.borderColor = client  ? '#0b7a8f' : '#e2e8f0';
+    cardC.style.background  = client  ? '#f0fdfb' : 'white';
+    cardA.style.borderColor = !client ? '#0b7a8f' : '#e2e8f0';
+    cardA.style.background  = !client ? '#f0fdfb' : 'white';
+}
+// Appliquer au chargement
+window.addEventListener('DOMContentLoaded', highlightRole);
+</script>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+{% block title %}Séances disponibles{% endblock %}
+{% block body %}
+
+<div style="text-align:center; margin-bottom:40px;">
+    <h1 style="font-size:36px; font-weight:700; color:#0b7a8f;">🎯 Séances MindGrow</h1>
+    <p style="color:var(--text2); font-size:16px; margin-top:8px;">Réservez votre place dans nos séances de bien-être</p>
+</div>
+
+<div class="card" style="margin-bottom:30px;">
+    <form method="get" action="{{ path('seances') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher par titre ou lieu..."
+               style="flex:2; min-width:200px; margin:0;">
+        <div style="display:flex; gap:8px;">
+            <button type="submit" name="filtre" value="toutes"
+                    class="btn {{ filtre == 'toutes' ? 'btn-primary' : '' }}"
+                    style="{{ filtre != 'toutes' ? 'background:var(--bg3); color:var(--text2);' : '' }}">Toutes</button>
+            <button type="submit" name="filtre" value="avenir"
+                    class="btn {{ filtre == 'avenir' ? 'btn-success' : '' }}"
+                    style="{{ filtre != 'avenir' ? 'background:var(--bg3); color:var(--text2);' : '' }}">📅 À venir</button>
+        </div>
+        {% if search %}
+        <a href="{{ path('seances') }}" class="btn" style="background:#fee2e2; color:#dc2626;">✕</a>
+        {% endif %}
+    </form>
+</div>
+
+{% if search %}
+<p style="color:var(--text2); margin-bottom:20px;">
+    {{ seances|length }} résultat(s) pour "<strong>{{ search }}</strong>"
+</p>
+{% endif %}
+
+<div style="display:flex; flex-wrap:wrap; gap:24px; justify-content:flex-start;">
+{% for seance in seances %}
+{% set places = placesRestantes[seance.id] is defined ? placesRestantes[seance.id] : 0 %}
+{% set reserve = dejaReserve[seance.id] is defined ? dejaReserve[seance.id] : false %}
+
+<div style="background:var(--bg2); border-radius:20px; width:310px;
+     box-shadow:0 4px 24px rgba(0,0,0,0.07);
+     border:2px solid {{ places <= 0 ? '#fee2e2' : (reserve ? '#dcfce7' : 'var(--border2)') }};
+     transition:all 0.3s; overflow:hidden;"
+     onmouseenter="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 12px 40px rgba(11,122,143,0.15)'"
+     onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0,0,0,0.07)'">
+
+    {# ── IMAGE en haut si elle existe ── #}
+    {% if seance.image and seance.image starts with '/uploads/' %}
+    <div style="width:100%; height:160px; overflow:hidden; position:relative; flex-shrink:0;">
+        <img src="{{ seance.image }}" alt="{{ seance.titre }}"
+             style="width:100%; height:100%; object-fit:cover; display:block;">
+        <div style="position:absolute; top:10px; left:10px; display:flex; gap:6px; flex-wrap:wrap;">
+            <span style="background:{% if places <= 0 %}rgba(153,27,27,0.9){% elseif places <= 3 %}rgba(146,64,14,0.9){% else %}rgba(22,101,52,0.9){% endif %};
+                        color:white; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;
+                        backdrop-filter:blur(4px);">
+                {% if places <= 0 %}COMPLET{% elseif places <= 3 %}⚠️ {{ places }} place(s){% else %}✅ {{ places }} places{% endif %}
+            </span>
+            {% if reserve %}
+            <span style="background:rgba(22,101,52,0.9); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">✓ Réservé</span>
+            {% endif %}
+        </div>
+    </div>
+    <div style="padding:20px;">
+    {% else %}
+    <div style="padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span style="background:{% if places <= 0 %}#fee2e2; color:#991b1b{% elseif places <= 3 %}#fef3c7; color:#92400e{% else %}#dcfce7; color:#166534{% endif %};
+                        padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;">
+                {% if places <= 0 %}COMPLET{% elseif places <= 3 %}⚠️ {{ places }} place(s){% else %}✅ {{ places }} places{% endif %}
+            </span>
+            {% if reserve %}
+            <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">✓ Réservé</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+        <h2 style="font-size:20px; font-weight:700; color:var(--text); margin-bottom:10px;">{{ seance.titre }}</h2>
+
+        <div style="color:var(--text2); font-size:13px; margin-bottom:8px;">
+            📍 {{ seance.lieu|slice(0,50) }}{% if seance.lieu|length > 50 %}...{% endif %}
+        </div>
+        <div style="color:#0b7a8f; font-size:13px; font-weight:600; margin-bottom:4px;">
+            📅 {{ seance.dateDebut ? seance.dateDebut|date('d/m/Y à H:i') : '—' }}
+        </div>
+        <div style="color:var(--text3); font-size:12px; margin-bottom:16px;">
+            🏁 {{ seance.dateFin ? seance.dateFin|date('d/m/Y à H:i') : '—' }}
+        </div>
+
+        {% if seance.description %}
+        <p style="color:var(--text2); font-size:13px; line-height:1.5; margin-bottom:16px;">
+            {{ seance.description|slice(0,100) }}{% if seance.description|length > 100 %}...{% endif %}
+        </p>
+        {% endif %}
+
+        <div style="margin-bottom:16px;">
+            {% set taux = seance.capacite > 0 ? ((seance.capacite - places) / seance.capacite * 100)|round : 100 %}
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text3); margin-bottom:4px;">
+                <span>Remplissage</span><span>{{ seance.capacite - places }}/{{ seance.capacite }}</span>
+            </div>
+            <div style="background:var(--bg3); border-radius:6px; height:8px; overflow:hidden;">
+                <div style="background:{{ taux >= 90 ? '#ef4444' : (taux >= 60 ? '#f59e0b' : '#10b981') }};
+                            height:100%; width:{{ taux }}%; transition:width 0.3s;"></div>
+            </div>
+        </div>
+
+        {% if reserve %}
+            <div style="background:#f0fdf4; color:#166534; padding:12px; border-radius:12px; text-align:center; font-weight:600; font-size:14px;">
+                ✓ Vous avez réservé cette séance
+            </div>
+        {% elseif places <= 0 %}
+            <div style="background:#fef2f2; color:#991b1b; padding:12px; border-radius:12px; text-align:center; font-weight:600; font-size:14px;">
+                Cette séance est complète
+            </div>
+        {% else %}
+            <a href="{{ path('reservation_new', {idSeance: seance.id}) }}"
+               style="display:block; background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white;
+                      padding:13px; border-radius:12px; text-decoration:none; font-weight:600;
+                      font-size:15px; text-align:center; transition:opacity 0.2s;"
+               onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">
+                Réserver ma place →
+            </a>
+        {% endif %}
+
+    </div>{# fin padding div #}
+</div>{# fin card #}
+{% else %}
+<div style="text-align:center; width:100%; padding:60px; color:var(--text3);">
+    {% if search %}
+        Aucune séance pour "{{ search }}" — <a href="{{ path('seances') }}" style="color:#0b7a8f;">Voir toutes les séances</a>
+    {% else %}
+        Aucune séance disponible pour le moment.
+    {% endif %}
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

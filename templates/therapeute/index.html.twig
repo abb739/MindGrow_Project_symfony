@@ -1,0 +1,248 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nos Thérapeutes — MindGrow{% endblock %}
+{% block body %}
+
+<style>
+/* ---- Hero ---- */
+.th-hero { text-align:center; padding:52px 0 44px; }
+.th-hero h1 { font-size:42px; font-weight:800; color:#0b7a8f; letter-spacing:-1px; line-height:1.1; }
+.th-hero p  { font-size:17px; color:#64748b; margin-top:12px; }
+
+/* ---- Barre de recherche ---- */
+.search-bar {
+    background:white; border-radius:16px; padding:20px 24px;
+    box-shadow:0 2px 16px rgba(0,0,0,.07);
+    margin-bottom:32px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+}
+.search-bar input[type=text] { flex:2; min-width:200px; margin:0; }
+.search-bar select           { flex:1; min-width:160px; margin:0; }
+
+/* ---- Grille ---- */
+.th-grid { display:flex; flex-wrap:wrap; gap:28px; padding-bottom:60px; }
+
+/* ---- Carte thérapeute ---- */
+.th-card {
+    background:white; border-radius:24px; width:300px;
+    box-shadow:0 4px 24px rgba(0,0,0,.07);
+    border:2px solid #f1f5f9; transition:all .3s;
+    overflow:hidden; display:flex; flex-direction:column;
+}
+.th-card:hover {
+    border-color:#0b7a8f;
+    transform:translateY(-8px);
+    box-shadow:0 16px 48px rgba(11,122,143,.18);
+}
+
+/* Photo ou avatar */
+.th-photo-wrap {
+    height:180px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#0b7a8f,#065f6e);
+    display:flex; align-items:center; justify-content:center;
+}
+.th-photo-wrap img {
+    width:100%; height:100%; object-fit:cover;
+    transition:transform .4s;
+}
+.th-card:hover .th-photo-wrap img { transform:scale(1.05); }
+.th-photo-overlay {
+    position:absolute; inset:0;
+    background:linear-gradient(to top, rgba(6,95,110,.7) 0%, transparent 50%);
+}
+.th-photo-name {
+    position:absolute; bottom:12px; left:16px; right:16px;
+    color:white; font-size:17px; font-weight:800; line-height:1.2;
+    text-shadow:0 1px 4px rgba(0,0,0,.4);
+}
+.th-photo-spec {
+    display:inline-block; background:rgba(255,255,255,.2);
+    backdrop-filter:blur(4px); border:1px solid rgba(255,255,255,.3);
+    color:white; font-size:11px; font-weight:700; letter-spacing:.5px;
+    padding:3px 10px; border-radius:20px; margin-top:4px;
+}
+
+/* Avatar emoji (pas de photo) */
+.th-avatar-emoji {
+    font-size:56px; user-select:none; line-height:1;
+}
+
+/* Corps de la carte */
+.th-body { padding:20px 22px; flex:1; display:flex; flex-direction:column; }
+
+/* Étoiles */
+.star-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.stars { color:#f59e0b; font-size:16px; letter-spacing:1px; }
+.note-label { font-size:13px; color:#0b7a8f; font-weight:700; }
+.note-count  { font-size:12px; color:#94a3b8; }
+
+/* Contact */
+.th-contact { font-size:13px; color:#64748b; margin-bottom:4px; }
+
+/* Séparateur avant le formulaire avis */
+.avis-sep { border:none; border-top:1px solid #f1f5f9; margin:16px 0; }
+
+/* Formulaire avis inline */
+.avis-toggle-btn {
+    background:none; border:none; cursor:pointer;
+    font-size:14px; font-weight:700; color:#0b7a8f;
+    padding:0; display:flex; align-items:center; gap:6px;
+    margin-bottom:0;
+}
+.avis-toggle-btn:hover { color:#065f6e; }
+
+.avis-form-wrap {
+    display:none; margin-top:14px;
+}
+.avis-form-wrap.open { display:block; }
+
+.star-picker { display:flex; gap:6px; margin-bottom:10px; flex-direction:row-reverse; justify-content:flex-end; }
+.star-picker input  { display:none; }
+.star-picker label  { font-size:26px; color:#d1d5db; cursor:pointer; transition:.15s; }
+.star-picker input:checked ~ label,
+.star-picker label:hover,
+.star-picker label:hover ~ label { color:#f59e0b; }
+</style>
+
+{# ---- Hero ---- #}
+<div class="th-hero">
+    <h1>Nos Thérapeutes</h1>
+    <p>Des professionnels qualifiés pour vous accompagner</p>
+</div>
+
+{# ---- Barre recherche + filtre ---- #}
+<div class="search-bar">
+    <form method="get" action="{{ path('therapeutes') }}" style="display:contents;">
+        <input type="text" name="search" value="{{ search }}"
+               placeholder="🔍 Rechercher par nom ou prénom...">
+        <select name="specialite">
+            <option value="">Toutes les spécialités</option>
+            {% for spec in specialites %}
+            <option value="{{ spec }}" {{ specialite == spec ? 'selected' : '' }}>{{ spec }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Filtrer</button>
+        {% if search or specialite %}
+        <a href="{{ path('therapeutes') }}" class="btn" style="background:#fee2e2; color:#dc2626;">✕ Réinitialiser</a>
+        {% endif %}
+    </form>
+</div>
+
+{# Résultat de recherche #}
+{% if search or specialite %}
+<p style="color:#64748b; margin-bottom:24px; font-size:14px;">
+    <strong>{{ therapeutes|length }}</strong> thérapeute(s) trouvé(s)
+    {% if search %} pour "<strong>{{ search }}</strong>"{% endif %}
+    {% if specialite %} — spécialité : <strong>{{ specialite }}</strong>{% endif %}
+</p>
+{% endif %}
+
+{# ---- Grille ---- #}
+<div class="th-grid">
+{% for therapeute in therapeutes %}
+{% set note = noteMoyenne[therapeute.id] is defined ? noteMoyenne[therapeute.id] : 0 %}
+{% set nb   = nbAvis[therapeute.id]      is defined ? nbAvis[therapeute.id]      : 0 %}
+
+<div class="th-card">
+
+    {# Photo ou avatar emoji #}
+    <div class="th-photo-wrap">
+        {% if therapeute.image %}
+            <img src="{{ therapeute.image }}" alt="{{ therapeute.prenom }} {{ therapeute.nom }}">
+            <div class="th-photo-overlay"></div>
+            <div class="th-photo-name">
+                {{ therapeute.prenom }} {{ therapeute.nom }}
+                {% if therapeute.specialite %}
+                <br><span class="th-photo-spec">{{ therapeute.specialite }}</span>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="th-avatar-emoji">🧑‍⚕️</div>
+        {% endif %}
+    </div>
+
+    <div class="th-body">
+
+        {# Nom (si pas de photo overlay) #}
+        {% if not therapeute.image %}
+        <h2 style="font-size:18px; font-weight:800; color:#1e293b; margin-bottom:4px; text-align:center;">
+            {{ therapeute.prenom }} {{ therapeute.nom }}
+        </h2>
+        {% if therapeute.specialite %}
+        <div style="text-align:center; margin-bottom:12px;">
+            <span style="background:#e0f2fe; color:#0369a1; padding:4px 14px; border-radius:20px; font-size:12px; font-weight:600;">
+                {{ therapeute.specialite }}
+            </span>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {# Étoiles #}
+        <div class="star-row">
+            <div class="stars">
+                {% for i in 1..5 %}{{ i <= note|round ? '★' : '☆' }}{% endfor %}
+            </div>
+            {% if nb > 0 %}
+            <span class="note-label">{{ note }}/5</span>
+            <span class="note-count">({{ nb }} avis)</span>
+            {% else %}
+            <span class="note-count" style="font-style:italic;">Aucun avis</span>
+            {% endif %}
+        </div>
+
+        {# Contact #}
+        {% if therapeute.email %}
+        <div class="th-contact">✉️ {{ therapeute.email }}</div>
+        {% endif %}
+        {% if therapeute.telephone %}
+        <div class="th-contact">📞 {{ therapeute.telephone }}</div>
+        {% endif %}
+
+        {# Formulaire avis #}
+        <hr class="avis-sep">
+        <button class="avis-toggle-btn" onclick="toggleAvis({{ therapeute.id }})">
+            <span id="avis-icon-{{ therapeute.id }}">⭐</span> Laisser un avis
+        </button>
+
+        <div class="avis-form-wrap" id="avis-form-{{ therapeute.id }}">
+            <form method="post" action="{{ path('avis_new', {idTherapeute: therapeute.id}) }}">
+                <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Note</label>
+                <div class="star-picker" style="margin-bottom:10px;">
+                    {% for i in [5,4,3,2,1] %}
+                    <input type="radio" name="note" id="star-{{ therapeute.id }}-{{ i }}" value="{{ i }}" required>
+                    <label for="star-{{ therapeute.id }}-{{ i }}">★</label>
+                    {% endfor %}
+                </div>
+                <label style="font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.5px;">Commentaire *</label>
+                <textarea name="commentaire" required rows="3"
+                          placeholder="Votre expérience avec ce thérapeute..."
+                          style="margin-bottom:10px;"></textarea>
+                <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">
+                    Publier mon avis
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% else %}
+<div style="text-align:center; width:100%; padding:80px; color:#94a3b8;">
+    {% if search or specialite %}
+        Aucun thérapeute trouvé —
+        <a href="{{ path('therapeutes') }}" style="color:#0b7a8f;">Voir tous</a>
+    {% else %}
+        Aucun thérapeute disponible.
+    {% endif %}
+</div>
+{% endfor %}
+</div>
+
+<script>
+function toggleAvis(id) {
+    const wrap = document.getElementById('avis-form-' + id);
+    const icon = document.getElementById('avis-icon-' + id);
+    const open = wrap.classList.toggle('open');
+    icon.textContent = open ? '✕' : '⭐';
+}
+</script>
+
+{% endblock %}

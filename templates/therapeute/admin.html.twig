@@ -1,0 +1,319 @@
+{% extends 'base.html.twig' %}
+{% block title %}Admin — Gestion Thérapeutes{% endblock %}
+{% block body %}
+
+<style>
+.th-page-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:28px; flex-wrap:wrap; gap:12px;
+}
+.th-count-badge {
+    background:#e0f5f8; color:#0b7a8f;
+    padding:6px 16px; border-radius:20px; font-size:13px; font-weight:700;
+}
+
+.add-card { background:white; border-radius:18px; padding:28px 32px; margin-bottom:32px; box-shadow:0 2px 16px rgba(0,0,0,.06); }
+.add-card h3 { font-size:15px; font-weight:700; color:#374151; margin-bottom:20px; }
+.form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:800px){ .form-grid-3 { grid-template-columns:1fr 1fr; } }
+@media(max-width:500px){ .form-grid-3 { grid-template-columns:1fr; } }
+
+.file-input-wrap input[type=file] {
+    width:100%; padding:8px 12px;
+    border:2px dashed #cbd5e1; border-radius:10px;
+    background:#f8fafc; cursor:pointer; font-size:13px;
+}
+.file-input-wrap input[type=file]:hover { border-color:#0b7a8f; background:#f0fdfb; }
+
+.th-table { width:100%; border-collapse:collapse; }
+.th-table thead tr { background:linear-gradient(135deg,#0b7a8f,#065f6e); }
+.th-table th {
+    padding:12px 16px; text-align:left; color:white;
+    font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+}
+.th-table th:first-child { border-radius:12px 0 0 0; }
+.th-table th:last-child  { border-radius:0 12px 0 0; }
+.th-table td { padding:13px 16px; border-bottom:1px solid #f1f5f9; vertical-align:middle; font-size:14px; }
+.th-table tr:hover td { background:#f8fafc; }
+.th-table tr:last-child td { border-bottom:none; }
+
+.avatar-circle {
+    width:44px; height:44px; border-radius:50%;
+    object-fit:cover; border:2px solid #e2e8f0; flex-shrink:0;
+}
+.avatar-emoji {
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(135deg,#0b7a8f,#065f6e);
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:20px; flex-shrink:0;
+}
+.name-cell { display:flex; align-items:center; gap:10px; }
+.stars-display { color:#f59e0b; font-size:14px; letter-spacing:1px; }
+
+/* ---- Modal — EN DEHORS DU TABLEAU ---- */
+.modal-overlay {
+    display:none;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(15,23,42,.65);
+    z-index:9999;
+    align-items:center; justify-content:center;
+    backdrop-filter:blur(3px);
+}
+.modal-overlay.open { display:flex; }
+
+.modal-box {
+    background:white; border-radius:20px; padding:36px 32px;
+    width:580px; max-width:95vw; max-height:90vh; overflow-y:auto;
+    box-shadow:0 24px 80px rgba(0,0,0,.3);
+    position:relative;
+    animation: modalIn .2s ease;
+}
+@keyframes modalIn {
+    from { transform:scale(.95) translateY(10px); opacity:0; }
+    to   { transform:scale(1)   translateY(0);    opacity:1; }
+}
+
+.modal-close {
+    position:absolute; top:14px; right:14px;
+    background:#f1f5f9; border:none; border-radius:8px;
+    width:34px; height:34px; cursor:pointer; font-size:17px;
+    display:flex; align-items:center; justify-content:center; color:#475569;
+    transition:.15s;
+}
+.modal-close:hover { background:#e2e8f0; color:#1e293b; }
+.modal-title { font-size:18px; font-weight:700; color:#1e293b; margin-bottom:20px; padding-right:40px; }
+
+.current-photo-wrap { text-align:center; margin-bottom:20px; }
+.current-photo-wrap img {
+    width:90px; height:90px; border-radius:50%; object-fit:cover;
+    border:3px solid #0b7a8f; box-shadow:0 4px 16px rgba(11,122,143,.25);
+}
+.current-photo-label { font-size:12px; color:#94a3b8; margin-top:6px; }
+
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:460px){ .form-grid-2 { grid-template-columns:1fr; } }
+
+.badge-spec { background:#fef3c7; color:#92400e; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+.badge-id   { background:#e0f5f8; color:#0b7a8f; padding:3px 10px; border-radius:8px; font-size:12px; font-weight:700; }
+</style>
+
+{# ======================================================= #}
+{# MODALS — HORS DU TABLEAU (position:fixed fonctionne)   #}
+{# ======================================================= #}
+{% for t in therapeutes %}
+<div class="modal-overlay" id="modal-{{ t.id }}">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-{{ t.id }}')">✕</button>
+        <div class="modal-title">✏️ Modifier : {{ t.prenom }} {{ t.nom }}</div>
+
+        {% if t.image %}
+        <div class="current-photo-wrap">
+            <img src="{{ t.image }}" alt="{{ t.prenom }}">
+            <div class="current-photo-label">Photo actuelle</div>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('admin_therapeute_edit', {id: t.id}) }}"
+              enctype="multipart/form-data">
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" name="nom" value="{{ t.nom }}" required minlength="2" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" name="prenom" value="{{ t.prenom }}" required minlength="2" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label>Spécialité *</label>
+                    <input type="text" name="specialite" value="{{ t.specialite }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" value="{{ t.email ?? '' }}">
+                </div>
+                <div class="form-group">
+                    <label>Téléphone <span style="color:#94a3b8;font-weight:400;">(8-15 chiffres)</span></label>
+                    <input type="tel" name="telephone" value="{{ t.telephone ?? '' }}" pattern="[0-9]{8,15}">
+                </div>
+                <div class="form-group">
+                    <label>Nouvelle photo <span style="color:#94a3b8;font-weight:400;">(laisser vide = garder)</span></label>
+                    <div class="file-input-wrap">
+                        <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif">
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+                <button type="button" onclick="closeModal('modal-{{ t.id }}')"
+                        class="btn" style="background:#f1f5f9; color:#475569;">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{# ======================================================= #}
+{# PAGE                                                    #}
+{# ======================================================= #}
+<div class="th-page-header">
+    <h1 class="page-title" style="margin-bottom:0;">👨‍⚕️ Gestion des Thérapeutes</h1>
+    <span class="th-count-badge">{{ therapeutes|length }} thérapeute(s)</span>
+</div>
+
+{# Erreurs #}
+{% if errors is defined and errors|length > 0 %}
+<div style="margin-bottom:20px;">
+    {% for err in errors %}
+    <div class="alert-error" style="margin-bottom:6px;">⚠️ {{ err }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ---- Formulaire ajout ---- #}
+<div class="add-card">
+    <h3>➕ Ajouter un thérapeute</h3>
+    <form method="post" action="{{ path('admin_therapeute_new') }}" enctype="multipart/form-data">
+        <div class="form-grid-3">
+            <div class="form-group">
+                <label>Nom * <span style="color:#94a3b8;font-weight:400;">(min. 2 caract.)</span></label>
+                <input type="text" name="nom" value="{{ form.nom ?? '' }}"
+                       required minlength="2" maxlength="100" placeholder="Ben Ali">
+            </div>
+            <div class="form-group">
+                <label>Prénom * <span style="color:#94a3b8;font-weight:400;">(min. 2 caract.)</span></label>
+                <input type="text" name="prenom" value="{{ form.prenom ?? '' }}"
+                       required minlength="2" maxlength="100" placeholder="Ahmed">
+            </div>
+            <div class="form-group">
+                <label>Spécialité *</label>
+                <input type="text" name="specialite" value="{{ form.specialite ?? '' }}"
+                       required placeholder="Psychologie, Sophrologie...">
+            </div>
+            <div class="form-group">
+                <label>Email <span style="color:#94a3b8;font-weight:400;">(format valide)</span></label>
+                <input type="email" name="email" value="{{ form.email ?? '' }}"
+                       placeholder="ahmed@exemple.com">
+            </div>
+            <div class="form-group">
+                <label>Téléphone <span style="color:#94a3b8;font-weight:400;">(8-15 chiffres)</span></label>
+                <input type="tel" name="telephone" value="{{ form.telephone ?? '' }}"
+                       pattern="[0-9]{8,15}" placeholder="58140402">
+            </div>
+            <div class="form-group">
+                <label>Photo <span style="color:#94a3b8;font-weight:400;">(JPG/PNG, max 3 Mo)</span></label>
+                <div class="file-input-wrap">
+                    <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif">
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn btn-success">➕ Ajouter le thérapeute</button>
+        </div>
+    </form>
+</div>
+
+{# ---- Tableau ---- #}
+<div style="background:white; border-radius:18px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,.06);">
+    {% if therapeutes|length == 0 %}
+    <div style="padding:60px; text-align:center; color:#94a3b8;">Aucun thérapeute enregistré.</div>
+    {% else %}
+    <table class="th-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Photo &amp; Nom</th>
+                <th>Spécialité</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>⭐ Note moy.</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in therapeutes %}
+        <tr>
+            <td><span class="badge-id">#{{ t.id }}</span></td>
+
+            <td>
+                <div class="name-cell">
+                    {% if t.image %}
+                        <img src="{{ t.image }}" alt="{{ t.prenom }}" class="avatar-circle">
+                    {% else %}
+                        <div class="avatar-emoji">🧑‍⚕️</div>
+                    {% endif %}
+                    <strong>{{ t.prenom }} {{ t.nom }}</strong>
+                </div>
+            </td>
+
+            <td>
+                {% if t.specialite %}
+                    <span class="badge-spec">{{ t.specialite }}</span>
+                {% else %}
+                    <span style="color:#94a3b8;">—</span>
+                {% endif %}
+            </td>
+
+            <td style="font-size:13px; color:#64748b;">{{ t.email ?? '—' }}</td>
+            <td style="font-size:13px; color:#64748b;">{{ t.telephone ?? '—' }}</td>
+
+            <td>
+                {% set note = noteMoyenne[t.id] is defined ? noteMoyenne[t.id] : 0 %}
+                {% if note > 0 %}
+                    <div class="stars-display">
+                        {% for i in 1..5 %}{{ i <= note|round ? '★' : '☆' }}{% endfor %}
+                    </div>
+                    <div style="font-size:12px; color:#0b7a8f; font-weight:700;">{{ note }}/5</div>
+                {% else %}
+                    <span style="color:#94a3b8; font-size:13px;">Aucun avis</span>
+                {% endif %}
+            </td>
+
+            <td style="font-size:13px; color:#64748b;">
+                {{ t.dateInscription ? t.dateInscription|date('d/m/Y') : '—' }}
+            </td>
+
+            <td>
+                <button onclick="openModal('modal-{{ t.id }}')" class="btn btn-warning btn-sm">✏️ Modifier</button>
+                <a href="{{ path('admin_therapeute_delete', {id: t.id}) }}"
+                   onclick="return confirm('Supprimer {{ t.prenom }} {{ t.nom }} ?')"
+                   class="btn btn-danger btn-sm">🗑️</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" style="text-align:center; color:#94a3b8; padding:48px;">
+                Aucun thérapeute enregistré.
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+<script>
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+}
+// Fermer en cliquant sur l'overlay
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', function(e) {
+        if (e.target === this) closeModal(this.id);
+    });
+});
+// Fermer avec Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.open').forEach(el => closeModal(el.id));
+    }
+});
+</script>
+
+{% endblock %}
