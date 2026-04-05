@@ -5,60 +5,311 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}MindGrow{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; }
-        .navbar-brand { font-weight: 700; color: #2ecc71 !important; font-size: 1.5rem; }
-        .nav-link { color: #4a4a4a !important; font-weight: 500; }
-        .nav-link:hover { color: #2ecc71 !important; }
+
+        /* ── Navbar ── */
+        .main-nav {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+            padding: 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            height: 66px;
+            gap: 32px;
+        }
+        .nav-brand {
+            font-size: 1.45rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0b7a8f, #2ecc71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex: 1;
+            justify-content: center;
+        }
+        .nav-links a {
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 10px;
+            transition: background 0.18s, color 0.18s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .nav-links a:hover {
+            background: #f1f5f9;
+            color: #0b7a8f;
+        }
+        .nav-links a.active {
+            background: #e8f4f8;
+            color: #0b7a8f;
+            font-weight: 600;
+        }
+        .nav-links .nav-icon {
+            font-size: 15px;
+            opacity: 0.75;
+        }
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+        .btn-nav-admin {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            text-decoration: none;
+            transition: background 0.18s, color 0.18s;
+        }
+        .btn-nav-admin:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+        .btn-nav-profile {
+            font-size: 14px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #0b7a8f, #2ecc71);
+            border: none;
+            border-radius: 12px;
+            padding: 9px 22px;
+            text-decoration: none;
+            transition: opacity 0.18s, transform 0.18s;
+            box-shadow: 0 4px 14px rgba(11,122,143,0.25);
+        }
+        .btn-nav-profile:hover {
+            opacity: 0.88;
+            transform: translateY(-1px);
+            color: white;
+        }
+        /* pill indicator on nav links */
+        .nav-links li { position: relative; }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #0b7a8f, #2ecc71);
+            border-radius: 2px;
+            transition: width 0.2s;
+        }
+        .nav-links a:hover::after,
+        .nav-links a.active::after { width: 60%; }
+
+        /* Mobile toggle */
+        .nav-toggler {
+            display: none;
+            background: none;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            color: #475569;
+            font-size: 18px;
+        }
+        @media (max-width: 768px) {
+            .nav-toggler { display: block; }
+            .nav-links, .nav-actions { display: none; }
+            .nav-links.open, .nav-actions.open {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+            .nav-inner { flex-wrap: wrap; height: auto; padding: 12px 0; gap: 12px; }
+        }
+
+        /* ── Dark mode ── */
+        body.dark { background: #0f172a; color: #e2e8f0; }
+        body.dark .main-nav { background: rgba(15,23,42,0.85); border-bottom-color: rgba(255,255,255,0.07); }
+        body.dark .nav-links a { color: #94a3b8; }
+        body.dark .nav-links a:hover { background: #1e293b; color: #38bdf8; }
+        body.dark .nav-links a.active { background: #1e3a4a; color: #38bdf8; }
+        body.dark .btn-nav-admin { background: #1e293b; color: #94a3b8; }
+        body.dark .btn-nav-admin:hover { background: #334155; color: #e2e8f0; }
+        body.dark .card { background: #1e293b; border-color: #334155 !important; color: #e2e8f0; }
+        body.dark .card:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important; }
+        body.dark .text-muted { color: #94a3b8 !important; }
+        body.dark .chip { background: #1e293b; border-color: #334155; color: #94a3b8; }
+        body.dark .chip.active { background: #0b7a8f; color: white; border-color: #0b7a8f; }
+        body.dark .form-control { background: #1e293b; border-color: #334155; color: #e2e8f0; }
+        body.dark .form-control::placeholder { color: #64748b; }
+        body.dark .form-control:focus { background: #1e293b; border-color: #2ecc71; color: #e2e8f0; box-shadow: 0 0 0 3px rgba(46,204,113,0.15); }
+        body.dark footer { background: #020617; }
+        body.dark .section-card { background: #1e293b !important; }
+        body.dark .review-card { background: #1e293b; border-color: #334155; }
+        body.dark .alert-success { background: #14532d; border-color: #166534; color: #bbf7d0; }
+        body.dark h1, body.dark h2, body.dark h3, body.dark h4, body.dark h5, body.dark h6 { color: #f1f5f9; }
+
+        .theme-toggle {
+            width: 44px;
+            height: 24px;
+            border-radius: 12px;
+            background: #e2e8f0;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s;
+            flex-shrink: 0;
+        }
+        .theme-toggle::after {
+            content: '☀️';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            line-height: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        body.dark .theme-toggle { background: #334155; }
+        body.dark .theme-toggle::after { content: '🌙'; transform: translateX(20px); }
+
+        /* ── Rest of app ── */
         .card { border-radius: 16px; transition: transform 0.2s, box-shadow 0.2s; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important; }
         .chip { border-radius: 20px; padding: 6px 18px; border: 1px solid #e2e8f0; font-size: 13px; cursor: pointer; background: white; text-decoration: none; color: #4a4a4a; display: inline-block; }
         .chip.active { background: #A2D5AB; color: white; border-color: #A2D5AB; font-weight: bold; }
         .avatar-initials { width: 90px; height: 90px; border-radius: 50%; background: #0b7a8f; color: white; display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: bold; margin: 0 auto; }
-        footer { background: #2c3e50; color: #ecf0f1; padding: 30px 0; margin-top: 60px; }
+        footer { background: #1e293b; color: #94a3b8; padding: 40px 0; margin-top: 60px; }
         {% block extra_css %}{% endblock %}
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+<nav class="main-nav">
     <div class="container">
-        <a class="navbar-brand" href="/">MindGrow</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navMenu">
-            <ul class="navbar-nav mx-auto gap-2">
-                <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="/therapeutes">Therapeutes</a></li>
+        <div class="nav-inner">
+            <a class="nav-brand" href="/">MindGrow</a>
+
+            <ul class="nav-links" id="navLinks">
+                <li>
+                    <a href="/"
+                       class="{{ app.request.attributes.get('_route') == 'app_home' ? 'active' : '' }}">
+                        <span class="nav-icon">&#127968;</span> Accueil
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('front_therapeute_index') }}"
+                       class="{{ app.request.attributes.get('_route') starts with 'front_therapeute' ? 'active' : '' }}">
+                        <span class="nav-icon">&#129657;</span> Thérapeutes
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ path('app_seances') }}"
+                       class="{{ app.request.attributes.get('_route') starts with 'app_seance' ? 'active' : '' }}">
+                        <span class="nav-icon">&#128197;</span> Séances
+                    </a>
+                </li>
             </ul>
-            <div class="d-flex gap-2">
-                <a href="{{ path('front_profil') }}" class="btn btn-success rounded-pill px-4">Mon Profil</a>
+
+            <div class="nav-actions" id="navActions">
+                <button class="theme-toggle" id="themeToggle" title="Changer le thème" aria-label="Basculer mode sombre/clair"></button>
+                <a href="{{ path('front_goto_admin') }}" class="btn-nav-admin">
+                    &#9881; Admin
+                </a>
+                <a href="{{ path('front_profil') }}" class="btn-nav-profile">
+                    &#128100; Mon Profil
+                </a>
             </div>
+
+            <button class="nav-toggler" id="navToggler">&#9776;</button>
         </div>
     </div>
 </nav>
 
 <div class="container mt-3">
     {% for msg in app.flashes('success') %}
-        <div class="alert alert-success alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show rounded-3">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     {% endfor %}
     {% for msg in app.flashes('error') %}
-        <div class="alert alert-danger alert-dismissible fade show">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show rounded-3">{{ msg }}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>
     {% endfor %}
 </div>
 
 {% block body %}{% endblock %}
 
 <footer>
-    <div class="container text-center">
-        <p class="mb-1 fw-bold" style="color:#2ecc71;font-size:1.2rem;">MindGrow</p>
-        <p class="small opacity-50 mt-2">2026 MindGrow. Tous droits reserves.</p>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-4 mb-3 mb-md-0">
+                <div style="font-size:1.3rem;font-weight:800;background:linear-gradient(135deg,#0b7a8f,#2ecc71);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">MindGrow</div>
+                <p class="small mt-1 mb-0" style="color:#64748b;">Un accompagnement bienveillant pour votre équilibre.</p>
+            </div>
+            <div class="col-md-4 text-center mb-3 mb-md-0">
+                <div class="d-flex justify-content-center gap-4">
+                    <a href="/" style="color:#64748b;text-decoration:none;font-size:14px;">Accueil</a>
+                    <a href="{{ path('front_therapeute_index') }}" style="color:#64748b;text-decoration:none;font-size:14px;">Thérapeutes</a>
+                    <a href="{{ path('app_seances') }}" style="color:#64748b;text-decoration:none;font-size:14px;">Séances</a>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <p class="small mb-0" style="color:#475569;">&#169; 2026 MindGrow. Tous droits réservés.</p>
+            </div>
+        </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Mobile nav
+    document.getElementById('navToggler').addEventListener('click', function() {
+        document.getElementById('navLinks').classList.toggle('open');
+        document.getElementById('navActions').classList.toggle('open');
+    });
+
+    // Dark / light mode
+    const toggle = document.getElementById('themeToggle');
+    const body = document.body;
+
+    if (localStorage.getItem('theme') === 'dark') {
+        body.classList.add('dark');
+    }
+
+    toggle.addEventListener('click', () => {
+        body.classList.toggle('dark');
+        localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+    });
+</script>
 {% block extra_js %}{% endblock %}
 </body>
 </html>

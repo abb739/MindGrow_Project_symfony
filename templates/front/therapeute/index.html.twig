@@ -28,7 +28,7 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         {% for t in therapeutes %}
         <div class="col">
-            <div class="card h-100 shadow-sm border-0 text-center p-3">
+            <div class="card h-100 shadow-sm border-0 text-center p-3" onclick="window.location='{{ path('front_therapeute_show', {id: t.id}) }}'" style="cursor:pointer;">
                 {% if t.image %}
                     <img src="{{ asset('uploads/' ~ t.image) }}"
                          style="width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto 10px;">

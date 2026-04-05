@@ -21,15 +21,15 @@
 
 <nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
     <div class="container">
-        <a class="navbar-brand" href="{{ path('front_test_base') }}">MindGrow</a>
+        <a class="navbar-brand" href="{{ path('app_home') }}">MindGrow</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navMenu">
             <ul class="navbar-nav mx-auto gap-2">
-                <li class="nav-item"><a class="nav-link" href="{{ path('front_test_base') }}">Accueil</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('front_seances') }}">Séances</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Therapeutes</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('app_seances') }}">Séances</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ path('front_therapeute_index') }}">Therapeutes</a></li>
             </ul>
             <div class="d-flex gap-2">
                 <a href="#" class="btn btn-success rounded-pill px-4">Mon Profil</a>

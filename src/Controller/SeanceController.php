@@ -37,6 +37,7 @@ class SeanceController extends AbstractController
 
         return $this->render('seance/seances.html.twig', [
             'seancesGrouped' => $seancesGrouped,
+            'reservations' => [],
         ]);
     }
 

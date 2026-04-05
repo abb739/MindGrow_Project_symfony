@@ -10,10 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
-
 #[Route('/admin/reservation')]
-#[IsGranted('ROLE_ADMIN')]
 final class ReservationController extends AbstractController
 {
     #[Route(name: 'app_admin_reservation_index', methods: ['GET'])]

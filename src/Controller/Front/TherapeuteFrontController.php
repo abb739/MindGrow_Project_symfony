@@ -37,13 +37,25 @@ class TherapeuteFrontController extends AbstractController
         return $this->redirectToRoute('admin_therapeute_index');
     }
 
-    #[Route('/{id}', name: 'front_therapeute_show')]
-    public function show(int $id, TherapeuteRepository $repo): Response
+    #[Route('/{id}', name: 'front_therapeute_show', methods: ['GET', 'POST'])]
+    public function show(int $id, TherapeuteRepository $repo, Request $request, EntityManagerInterface $em): Response
     {
         $therapeute = $repo->find($id);
         if (!$therapeute) throw $this->createNotFoundException();
+        $avis = new Avis();
+        $form = $this->createForm(AvisType::class, $avis);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $avis->setTherapeute($therapeute);
+            $avis->setIdUtilisateur(1);
+            $em->persist($avis);
+            $em->flush();
+            $this->addFlash('success', 'Merci pour votre avis !');
+            return $this->redirectToRoute('front_therapeute_show', ['id' => $id]);
+        }
         return $this->render('front/therapeute/show.html.twig', [
             'therapeute' => $therapeute,
+            'form' => $form->createView(),
         ]);
     }
 

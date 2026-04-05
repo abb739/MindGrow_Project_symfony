@@ -20,7 +20,6 @@ final class Version20260403193910 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE achat CHANGE statut statut ENUM(\'actif\',\'expiré\',\'annulé\')');
         $this->addSql('DROP INDEX id_utilisateur ON favoris');
         $this->addSql('ALTER TABLE favoris DROP FOREIGN KEY `favoris_ibfk_2`');
         $this->addSql('DROP INDEX id_programme ON favoris');
@@ -52,7 +51,6 @@ final class Version20260403193910 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('ALTER TABLE achat CHANGE statut statut ENUM(\'actif\', \'expiré\', \'annulé\') DEFAULT NULL');
         $this->addSql('ALTER TABLE favoris DROP FOREIGN KEY FK_8933C432BDE905D8');
         $this->addSql('CREATE UNIQUE INDEX id_utilisateur ON favoris (id_utilisateur, id_programme)');
         $this->addSql('DROP INDEX idx_8933c432bde905d8 ON favoris');
