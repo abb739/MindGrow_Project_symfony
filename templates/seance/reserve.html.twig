@@ -1,0 +1,29 @@
+{% extends 'seance/base.html.twig' %}
+
+{% block title %}Réservation - {{ seance.titre }}{% endblock %}
+
+{% block body %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Réserver : {{ seance.titre }}</h3>
+                </div>
+                <div class="card-body">
+                    <p>Vous êtes sur le point de réserver la séance suivante :</p>
+                    <p><strong>Lieu :</strong> {{ seance.lieu }}</p>
+                    <p><strong>Date :</strong> {{ seance.dateDebut|date('d/m/Y H:i') }} - {{ seance.dateFin|date('d/m/Y H:i') }}</p>
+                    <p><strong>Capacité :</strong> {{ seance.capacite }}</p>
+
+                    <form method="post" action="{{ path('app_seance_reserve', {'id': seance.id}) }}">
+                        <p>Confirmez votre réservation :</p>
+                        <button type="submit" class="btn btn-success">Confirmer la réservation</button>
+                        <a href="{{ path('app_seance_detail', {'titre': seance.titre}) }}" class="btn btn-secondary">Retour</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
