@@ -36,9 +36,10 @@ class TherapeuteType extends AbstractType
                 'attr' => ['placeholder' => 'Prenom', 'required' => 'required'],
             ])
             ->add('specialite', TextType::class, [
-                'required' => false,
-                'attr' => ['placeholder' => 'Specialite'],
+                'required' => true,
+                'attr' => ['placeholder' => 'Specialite', 'required' => 'required'],
                 'constraints' => [
+                    new NotBlank(message: 'La spécialité est obligatoire.'),
                     new Length(['max' => 100, 'maxMessage' => 'Spécialité trop longue (100 caractères max).']),
                 ],
             ])
@@ -56,9 +57,10 @@ class TherapeuteType extends AbstractType
                 ],
             ])
             ->add('telephone', TextType::class, [
-                'required' => false,
-                'attr' => ['placeholder' => 'Telephone'],
+                'required' => true,
+                'attr' => ['placeholder' => 'Telephone', 'required' => 'required'],
                 'constraints' => [
+                    new NotBlank(message: 'Le numéro de téléphone est obligatoire.'),
                     new Regex([
                         'pattern' => '/^[+0-9\s\-]{6,20}$/',
                         'message' => 'Numéro de téléphone invalide (ex: +33123456789).',
