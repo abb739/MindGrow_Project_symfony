@@ -1,0 +1,93 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Admin - Détails Séance{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">Détails de la Séance</h1>
+        <div>
+            <a href="{{ path('app_admin_seance_index') }}" class="btn btn-secondary me-2">Retour à la liste</a>
+            <a href="{{ path('app_admin_seance_edit', {'id': seance.id}) }}" class="btn btn-warning">Modifier</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">ID</dt>
+                <dd class="col-sm-9">{{ seance.id }}</dd>
+
+                <dt class="col-sm-3">Titre</dt>
+                <dd class="col-sm-9">{{ seance.titre }}</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9">{{ seance.description }}</dd>
+
+                <dt class="col-sm-3">Lieu</dt>
+                <dd class="col-sm-9">{{ seance.lieu }}</dd>
+
+                <dt class="col-sm-3">Date de début</dt>
+                <dd class="col-sm-9">{{ seance.dateDebut ? seance.dateDebut|date('d/m/Y H:i') : '' }}</dd>
+
+                <dt class="col-sm-3">Date de fin</dt>
+                <dd class="col-sm-9">{{ seance.dateFin ? seance.dateFin|date('d/m/Y H:i') : '' }}</dd>
+
+                <dt class="col-sm-3">Capacité</dt>
+                <dd class="col-sm-9">{{ seance.capacite }}</dd>
+
+                <dt class="col-sm-3">Image</dt>
+                <dd class="col-sm-9">
+                    {% if seance.image %}
+                        <img src="{{ asset('uploads/seances/' ~ seance.image) }}" alt="{{ seance.titre }}" class="img-thumbnail" style="max-width: 200px;">
+                    {% else %}
+                        Aucune image
+                    {% endif %}
+                </dd>
+            </dl>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Réservations pour cette séance</h5>
+        </div>
+        <div class="card-body">
+            {% if seance.reservations|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID Réservation</th>
+                                <th>Utilisateur</th>
+                                <th>Date de réservation</th>
+                                <th>Statut</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for reservation in seance.reservations %}
+                            <tr>
+                                <td>{{ reservation.id }}</td>
+                                <td>{{ reservation.utilisateur.prenom }} {{ reservation.utilisateur.nom }}</td>
+                                <td>{{ reservation.dateReservation ? reservation.dateReservation|date('d/m/Y H:i') : '' }}</td>
+                                <td>
+                                    <span class="badge 
+                                        {% if reservation.statut == 'confirmée' %}bg-success
+                                        {% elseif reservation.statut == 'annulée' %}bg-danger
+                                        {% else %}bg-warning{% endif %}">
+                                        {{ reservation.statut }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ path('app_admin_reservation_edit_statut', {'id': reservation.id}) }}" class="btn btn-sm btn-outline-primary">Modifier statut</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune réservation pour cette séance.</p>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

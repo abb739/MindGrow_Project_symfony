@@ -1,0 +1,77 @@
+{% extends 'admin/base.html.twig' %}
+{% block title %}Gestion des Thérapeutes{% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0">Gestion des Thérapeutes</h2>
+        <p class="text-muted">Gérez les professionnels de santé et leurs profils.</p>
+    </div>
+    <a href="{{ path('admin_therapeute_new') }}" class="btn btn-success px-4">
+        + Ajouter Thérapeute
+    </a>
+</div>
+
+{# Search #}
+<form method="get" class="mb-4">
+    <input type="text" name="search" value="{{ search }}"
+           class="form-control" style="max-width:400px;border-radius:25px;padding:10px 20px;"
+           placeholder="🔍 Rechercher un thérapeute...">
+</form>
+
+{# Sort buttons #}
+<div class="d-flex gap-2 mb-4">
+    <a href="{{ path('admin_therapeute_index', {search: search, sort: 'asc'}) }}"
+       class="btn btn-sm {{ sort == 'asc' ? 'btn-success' : 'btn-outline-secondary' }}">Date ↑</a>
+    <a href="{{ path('admin_therapeute_index', {search: search, sort: 'desc'}) }}"
+       class="btn btn-sm {{ sort == 'desc' ? 'btn-success' : 'btn-outline-secondary' }}">Date ↓</a>
+</div>
+
+{# Cards #}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for t in therapeutes %}
+    <div class="col">
+        <div class="card shadow-sm border-0 text-center p-3">
+
+            {% if t.certificat %}
+                <a href="{{ asset('uploads/' ~ t.certificat) }}" target="_blank"
+                   class="btn btn-outline-secondary btn-sm mb-2">📄 Certificat</a>
+            {% endif %}
+
+            {% if t.image %}
+                <img src="{{ asset('uploads/' ~ t.image) }}"
+                     style="width:80px;height:80px;border-radius:50%;object-fit:cover;margin:0 auto 10px;">
+            {% else %}
+                <div class="avatar-initials mb-2" style="width:80px;height:80px;font-size:22px;">
+                    {{ t.nom|first|upper }}{{ t.prenom|first|upper }}
+                </div>
+            {% endif %}
+
+            <h5 class="fw-bold mb-1">{{ t.nom }} {{ t.prenom }}</h5>
+
+            {% if t.specialite %}
+                <span class="badge mb-2" style="background:#f0fdf4;color:#166534;">{{ t.specialite }}</span>
+            {% endif %}
+
+            <p class="text-muted small">
+                📅 {{ t.dateInscription ? t.dateInscription|date('d/m/Y') : '-' }}
+            </p>
+
+            <div class="d-flex justify-content-center gap-2 mt-2">
+                <a href="{{ path('admin_therapeute_edit', {id: t.id}) }}"
+                   class="btn btn-outline-secondary btn-sm">✏️</a>
+                <form method="post" action="{{ path('admin_therapeute_delete', {id: t.id}) }}"
+                      onsubmit="return confirm('Supprimer {{ t.nom }} {{ t.prenom }} ?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ t.id) }}">
+                    <button class="btn btn-outline-danger btn-sm">🗑️</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% else %}
+        <div class="col-12">
+            <p class="text-muted">Aucun thérapeute trouvé.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
