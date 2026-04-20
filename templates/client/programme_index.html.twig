@@ -1,0 +1,328 @@
+{% extends 'base.html.twig' %}
+{% block title %}Programmes{% endblock %}
+{% block body %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+  * { box-sizing: border-box; }
+
+  /* ── HERO ── */
+  .pg-hero {
+    text-align: center; padding: 3rem 1rem 2rem;
+    background: linear-gradient(160deg, var(--bg-hero-start, #e8f7fa) 0%, var(--bg, #f0f4f8) 60%);
+    border-bottom: 1px solid var(--border, #e2eaef); margin-bottom: 2rem;
+  }
+  .pg-hero-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--hero-tag-bg, #d0f0f5); color: #0b7a8f; font-size: 12px;
+    font-weight: 600; padding: 4px 14px; border-radius: 20px;
+    letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 1rem;
+  }
+  .pg-hero h1 {
+    font-family: 'DM Serif Display', serif; font-size: 2.8rem;
+    font-weight: 400; color: #0b7a8f; letter-spacing: -0.5px; margin: 0 0 0.5rem;
+  }
+  .pg-hero p { color: var(--text2, #64748b); font-size: 1.05rem; margin: 0; }
+
+  /* ── FILTRES ── */
+  .pg-filters {
+    background: var(--bg2, white); border-radius: 16px; padding: 1.1rem 1.4rem;
+    margin-bottom: 1rem; display: flex; gap: 10px; flex-wrap: wrap;
+    align-items: center; box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    border: 1px solid var(--border, #e2e8f0);
+  }
+  .search-wrap {
+    flex: 2; min-width: 200px; position: relative; display: flex; align-items: center;
+  }
+  .search-wrap input {
+    width: 100%; padding-left: 36px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; border: 1.5px solid var(--border, #e2e8f0); border-radius: 10px;
+    height: 40px; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    background: var(--bg3, #f8fafc); color: var(--text, #1e293b);
+  }
+  .search-wrap input::placeholder { color: var(--text3, #94a3b8); }
+  .search-wrap input:focus {
+    border-color: #0b7a8f; background: var(--bg2, white);
+    box-shadow: 0 0 0 3px rgba(11,122,143,0.1);
+  }
+  .search-icon { position: absolute; left: 12px; color: var(--text3, #94a3b8); pointer-events: none; font-size: 15px; }
+  .pg-filters select {
+    flex: 1; min-width: 180px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+    border: 1.5px solid var(--border, #e2e8f0); border-radius: 10px; height: 40px;
+    padding: 0 14px; background: var(--bg3, #f8fafc); color: var(--text, #1e293b);
+    outline: none; cursor: pointer; transition: border-color 0.2s;
+  }
+  .pg-filters select:focus { border-color: #0b7a8f; }
+  .btn-filter {
+    background: #0b7a8f; color: white; border: none; border-radius: 10px;
+    padding: 0 22px; height: 40px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s, transform 0.1s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-filter:hover { background: #085f70; transform: translateY(-1px); }
+  .btn-reset {
+    background: var(--bg3, #f1f5f9); color: var(--text2, #475569); border: none; border-radius: 10px;
+    padding: 0 16px; height: 40px; font-family: 'DM Sans', sans-serif;
+    font-size: 14px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 5px; transition: background 0.2s;
+  }
+  .btn-reset:hover { background: var(--border, #e2e8f0); color: var(--text, #334155); }
+
+  /* ── RÉSULTATS BAR ── */
+  .results-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem; flex-wrap: wrap; gap: 8px;
+  }
+  .results-count { font-size: 13px; color: var(--text2, #64748b); }
+  .results-count strong { color: var(--text, #1e293b); font-weight: 700; }
+
+  /* ── GRID ── */
+  .prog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 22px;
+  }
+
+  /* ── CARD ── */
+  .prog-card {
+    background: var(--bg2, white); border-radius: 20px; overflow: hidden;
+    border: 1.5px solid var(--border, #e8edf2);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: flex; flex-direction: column;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    animation: fadeUp 0.4s ease both;
+    text-decoration: none; color: inherit;
+  }
+  .prog-card:hover {
+    border-color: #0b7a8f; transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(11,122,143,0.15);
+  }
+
+  .prog-thumb {
+    height: 160px; width: 100%; object-fit: cover;
+    display: block; background: linear-gradient(135deg, #0b7a8f, #065f6e);
+  }
+  .prog-thumb-placeholder {
+    height: 160px; background: linear-gradient(135deg, #0b7a8f 0%, #065f6e 60%, #054f5b 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.5rem; color: rgba(255,255,255,0.25);
+    position: relative; overflow: hidden;
+  }
+  .prog-thumb-placeholder::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.08) 0%, transparent 70%);
+  }
+  .prog-num-badge {
+    position: absolute; top: 12px; right: 14px;
+    background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);
+    font-size: 11px; font-weight: 600; padding: 3px 9px;
+    border-radius: 20px; letter-spacing: 0.5px; backdrop-filter: blur(4px);
+  }
+  .prog-title-overlay {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(4,44,51,0.7));
+    padding: 1rem 1.25rem 0.9rem;
+  }
+  .prog-title-overlay h2 {
+    font-family: 'DM Serif Display', serif; font-size: 1.3rem;
+    font-weight: 400; color: white; margin: 0; line-height: 1.3;
+  }
+
+  .prog-card-body {
+    padding: 1rem 1.25rem 1.25rem; flex: 1;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .cat-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: var(--cat-badge-bg, #E1F5EE); color: var(--cat-badge-text, #085041);
+    font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    width: fit-content; letter-spacing: 0.2px;
+  }
+  .cat-dot { width: 6px; height: 6px; background: #0b7a8f; border-radius: 50%; flex-shrink: 0; }
+  .prog-desc { font-size: 13px; color: var(--text2, #64748b); line-height: 1.7; flex: 1; }
+
+  .prog-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.8rem 1.25rem; border-top: 1px solid var(--border2, #f1f5f9);
+    background: var(--footer-bg, #fafcfd);
+  }
+  .prog-link {
+    font-size: 12px; font-weight: 700; color: #0b7a8f;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    transition: gap 0.2s, color 0.2s;
+  }
+  .prog-link:hover { gap: 9px; color: #065f6e; }
+  .prog-fav {
+    background: none; border: none; cursor: pointer; color: var(--text3, #cbd5e1);
+    font-size: 19px; transition: color 0.2s, transform 0.2s; padding: 2px; line-height: 1;
+  }
+  .prog-fav:hover { color: #e05c5c; transform: scale(1.25); }
+  .prog-fav.active { color: #e05c5c; }
+
+  .prog-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+  .meta-tag {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--bg3, #f1f5f9); color: var(--text2, #475569); font-size: 11px;
+    font-weight: 500; padding: 2px 9px; border-radius: 8px;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1; text-align: center; padding: 5rem 2rem; color: var(--text3, #94a3b8);
+  }
+  .empty-icon {
+    width: 72px; height: 72px; background: var(--bg3, #f8fafc); border-radius: 50%;
+    margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
+    font-size: 28px; border: 1px solid var(--border, #e2e8f0);
+  }
+  .empty-state h3 { font-size: 16px; color: var(--text2, #64748b); margin-bottom: 0.4rem; }
+  .empty-state p { font-size: 13px; }
+
+  /* ── DARK MODE OVERRIDES ── */
+  [data-theme="dark"] .pg-hero {
+    background: linear-gradient(160deg, #0d2d33 0%, var(--bg, #0f172a) 60%);
+  }
+  [data-theme="dark"] .pg-hero-tag {
+    background: rgba(11,122,143,0.2); color: #7dd3fc;
+  }
+  [data-theme="dark"] .pg-hero h1 { color: #7dd3fc; }
+  [data-theme="dark"] .cat-badge {
+    background: rgba(11,122,143,0.2); color: #7dd3fc;
+  }
+  [data-theme="dark"] .prog-card-footer {
+    background: var(--bg3, #1e293b);
+  }
+  [data-theme="dark"] .prog-card:hover {
+    box-shadow: 0 12px 32px rgba(11,122,143,0.25);
+  }
+  [data-theme="dark"] .meta-tag {
+    background: rgba(255,255,255,0.07); color: var(--text2);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width:600px) {
+    .pg-hero h1 { font-size: 2rem; }
+    .prog-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div style="font-family:'DM Sans',sans-serif; min-height:100vh; background: var(--bg, #f0f4f8);">
+
+  {# ── HERO ── #}
+  <div class="pg-hero">
+    <div class="pg-hero-tag">🌿 Bien-être &amp; Santé</div>
+    <h1>Nos Programmes</h1>
+    <p>Découvrez nos programmes de bien-être conçus pour vous</p>
+  </div>
+
+  <div style="max-width:1120px; margin:0 auto; padding:0 1.5rem 3rem;">
+
+    {# ── FILTRES ── #}
+    <div class="pg-filters">
+      <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; width:100%; align-items:center;">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" name="search" value="{{ search }}" placeholder="Rechercher un programme...">
+        </div>
+        <select name="categorie">
+          <option value="">Toutes les catégories</option>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {{ catId == cat.id ? 'selected' : '' }}>
+              {{ cat.nom }}
+            </option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-filter">🔎 Filtrer</button>
+        {% if search or catId %}
+          <a href="{{ path('programmes') }}" class="btn-reset">✕ Reset</a>
+        {% endif %}
+      </form>
+    </div>
+
+    {# ── COMPTEUR ── #}
+    <div class="results-bar">
+      <span class="results-count">
+        <strong>{{ programmes|length }}</strong>
+        programme{{ programmes|length != 1 ? 's' : '' }}
+        trouvé{{ programmes|length != 1 ? 's' : '' }}
+      </span>
+    </div>
+
+    {# ── GRILLE ── #}
+    <div class="prog-grid">
+      {% for prog in programmes %}
+
+        {% set catNom = 'Sans catégorie' %}
+        {% for cat in categories %}
+          {% if cat.id == prog.idCategorie %}{% set catNom = cat.nom %}{% endif %}
+        {% endfor %}
+
+        <a href="{{ path('programme_show', {id: prog.id}) }}"
+           class="prog-card"
+           style="animation-delay: {{ loop.index0 * 0.07 }}s;">
+
+          {# ── Image ou placeholder ── #}
+          <div class="prog-thumb-placeholder" style="position:relative;">
+            {% if prog.image and not 'C:\\' in prog.image %}
+              <img src="{{ asset(prog.image) }}"
+                   alt="{{ prog.titre }}" class="prog-thumb">
+            {% else %}
+              <span>🧠</span>
+            {% endif %}
+            <span class="prog-num-badge">#{{ '%02d'|format(loop.index) }}</span>
+            <div class="prog-title-overlay">
+              <h2>{{ prog.titre }}</h2>
+            </div>
+          </div>
+
+          {# ── Body ── #}
+          <div class="prog-card-body">
+            <span class="cat-badge">
+              <span class="cat-dot"></span>
+              {{ catNom }}
+            </span>
+
+            <p class="prog-desc">
+              {% if prog.description %}
+                {{ prog.description|slice(0, 110) }}{{ prog.description|length > 110 ? '…' : '' }}
+              {% else %}
+                Aucune description disponible.
+              {% endif %}
+            </p>
+
+            <div class="prog-meta">
+              {% if prog.video %}
+                <span class="meta-tag">🎬 Vidéo incluse</span>
+              {% endif %}
+              {% if prog.image %}
+                <span class="meta-tag">🖼️ Illustration</span>
+              {% endif %}
+            </div>
+          </div>
+
+          {# ── Footer ── #}
+          <div class="prog-card-footer">
+            <span class="prog-link">Voir le programme →</span>
+            <button type="button"
+                    class="prog-fav {{ prog.id in (favoris ?? []) ? 'active' : '' }}"
+                    title="Ajouter aux favoris"
+                    onclick="event.preventDefault(); this.classList.toggle('active')">♥</button>
+          </div>
+
+        </a>
+
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <h3>Aucun programme trouvé</h3>
+          <p>Essayez de modifier vos critères de recherche</p>
+        </div>
+      {% endfor %}
+    </div>
+
+  </div>
+</div>
+{% endblock %}

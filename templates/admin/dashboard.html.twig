@@ -1,0 +1,433 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Dashboard Admin — MindGrow
+{# ══════════════════════════════════════════════════════════ #}
+{# SECTION FONCTIONNALITÉS AVANCÉES & IA                    #}
+{# ══════════════════════════════════════════════════════════ #}
+<div style="margin-top:40px;">
+  <h2 style="font-size:22px;font-weight:800;color:#0b7a8f;margin-bottom:20px;">
+    ⚡ Fonctionnalités Avancées & IA
+  </h2>
+
+  <div style="display:flex;flex-wrap:wrap;gap:20px;">
+
+    {# Chatbot IA #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">🤖</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Chatbot IA Gemini</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        Assistant IA disponible sur toutes les pages. Répond aux questions, recommande thérapeutes et séances.
+      </div>
+      <span style="display:inline-block;background:#dcfce7;color:#166534;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+        ✓ Actif sur toutes les pages
+      </span>
+    </div>
+
+    {# Recommandation Thérapeute IA #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">🧑‍⚕️</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Recommandation Thérapeute</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        L'IA analyse les symptômes/besoins du client et recommande le thérapeute le plus adapté.
+      </div>
+      <a href="{{ path('therapeutes') }}" style="display:inline-block;background:linear-gradient(135deg,#6c5ce7,#a29bfe);
+         color:white;border-radius:12px;padding:8px 18px;font-size:13px;font-weight:700;text-decoration:none;">
+        Voir les thérapeutes →
+      </a>
+    </div>
+
+    {# Recommandation Séance IA #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">🧘</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Recommandation Séance</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        L'IA suggère les séances adaptées selon le ressenti et les objectifs du client.
+      </div>
+      <a href="{{ path('seances') }}" style="display:inline-block;background:linear-gradient(135deg,#0b7a8f,#065f6e);
+         color:white;border-radius:12px;padding:8px 18px;font-size:13px;font-weight:700;text-decoration:none;">
+        Voir les séances →
+      </a>
+    </div>
+
+    {# Filtre Mots Offensants #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">🛡️</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Filtre Contenu Offensant</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        Tous les commentaires/avis sont automatiquement filtrés (FR & EN) avant publication.
+      </div>
+      <span style="display:inline-block;background:#dcfce7;color:#166534;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+        ✓ Actif sur les avis
+      </span>
+    </div>
+
+    {# PDF Reçus #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">📄</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Génération PDF</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        Reçus d'abonnement et tickets de réservation générés automatiquement en PDF.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="{{ path('abonnements') }}" style="display:inline-block;background:#0b7a8f;
+           color:white;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">
+          Abonnements
+        </a>
+        <a href="{{ path('mes_reservations') }}" style="display:inline-block;background:#065f6e;
+           color:white;border-radius:12px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none;">
+          Réservations
+        </a>
+      </div>
+    </div>
+
+    {# Dark Mode Ultra #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">🌓</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Thème Adaptatif Ultra</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        Détection OS automatique + persistance BDD + sync multi-appareils + 3 modes (Jour / Nuit / Auto).
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span style="display:inline-block;background:#fef9c3;color:#854d0e;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+          ☀️ Jour
+        </span>
+        <span style="display:inline-block;background:#1e293b;color:#f1f5f9;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+          🌙 Nuit
+        </span>
+        <span style="display:inline-block;background:#ede9fe;color:#5b21b6;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+          🌓 Auto OS
+        </span>
+      </div>
+    </div>
+
+    {# Paiement Stripe #}
+    <div style="background:white;border-radius:20px;padding:24px;flex:1;min-width:260px;
+                box-shadow:0 4px 24px rgba(0,0,0,.07);border:2px solid #f1f5f9;">
+      <div style="font-size:32px;margin-bottom:10px;">💳</div>
+      <div style="font-weight:800;font-size:16px;color:#1e293b;margin-bottom:6px;">Paiement Stripe</div>
+      <div style="font-size:13px;color:#64748b;margin-bottom:16px;">
+        Paiement sécurisé des abonnements via Stripe. Cartes de crédit et débit acceptées.
+      </div>
+      <span style="display:inline-block;background:#ede9fe;color:#5b21b6;border-radius:20px;padding:4px 14px;font-size:12px;font-weight:700;">
+        ✓ Intégré sur les paiements
+      </span>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+{% block body %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+* { box-sizing: border-box; }
+
+.dash-wrap {
+    font-family: 'DM Sans', sans-serif;
+    padding: 0 0 60px;
+}
+
+/* ── HERO BANNER ── */
+.dash-hero {
+    background: linear-gradient(135deg, #0b4f5e 0%, #0b7a8f 50%, #0e9db6 100%);
+    border-radius: 24px;
+    padding: 40px 48px;
+    margin-bottom: 36px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+.dash-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 50%, rgba(255,255,255,.08) 0%, transparent 60%);
+}
+.dash-hero::after {
+    content: '';
+    position: absolute; right: -60px; top: -60px;
+    width: 260px; height: 260px;
+    background: rgba(255,255,255,.05);
+    border-radius: 50%;
+}
+.hero-left { position: relative; z-index: 1; }
+.hero-greeting {
+    font-family: 'Syne', sans-serif;
+    font-size: 30px; font-weight: 800;
+    color: white; line-height: 1.2;
+    margin-bottom: 8px;
+}
+.hero-greeting span { color: #7ee8f6; }
+.hero-sub {
+    font-size: 15px; color: rgba(255,255,255,.75);
+    display: flex; align-items: center; gap: 8px;
+}
+.hero-badge {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    color: white; font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    letter-spacing: .5px;
+}
+.hero-right {
+    position: relative; z-index: 1;
+    display: flex; gap: 20px; flex-wrap: wrap;
+}
+.hero-stat {
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 16px; padding: 18px 24px;
+    text-align: center; min-width: 110px;
+    backdrop-filter: blur(10px);
+}
+.hero-stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px; font-weight: 800; color: white;
+}
+.hero-stat-lbl {
+    font-size: 11px; color: rgba(255,255,255,.65);
+    text-transform: uppercase; letter-spacing: .8px;
+    margin-top: 2px;
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px; font-weight: 700;
+    color: #94a3b8; text-transform: uppercase;
+    letter-spacing: 1.5px; margin: 0 0 16px;
+}
+
+/* ── MODULE GRID ── */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 18px;
+    margin-bottom: 36px;
+}
+.module-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px 24px;
+    border: 2px solid #f1f5f9;
+    transition: all .25s cubic-bezier(.4,0,.2,1);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative; overflow: hidden;
+}
+.module-card::before {
+    content: '';
+    position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent, #0b7a8f);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .25s;
+}
+.module-card:hover {
+    border-color: var(--accent, #0b7a8f);
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(11,122,143,.12);
+    text-decoration: none;
+}
+.module-card:hover::before { transform: scaleX(1); }
+
+.module-icon {
+    width: 52px; height: 52px;
+    background: var(--icon-bg, #e0f5f8);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+}
+.module-info { flex: 1; }
+.module-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 700;
+    color: #1e293b; margin-bottom: 4px;
+}
+.module-desc {
+    font-size: 13px; color: #94a3b8; line-height: 1.5;
+}
+.module-arrow {
+    font-size: 18px; color: var(--accent, #0b7a8f);
+    align-self: flex-end; opacity: 0;
+    transition: opacity .2s, transform .2s;
+    transform: translateX(-6px);
+}
+.module-card:hover .module-arrow {
+    opacity: 1; transform: translateX(0);
+}
+
+/* ── QUICK ACTIONS ── */
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+.quick-btn {
+    background: white; border: 2px solid #f1f5f9;
+    border-radius: 14px; padding: 16px 20px;
+    display: flex; align-items: center; gap: 12px;
+    text-decoration: none; color: #1e293b;
+    font-weight: 600; font-size: 14px;
+    transition: all .2s;
+}
+.quick-btn:hover {
+    border-color: #0b7a8f; background: #f0fdfb;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(11,122,143,.1);
+    text-decoration: none; color: #0b7a8f;
+}
+.quick-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dot, #0b7a8f); flex-shrink: 0;
+}
+
+/* Animations */
+.fade-up {
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp .5s forwards;
+}
+@keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<div class="dash-wrap">
+
+    <!-- HERO -->
+    <div class="dash-hero fade-up">
+        <div class="hero-left">
+            <div class="hero-greeting">
+                Bonjour, <span>{{ app.session.get('user_nom') ?? 'Admin' }}</span> 👋
+            </div>
+            <div class="hero-sub">
+                <span class="hero-badge">🛡️ ADMINISTRATEUR</span>
+                <span>Tableau de bord MindGrow</span>
+            </div>
+        </div>
+        <div class="hero-right">
+            <div class="hero-stat">
+                <div class="hero-stat-num">{{ totalUtilisateurs ?? '—' }}</div>
+                <div class="hero-stat-lbl">Utilisateurs</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">{{ totalTherapeutes ?? '—' }}</div>
+                <div class="hero-stat-lbl">Thérapeutes</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">{{ totalSeances ?? '—' }}</div>
+                <div class="hero-stat-lbl">Séances</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-num">{{ totalAbonnements ?? '—' }}</div>
+                <div class="hero-stat-lbl">Abonnements actifs</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODULES PRINCIPAUX -->
+    <p class="section-title fade-up" style="animation-delay:.1s">Gestion des modules</p>
+    <div class="modules-grid">
+
+        <a href="{{ path('admin_abonnements') }}" class="module-card fade-up"
+           style="--accent:#0b7a8f; --icon-bg:#e0f5f8; animation-delay:.15s">
+            <div class="module-icon">📋</div>
+            <div class="module-info">
+                <div class="module-name">Abonnements</div>
+                <div class="module-desc">Gérer les offres, prix et durées des plans</div>
+            </div>
+            <div class="module-arrow">→</div>
+        </a>
+
+        <a href="{{ path('admin_seances') }}" class="module-card fade-up"
+           style="--accent:#7c3aed; --icon-bg:#ede9fe; animation-delay:.2s">
+            <div class="module-icon">🎯</div>
+            <div class="module-info">
+                <div class="module-name">Séances</div>
+                <div class="module-desc">Planifier et suivre les séances de coaching</div>
+            </div>
+            <div class="module-arrow" style="color:#7c3aed">→</div>
+        </a>
+
+        <a href="{{ path('admin_programmes') }}" class="module-card fade-up"
+           style="--accent:#059669; --icon-bg:#d1fae5; animation-delay:.25s">
+            <div class="module-icon">📚</div>
+            <div class="module-info">
+                <div class="module-name">Programmes</div>
+                <div class="module-desc">Créer et organiser les programmes bien-être</div>
+            </div>
+            <div class="module-arrow" style="color:#059669">→</div>
+        </a>
+
+        <a href="{{ path('admin_therapeutes') }}" class="module-card fade-up"
+           style="--accent:#d97706; --icon-bg:#fef3c7; animation-delay:.3s">
+            <div class="module-icon">👨‍⚕️</div>
+            <div class="module-info">
+                <div class="module-name">Thérapeutes</div>
+                <div class="module-desc">Gérer les profils et disponibilités</div>
+            </div>
+            <div class="module-arrow" style="color:#d97706">→</div>
+        </a>
+
+        <a href="{{ path('admin_reservations') }}" class="module-card fade-up"
+           style="--accent:#dc2626; --icon-bg:#fee2e2; animation-delay:.35s">
+            <div class="module-icon">🎟️</div>
+            <div class="module-info">
+                <div class="module-name">Réservations</div>
+                <div class="module-desc">Consulter et gérer toutes les réservations</div>
+            </div>
+            <div class="module-arrow" style="color:#dc2626">→</div>
+        </a>
+
+        <a href="{{ path('admin_avis') }}" class="module-card fade-up"
+           style="--accent:#f59e0b; --icon-bg:#fef9c3; animation-delay:.4s">
+            <div class="module-icon">⭐</div>
+            <div class="module-info">
+                <div class="module-name">Avis</div>
+                <div class="module-desc">Modérer les avis et retours clients</div>
+            </div>
+            <div class="module-arrow" style="color:#f59e0b">→</div>
+        </a>
+
+    </div>
+
+    <!-- ACTIONS RAPIDES -->
+    <p class="section-title fade-up" style="animation-delay:.45s">Actions rapides</p>
+    <div class="quick-grid fade-up" style="animation-delay:.5s">
+        <a href="{{ path('admin_abonnements') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#0b7a8f"></span>
+            ➕ Nouvel abonnement
+        </a>
+        <a href="{{ path('admin_seances') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#7c3aed"></span>
+            📅 Nouvelle séance
+        </a>
+        <a href="{{ path('admin_programmes') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#059669"></span>
+            📖 Nouveau programme
+        </a>
+        <a href="{{ path('admin_therapeutes') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#d97706"></span>
+            👤 Nouveau thérapeute
+        </a>
+        <a href="{{ path('admin_reservations') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#dc2626"></span>
+            📋 Voir réservations
+        </a>
+        <a href="{{ path('admin_avis') }}" class="quick-btn">
+            <span class="quick-dot" style="--dot:#f59e0b"></span>
+            ⭐ Modérer avis
+        </a>
+    </div>
+
+</div>
+{% endblock %}

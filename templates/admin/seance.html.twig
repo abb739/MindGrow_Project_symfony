@@ -1,0 +1,608 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Admin — Gestion des Séances{% endblock %}
+{% block body %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+.delete-modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+z-index:9999;
+align-items:center;
+justify-content:center;
+}
+
+.delete-box{
+background:white;
+padding:25px;
+border-radius:12px;
+width:350px;
+text-align:center;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.delete-actions{
+display:flex;
+gap:10px;
+justify-content:center;
+margin-top:20px;
+}
+.error-text{
+    color:#ef4444;
+    font-size:12px;
+    margin-bottom:4px;
+}
+.toast-success{
+position:fixed;
+top:20px;
+right:20px;
+background:#10b981;
+color:white;
+padding:14px 20px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.15);
+z-index:9999;
+animation:slideIn 0.4s ease;
+}
+
+@keyframes slideIn{
+from{
+transform:translateX(100%);
+opacity:0;
+}
+to{
+transform:translateX(0);
+opacity:1;
+}
+}
+.input-error{
+    border:2px solid #ef4444 !important;
+    background:#fff5f5;
+}
+
+</style>
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+    <h1 class="page-title" style="margin-bottom:0;">🎯 Gestion des Séances</h1>
+    {% for message in app.flashes('success') %}
+<div class="toast-success" id="toast-msg">
+    ✔ {{ message }}
+</div>
+{% endfor %}
+
+<script>
+    setTimeout(function() {
+        var toast = document.getElementById('toast-msg');
+        if (toast) {
+            toast.style.transition = 'opacity 0.5s ease';
+            toast.style.opacity = '0';
+            setTimeout(function() { toast.remove(); }, 500);
+        }
+    }, 5000);
+</script>
+    <div style="display:flex; gap:10px;">
+        <a href="?tri=date" class="btn {{ tri == 'date' ? 'btn-primary' : '' }}" style="{{ tri != 'date' ? 'background:var(--bg3); color:var(--text2);' : '' }}">📅 Par date</a>
+        <a href="?tri=capacite_desc" class="btn {{ tri == 'capacite_desc' ? 'btn-primary' : '' }}" style="{{ tri != 'capacite_desc' ? 'background:var(--bg3); color:var(--text2);' : '' }}">⬇ Capacité</a>
+        <a href="?tri=capacite_asc" class="btn {{ tri == 'capacite_asc' ? 'btn-primary' : '' }}" style="{{ tri != 'capacite_asc' ? 'background:var(--bg3); color:var(--text2);' : '' }}">⬆ Capacité</a>
+    </div>
+</div>
+
+{# Barre de recherche admin #}
+<div class="card" style="margin-bottom:20px;">
+    <form method="get" action="{{ path('admin_seances') }}" style="display:flex; gap:12px; align-items:center;">
+        <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher par titre ou lieu..." style="flex:1; margin:0;">
+        <button type="submit" class="btn btn-primary">Rechercher</button>
+        {% if search %}
+        <a href="{{ path('admin_seances') }}" class="btn" style="background:var(--bg3); color:var(--text2);">✕ Effacer</a>
+        {% endif %}
+    </form>
+</div>
+
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px;">
+
+    <h1 class="page-title" style="margin-bottom:0;">🎯 Gestion des Séances</h1>
+
+    <div style="position:relative;">
+
+      <button id="notifBtn" style="...">
+    🔔
+    <span id="notifDot" style="
+        display:none;
+        position:absolute;
+        top:5px;
+        right:5px;
+        width:10px;
+        height:10px;
+        background:red;
+        border-radius:50%;
+    "></span>
+</button>
+
+    </div>
+
+</div>
+{# Formulaire d'ajout AVEC upload image #}
+<div class="card">
+    <h3 style="font-size:16px; font-weight:600; margin-bottom:20px; color:var(--label);">➕ Ajouter une séance</h3>
+<form method="post" action="{{ path('admin_seance_new') }}" enctype="multipart/form-data" novalidate>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+<div class="form-group">
+<label>Titre *</label>
+{% if errors.titre is defined %}
+<div class="error-text">{{ errors.titre }}</div>
+{% endif %}
+<input type="text" name="titre"
+value="{{ app.request.get('titre') }}"
+class="{{ errors.titre is defined ? 'input-error' : '' }}">
+</div>
+
+<div class="form-group">
+    <label>Lieu *</label>
+
+    <input type="text" name="lieu" id="lieu"
+           value="{{ app.request.get('lieu') }}"
+           class="{{ errors.lieu is defined ? 'input-error' : '' }}">
+
+    <div id="map" style="height:300px;margin-top:10px;"></div>
+</div>
+
+<div class="form-group">
+<label>Date début *</label>
+{% if errors.dateDebut is defined %}
+<div class="error-text">{{ errors.dateDebut }}</div>
+{% endif %}
+<input type="datetime-local" name="dateDebut"
+value="{{ app.request.get('dateDebut') }}"
+class="{{ errors.dateDebut is defined ? 'input-error' : '' }}">
+</div>
+
+<div class="form-group">
+<label>Date fin *</label>
+{% if errors.dateFin is defined %}
+<div class="error-text">{{ errors.dateFin }}</div>
+{% endif %}
+<input type="datetime-local" name="dateFin"
+value="{{ app.request.get('dateFin') }}"
+class="{{ errors.dateFin is defined ? 'input-error' : '' }}">
+</div>
+
+<div class="form-group">
+<label>Capacité *</label>
+{% if errors.capacite is defined %}
+<div class="error-text">{{ errors.capacite }}</div>
+{% endif %}
+<input type="number" name="capacite"
+value="{{ app.request.get('capacite') }}"
+class="{{ errors.capacite is defined ? 'input-error' : '' }}">
+</div>
+
+<div class="form-group">
+<label>Description *</label>
+{% if errors.description is defined %}
+<div class="error-text">{{ errors.description }}</div>
+{% endif %}
+<input type="text" name="description"
+value="{{ app.request.get('description') }}"
+class="{{ errors.description is defined ? 'input-error' : '' }}">
+</div>
+
+<div class="form-group" style="grid-column:1/-1;">
+<label>Image (optionnelle)</label>
+{% if errors.image is defined %}
+<div class="error-text">{{ errors.image }}</div>
+{% endif %}
+<input type="file" name="image"
+accept="image/png,image/jpeg,image/webp"
+class="{{ errors.image is defined ? 'input-error' : '' }}">
+</div>
+
+</div>
+
+<button type="submit" class="btn btn-success">
+➕ Ajouter la séance
+</button>
+
+</form>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Image</th>
+<th>Titre</th>
+<th>Lieu</th>
+<th>Date début</th>
+<th>Date fin</th>
+<th>Capacité</th>
+<th>📊 Réservations</th>
+<th>Remplissage</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+{% for seance in seances %}
+<tr>
+
+<td>
+<span class="badge badge-primary">
+#{{ seance.id }}
+</span>
+</td>
+
+<td>
+{% if seance.image %}
+<img src="{{ asset('/uploads/seances/' ~ seance.image) }}"
+style="width:50px;height:50px;object-fit:cover;border-radius:8px;">
+{% else %}
+<div style="width:50px;height:50px;background:#eee;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+🖼️
+</div>
+{% endif %}
+</td>
+
+<td style="font-weight:600;">
+{{ seance.titre }}
+</td>
+
+<td>
+{{ seance.lieu }}
+</td>
+
+<td>
+{{ seance.dateDebut ? seance.dateDebut|date('d/m/Y H:i') : '—' }}
+</td>
+
+<td>
+{{ seance.dateFin ? seance.dateFin|date('d/m/Y H:i') : '—' }}
+</td>
+
+<td>
+{{ seance.capacite }}
+</td>
+
+<td>
+{% if statsReservations[seance.id] is defined %}
+<strong>
+{{ statsReservations[seance.id].nb }}
+</strong>
+/ {{ seance.capacite }}
+{% else %}
+0 / {{ seance.capacite }}
+{% endif %}
+</td>
+
+<td>
+{% set taux = statsReservations[seance.id] is defined 
+? statsReservations[seance.id].taux : 0 %}
+
+<div style="
+background:#eee;
+border-radius:6px;
+height:10px;
+width:80px;
+overflow:hidden;
+">
+
+<div style="
+background:
+{{ taux >= 80 ? '#ef4444' 
+: (taux >= 50 ? '#f59e0b' : '#10b981') }};
+height:100%;
+width:{{ taux }}%;
+">
+</div>
+
+</div>
+
+<small>
+{{ taux }}%
+</small>
+</td>
+
+<td>
+
+<button
+onclick="document.getElementById('edit-{{ seance.id }}').style.display='flex'"
+class="btn btn-warning btn-sm">
+✏️
+</button>
+
+<button 
+onclick="openDeleteModal(
+'{{ path('admin_seance_delete',{id:seance.id}) }}',
+'{{ seance.titre }}'
+)"
+class="btn btn-danger btn-sm">
+🗑️
+</button>
+
+</td>
+
+</tr>
+
+{# MODAL EDIT #}
+<div id="edit-{{ seance.id }}"
+style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+
+<div class="card" style="width:600px;">
+
+<h3>Modifier séance</h3>
+
+<form method="post"
+action="{{ path('admin_seance_edit',{id:seance.id}) }}"
+enctype="multipart/form-data"
+novalidate>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+
+<div>
+<label>Titre *</label>
+{% if editId==seance.id and errorsEdit.titre is defined %}
+<div class="error-text">{{ errorsEdit.titre }}</div>
+{% endif %}
+<input type="text" name="titre"
+value="{{ seance.titre }}"
+class="{{ editId==seance.id and errorsEdit.titre is defined ? 'input-error' : '' }}">
+</div>
+
+<div>
+<label>Lieu *</label>
+{% if editId==seance.id and errorsEdit.lieu is defined %}
+<div class="error-text">{{ errorsEdit.lieu }}</div>
+{% endif %}
+<input type="text" name="lieu"
+value="{{ seance.lieu }}"
+class="{{ editId==seance.id and errorsEdit.lieu is defined ? 'input-error' : '' }}">
+</div>
+
+<div>
+<label>Date début *</label>
+{% if editId==seance.id and errorsEdit.dateDebut is defined %}
+<div class="error-text">{{ errorsEdit.dateDebut }}</div>
+{% endif %}
+<input type="datetime-local" name="dateDebut"
+value="{{ seance.dateDebut ? seance.dateDebut|date('Y-m-d\\TH:i') : '' }}"
+class="{{ editId==seance.id and errorsEdit.dateDebut is defined ? 'input-error' : '' }}">
+</div>
+
+<div>
+<label>Date fin *</label>
+{% if editId==seance.id and errorsEdit.dateFin is defined %}
+<div class="error-text">{{ errorsEdit.dateFin }}</div>
+{% endif %}
+<input type="datetime-local" name="dateFin"
+value="{{ seance.dateFin ? seance.dateFin|date('Y-m-d\\TH:i') : '' }}"
+class="{{ editId==seance.id and errorsEdit.dateFin is defined ? 'input-error' : '' }}">
+</div>
+
+<div>
+<label>Capacité *</label>
+{% if editId==seance.id and errorsEdit.capacite is defined %}
+<div class="error-text">{{ errorsEdit.capacite }}</div>
+{% endif %}
+<input type="number" name="capacite"
+value="{{ seance.capacite }}"
+class="{{ editId==seance.id and errorsEdit.capacite is defined ? 'input-error' : '' }}">
+</div>
+
+<div>
+<label>Description *</label>
+{% if editId==seance.id and errorsEdit.description is defined %}
+<div class="error-text">{{ errorsEdit.description }}</div>
+{% endif %}
+<input type="text" name="description"
+value="{{ seance.description }}"
+class="{{ editId==seance.id and errorsEdit.description is defined ? 'input-error' : '' }}">
+</div>
+
+<div style="grid-column:1/-1">
+<label>Image</label>
+
+{% if seance.image %}
+<img src="{{ asset('uploads/seances/' ~ seance.image) }}"
+style="height:70px;border-radius:8px;margin-bottom:8px;">
+{% endif %}
+
+<input type="file" name="image">
+</div>
+
+</div>
+
+<div style="margin-top:15px;display:flex;gap:10px;">
+<button class="btn btn-success">💾 Sauvegarder</button>
+
+<button type="button"
+onclick="document.getElementById('edit-{{ seance.id }}').style.display='none'"
+class="btn">
+Annuler
+</button>
+</div>
+
+</form>
+
+</div>
+</div>
+
+{% else %}
+<tr>
+<td colspan="10" style="text-align:center;">
+Aucune séance
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+</table>
+<div id="deleteModal" class="delete-modal">
+<div class="delete-box">
+
+<h3>Supprimer la séance ?</h3>
+<p id="deleteText"></p>
+
+<div class="delete-actions">
+<button onclick="confirmDelete()" class="btn btn-danger">
+Oui supprimer
+</button>
+
+<button onclick="closeDeleteModal()" class="btn">
+Annuler
+</button>
+</div>
+
+</div>
+</div>
+<script>
+document.querySelectorAll('input, textarea').forEach(input => {
+    input.addEventListener('input', function() {
+        this.classList.remove('input-error');
+
+        let error = this.parentElement.querySelector('.error-text');
+        if(error){
+            error.style.display = 'none';
+        }
+    });
+});
+
+
+</script>
+<script>
+let deleteUrl = null;
+
+function openDeleteModal(url,titre){
+deleteUrl = url;
+document.getElementById('deleteModal').style.display='flex';
+document.getElementById('deleteText').innerText =
+"Voulez-vous supprimer : " + titre + " ?";
+}
+
+function closeDeleteModal(){
+document.getElementById('deleteModal').style.display='none';
+}
+
+function confirmDelete(){
+window.location.href = deleteUrl;
+}
+</script>
+<script>
+{% if editId is defined %}
+document.getElementById('edit-{{ editId }}').style.display='flex';
+{% endif %}
+</script>
+
+<script>
+let map;
+let marker;
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // centre Tunis
+    map = L.map('map').setView([36.8065, 10.1815], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    // marker initial
+    marker = L.marker([36.8065, 10.1815], { draggable: true }).addTo(map);
+
+    const input = document.getElementById("lieu");
+
+    // click map
+    map.on('click', function(e) {
+
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
+
+        marker.setLatLng([lat, lng]);
+
+        // reverse geocoding (adresse)
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+                input.value = data.display_name || (lat + ", " + lng);
+            });
+    });
+
+    // drag marker
+    marker.on('dragend', function(e) {
+
+        const pos = marker.getLatLng();
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.lat}&lon=${pos.lng}`)
+            .then(res => res.json())
+            .then(data => {
+                input.value = data.display_name || (pos.lat + ", " + pos.lng);
+            });
+    });
+
+});
+
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    let notifications = [];
+
+    const notifBtn = document.getElementById("notifBtn");
+    const notifDot = document.getElementById("notifDot");
+
+    // 🔥 IMPORTANT FIX : utiliser URL directe Mercure
+    const url = new URL("{{ app.request.server.get('MERCURE_PUBLIC_URL') }}");
+    url.searchParams.append('topic', 'admin-notifications');
+
+    const es = new EventSource(url);
+
+    es.onmessage = function (event) {
+        console.log("notification:", event.data);
+
+        try {
+            const data = JSON.parse(event.data);
+            notifications.push(data);
+
+            notifDot.style.display = "block";
+
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    notifBtn.addEventListener("click", function () {
+
+        if (notifications.length === 0) {
+            alert("📭 Aucune notification");
+            return;
+        }
+
+        let msg = "📩 Notifications:\n\n";
+
+        notifications.forEach((n, i) => {
+            msg += `${i+1}) ${n.user} → ${n.seance}\n`;
+        });
+
+        alert(msg);
+
+        notifications = [];
+        notifDot.style.display = "none";
+    });
+
+});
+
+
+
+
+</script>
+
+
+
+
+{% endblock %}

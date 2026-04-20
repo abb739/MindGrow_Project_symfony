@@ -1,0 +1,308 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ programme.titre }}{% endblock %}
+{% block body %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+  body { background: #f0f4f8; font-family: 'DM Sans', sans-serif; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #94a3b8; padding: 1.5rem 0 0;
+  }
+  .breadcrumb a { color: #64748b; text-decoration: none; transition: color .2s; }
+  .breadcrumb a:hover { color: #0b7a8f; }
+  .breadcrumb span { color: #0b7a8f; font-weight: 600; }
+
+  /* ── HERO ── */
+  .show-hero {
+    border-radius: 24px; overflow: hidden; margin: 1.25rem 0 0;
+    height: 340px; position: relative;
+    background: linear-gradient(135deg, #0b7a8f 0%, #043d48 100%);
+    box-shadow: 0 8px 32px rgba(11,122,143,0.2);
+  }
+  .show-hero-img {
+    width: 100%; height: 100%; object-fit: cover;
+    display: block; opacity: 0.65;
+  }
+  .show-hero-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6rem; color: rgba(255,255,255,0.1);
+  }
+  .show-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(4,30,36,0.88) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem 2.5rem;
+  }
+  .show-cat-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15); color: white; backdrop-filter: blur(8px);
+    font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+    width: fit-content; margin-bottom: 0.75rem; letter-spacing: 0.3px;
+  }
+  .show-title {
+    font-family: 'DM Serif Display', serif; font-size: 2.6rem;
+    font-weight: 400; color: white; margin: 0; line-height: 1.2;
+  }
+
+  /* ── LAYOUT ── */
+  .show-layout {
+    display: grid; grid-template-columns: 1fr 340px;
+    gap: 24px; margin-top: 1.75rem;
+  }
+  @media (max-width: 900px) {
+    .show-layout { grid-template-columns: 1fr; }
+    .show-title  { font-size: 1.9rem; }
+    .show-hero   { height: 240px; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: white; border-radius: 18px;
+    border: 1px solid #e8edf2; box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    overflow: hidden; margin-bottom: 20px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  .card-header {
+    padding: 1.1rem 1.5rem; border-bottom: 1px solid #f1f5f9;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-icon {
+    width: 36px; height: 36px; background: #e8f7fa; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .card-header h3 { font-size: 15px; font-weight: 700; color: #1e293b; margin: 0; }
+  .card-body { padding: 1.4rem 1.5rem; }
+
+  /* ── DESCRIPTION ── */
+  .desc-text { font-size: 15px; color: #475569; line-height: 1.85; white-space: pre-line; }
+
+  /* ── MEDIA DISPLAY ── */
+  .media-img {
+    width: 100%; border-radius: 14px; overflow: hidden;
+    border: 1px solid #e2e8f0; display: block;
+    max-height: 420px; object-fit: cover;
+  }
+  .video-wrap {
+    width: 100%; aspect-ratio: 16/9; border-radius: 14px;
+    overflow: hidden; background: #000; position: relative;
+  }
+  .video-wrap video { width: 100%; height: 100%; display: block; outline: none; }
+
+  /* ── SIDEBAR INFO ── */
+  .info-list { display: flex; flex-direction: column; }
+  .info-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 0.85rem 0; border-bottom: 1px solid #f8fafc;
+  }
+  .info-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-icon { font-size: 19px; flex-shrink: 0; margin-top: 1px; }
+  .info-label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .info-value { font-size: 14px; color: #1e293b; font-weight: 500; margin-top: 3px; }
+
+  /* ── ACTION BUTTONS ── */
+  .action-btn {
+    display: block; width: 100%; text-align: center;
+    padding: 0.85rem; border-radius: 12px; font-size: 14px;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: all 0.2s; border: none; font-family: 'DM Sans', sans-serif;
+    margin-bottom: 10px;
+  }
+  .action-btn:last-child { margin-bottom: 0; }
+  .btn-primary { background: #0b7a8f; color: white; }
+  .btn-primary:hover { background: #085f70; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(11,122,143,0.28); }
+  .btn-secondary { background: #f1f5f9; color: #475569; }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn-fav { background: #fff0f0; color: #e05c5c; border: 1.5px solid #fecaca; }
+  .btn-fav:hover, .btn-fav.active { background: #e05c5c; color: white; border-color: #e05c5c; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 7px;
+    color: #64748b; text-decoration: none; font-size: 13px; font-weight: 500;
+    padding: 0.55rem 1.1rem; background: white; border-radius: 10px;
+    border: 1px solid #e2e8f0; transition: all 0.2s; margin-top: 1.5rem;
+  }
+  .back-link:hover { color: #0b7a8f; border-color: #0b7a8f; background: #f0fafc; }
+
+  .fade-in { animation: fadeIn 0.45s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+</style>
+
+<div style="max-width:1100px; margin:0 auto; padding:0 1.5rem 4rem;">
+
+  {# ── BREADCRUMB ── #}
+  <div class="breadcrumb">
+    <a href="{{ path('programmes') }}">🏠 Programmes</a>
+    <span>›</span>
+    <span>{{ programme.titre }}</span>
+  </div>
+
+  {# ── HERO avec vraie image ── #}
+  {% set hasImage = programme.image and 'C:\\' not in programme.image and programme.image is not empty %}
+
+  <div class="show-hero fade-in">
+    {% if hasImage %}
+      <img src="{{ asset(programme.image) }}"
+           alt="{{ programme.titre }}"
+           class="show-hero-img"
+           onerror="this.style.display='none'; document.getElementById('hero-placeholder').style.display='flex';">
+    {% endif %}
+    <div id="hero-placeholder" class="show-hero-placeholder" {{ hasImage ? 'style="display:none;"' : '' }}>
+      🧠
+    </div>
+    <div class="show-hero-overlay">
+      <div class="show-cat-badge">🏷️ {{ catNom }}</div>
+      <h1 class="show-title">{{ programme.titre }}</h1>
+    </div>
+  </div>
+
+  {# ── LAYOUT 2 colonnes ── #}
+  <div class="show-layout">
+
+    {# ── GAUCHE ── #}
+    <div>
+
+      {# Image en grand si disponible #}
+      {% if hasImage %}
+      <div class="card fade-in" style="animation-delay:.05s;">
+        <div class="card-header">
+          <div class="card-icon">🖼️</div>
+          <h3>Image du programme</h3>
+        </div>
+        <div class="card-body">
+          <img src="{{ asset(programme.image) }}"
+               alt="{{ programme.titre }}"
+               class="media-img"
+               onerror="this.parentElement.parentElement.style.display='none';">
+        </div>
+      </div>
+      {% endif %}
+
+      {# Description #}
+      <div class="card fade-in" style="animation-delay:.1s;">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <h3>Description du programme</h3>
+        </div>
+        <div class="card-body">
+          {% if programme.description %}
+            <p class="desc-text">{{ programme.description }}</p>
+          {% else %}
+            <p style="color:#94a3b8; font-style:italic; font-size:14px;">Aucune description disponible pour ce programme.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {# Vidéo #}
+      {% set hasVideo = programme.video and 'C:\\' not in programme.video and programme.video is not empty %}
+      {% if hasVideo %}
+      <div class="card fade-in" style="animation-delay:.15s;">
+        <div class="card-header">
+          <div class="card-icon">🎬</div>
+          <h3>Vidéo du programme</h3>
+        </div>
+        <div class="card-body">
+          <div class="video-wrap">
+            <video controls preload="metadata" controlslist="nodownload">
+              <source src="{{ asset(programme.video) }}" type="video/mp4">
+              <source src="{{ asset(programme.video) }}" type="video/webm">
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {# ── DROITE ── #}
+    <div>
+
+      {# Infos #}
+      <div class="card fade-in" style="animation-delay:.12s;">
+        <div class="card-header">
+          <div class="card-icon">ℹ️</div>
+          <h3>Informations</h3>
+        </div>
+        <div class="card-body" style="padding-top:.6rem;">
+          <div class="info-list">
+            <div class="info-item">
+              <span class="info-icon">🏷️</span>
+              <div>
+                <div class="info-label">Catégorie</div>
+                <div class="info-value">{{ catNom }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🎬</span>
+              <div>
+                <div class="info-label">Vidéo</div>
+                <div class="info-value">
+                  {% if hasVideo %}
+                    <span style="color:#10b981;">✅ Incluse</span>
+                  {% else %}
+                    <span style="color:#94a3b8;">❌ Non disponible</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🖼️</span>
+              <div>
+                <div class="info-label">Illustration</div>
+                <div class="info-value">
+                  {% if hasImage %}
+                    <span style="color:#10b981;">✅ Disponible</span>
+                  {% else %}
+                    <span style="color:#94a3b8;">❌ Non disponible</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">#️⃣</span>
+              <div>
+                <div class="info-label">Référence</div>
+                <div class="info-value">PROG-{{ '%04d'|format(programme.id) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Actions #}
+      <div class="card fade-in" style="animation-delay:.18s;">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <h3>Actions</h3>
+        </div>
+        <div class="card-body">
+          <a href="{{ path('programmes') }}" class="action-btn btn-primary">
+            🌿 Voir tous les programmes
+          </a>
+          <a href="{{ path('seances') }}" class="action-btn btn-secondary">
+            📅 Voir les séances
+          </a>
+          <button type="button"
+                  class="action-btn btn-fav {{ programme.id in (favoris ?? []) ? 'active' : '' }}"
+                  onclick="this.classList.toggle('active');
+                           this.innerHTML = this.classList.contains('active')
+                             ? '♥ Dans vos favoris'
+                             : '♡ Ajouter aux favoris';">
+            {% if programme.id in (favoris ?? []) %}♥ Dans vos favoris
+            {% else %}♡ Ajouter aux favoris{% endif %}
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="{{ path('programmes') }}" class="back-link">← Retour aux programmes</a>
+
+</div>
+{% endblock %}

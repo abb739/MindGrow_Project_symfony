@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+{% block title %}Mes Réservations{% endblock %}
+{% block body %}
+<h1 style="margin-bottom:20px; color:#0b7a8f;">Mes Réservations</h1>
+{% for message in app.flashes('error') %}
+    <div class="alert-error" style="margin-bottom:15px;">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% for message in app.flashes('success') %}
+    <div class="alert-success" style="margin-bottom:15px;">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{% if reservations is empty %}
+    <div class="card" style="text-align:center; color:#7f8c8d;">
+        <p>Vous n'avez aucune réservation.</p>
+        <a href="{{ path('seances') }}" class="btn btn-primary" style="margin-top:10px;">Voir les séances</a>
+    </div>
+{% else %}
+<table>
+    <thead>
+        <tr><th>Séance</th><th>Lieu</th><th>Date séance</th><th>Date réservation</th><th>Statut</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for res in reservations %}
+    <tr>
+        <td>{{ seances[res.id] ? seances[res.id].titre : 'N/A' }}</td>
+        <td>{{ seances[res.id] ? seances[res.id].lieu : 'N/A' }}</td>
+        <td>{{ seances[res.id] ? seances[res.id].dateDebut|date('d/m/Y H:i') : 'N/A' }}</td>
+        <td>{{ res.dateReservation ? res.dateReservation|date('d/m/Y H:i') : 'N/A' }}</td>
+        <td>
+            <span style="padding:4px 10px; border-radius:10px; font-size:12px; font-weight:bold;
+                background:{{ res.statut == 'confirmée' ? '#f0fdf4' : (res.statut == 'annulée' ? '#fef2f2' : '#fefce8') }};
+                color:{{ res.statut == 'confirmée' ? '#27ae60' : (res.statut == 'annulée' ? '#e74c3c' : '#f39c12') }};">
+                {{ res.statut }}
+            </span>
+        </td>
+        <td style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <a href="{{ path('reservation_ticket', {id: res.id}) }}" target="_blank"
+               class="btn" style="padding:5px 10px;background:#0b7a8f;color:white;font-size:12px;font-weight:600;border-radius:8px;text-decoration:none;">
+                🎫 Ticket PDF
+            </a>
+            {% if res.statut != 'annulée' %}
+            <a href="{{ path('reservation_annuler', {id: res.id}) }}"
+               onclick="return confirm('Annuler cette réservation ?')"
+               class="btn btn-danger" style="padding:5px 8px;font-size:12px;">Annuler</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

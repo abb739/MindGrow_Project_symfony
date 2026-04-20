@@ -1,0 +1,680 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Admin — Gestion Thérapeutes{% endblock %}
+{% block body %}
+
+<style>
+.th-page-header {
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom:28px; flex-wrap:wrap; gap:12px;
+}
+.th-count-badge {
+    background:#e0f5f8; color:#0b7a8f;
+    padding:6px 16px; border-radius:20px; font-size:13px; font-weight:700;
+}
+
+.add-card {
+    background: var(--bg2);
+    border-radius:18px; padding:28px 32px; margin-bottom:32px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+}
+.add-card h3 { font-size:15px; font-weight:700; color:#0b7a8f; margin-bottom:20px; }
+.form-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:800px){ .form-grid-3 { grid-template-columns:1fr 1fr; } }
+@media(max-width:500px){ .form-grid-3 { grid-template-columns:1fr; } }
+
+/* Supprimer le margin-bottom automatique du base dans la grille */
+.form-grid-3 input,
+.form-grid-2 input {
+    margin-bottom: 0;
+}
+
+.file-input-wrap input[type=file] {
+    width:100%; padding:8px 12px;
+    border:2px dashed #cbd5e1; border-radius:10px;
+    background: var(--input-bg); cursor:pointer; font-size:13px;
+    margin-bottom:0;
+}
+.file-input-wrap input[type=file]:hover { border-color:#0b7a8f; }
+
+.th-table { width:100%; border-collapse:collapse; }
+.th-table thead tr { background:linear-gradient(135deg,#0b7a8f,#065f6e); }
+.th-table th {
+    padding:12px 16px; text-align:left; color:white;
+    font-size:11px; font-weight:700; letter-spacing:.5px; text-transform:uppercase;
+}
+.th-table th:first-child { border-radius:12px 0 0 0; }
+.th-table th:last-child  { border-radius:0 12px 0 0; }
+.th-table td { padding:13px 16px; border-bottom:1px solid var(--table-border); vertical-align:middle; font-size:14px; }
+.th-table tr:hover td { background: var(--row-hover); }
+.th-table tr:last-child td { border-bottom:none; }
+
+.avatar-circle {
+    width:44px; height:44px; border-radius:50%;
+    object-fit:cover; border:2px solid var(--border2); flex-shrink:0;
+}
+.avatar-emoji {
+    width:44px; height:44px; border-radius:50%;
+    background:linear-gradient(135deg,#0b7a8f,#065f6e);
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:20px; flex-shrink:0;
+}
+.name-cell { display:flex; align-items:center; gap:10px; }
+.stars-display { color:#f59e0b; font-size:14px; letter-spacing:1px; }
+
+/* ===== Modal ===== */
+.modal-overlay {
+    display:none;
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(15,23,42,.65);
+    z-index:9999;
+    align-items:center; justify-content:center;
+    backdrop-filter:blur(3px);
+}
+.modal-overlay.open { display:flex; }
+.modal-box {
+    background: var(--bg2); border-radius:20px; padding:36px 32px;
+    width:580px; max-width:95vw; max-height:90vh; overflow-y:auto;
+    box-shadow:0 24px 80px rgba(0,0,0,.3);
+    position:relative;
+    animation: modalIn .2s ease;
+}
+@keyframes modalIn {
+    from { transform:scale(.95) translateY(10px); opacity:0; }
+    to   { transform:scale(1)   translateY(0);    opacity:1; }
+}
+.modal-close {
+    position:absolute; top:14px; right:14px;
+    background: var(--bg3); border:none; border-radius:8px;
+    width:34px; height:34px; cursor:pointer; font-size:17px;
+    display:flex; align-items:center; justify-content:center; color: var(--text2);
+    transition:.15s;
+}
+.modal-close:hover { background: var(--border2); }
+.modal-title { font-size:18px; font-weight:700; color: var(--text); margin-bottom:20px; padding-right:40px; }
+
+.current-photo-wrap { text-align:center; margin-bottom:20px; }
+.current-photo-wrap img {
+    width:90px; height:90px; border-radius:50%; object-fit:cover;
+    border:3px solid #0b7a8f; box-shadow:0 4px 16px rgba(11,122,143,.25);
+}
+.current-photo-label { font-size:12px; color:#94a3b8; margin-top:6px; }
+
+.form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:460px){ .form-grid-2 { grid-template-columns:1fr; } }
+
+.badge-spec { background:#fef3c7; color:#92400e; padding:3px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+.badge-id   { background:#e0f5f8; color:#0b7a8f; padding:3px 10px; border-radius:8px; font-size:12px; font-weight:700; }
+
+/* ===== Validation ===== */
+.field-error {
+    color:#e53e3e; font-size:12px; margin-top:3px;
+    display:block; min-height:16px; line-height:1.3;
+}
+input.input-invalid {
+    border-color:#e53e3e !important;
+    background:#fff5f5 !important;
+    color:#1e293b !important;
+}
+input.input-valid { border-color:#38a169 !important; }
+
+.delete-modal{
+    display:none;
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    background:rgba(0,0,0,0.5);
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+}
+.delete-box{
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    width:350px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+.delete-actions{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-top:20px;
+}
+.toast-success{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:#10b981;
+    color:white;
+    padding:14px 20px;
+    border-radius:12px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.15);
+    z-index:9999;
+    animation:slideIn 0.4s ease;
+    font-weight:600;
+}
+@keyframes slideIn{
+    from{ transform:translateX(100%); opacity:0; }
+    to  { transform:translateX(0);    opacity:1; }
+}
+</style>
+
+{# ======================================================= #}
+{# MODALS MODIFIER                                         #}
+{# ======================================================= #}
+{% for t in therapeutes %}
+<div class="modal-overlay" id="modal-{{ t.id }}">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal('modal-{{ t.id }}')">✕</button>
+        <div class="modal-title">✏️ Modifier : {{ t.prenom }} {{ t.nom }}</div>
+
+        {% if t.image %}
+        <div class="current-photo-wrap">
+            <img src="{{ t.image }}" alt="{{ t.prenom }}">
+            <div class="current-photo-label">Photo actuelle</div>
+        </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('admin_therapeute_edit', {id: t.id}) }}"
+              enctype="multipart/form-data"
+              id="editForm-{{ t.id }}"
+              novalidate>
+            <div class="form-grid-2">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" id="edit-nom-{{ t.id }}" name="nom"
+                           value="{{ t.nom }}" maxlength="100" placeholder="Ben Ali">
+                    <span class="field-error" id="edit-err-nom-{{ t.id }}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Prénom *</label>
+                    <input type="text" id="edit-prenom-{{ t.id }}" name="prenom"
+                           value="{{ t.prenom }}" maxlength="100" placeholder="Ahmed">
+                    <span class="field-error" id="edit-err-prenom-{{ t.id }}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Spécialité *</label>
+                    <input type="text" id="edit-specialite-{{ t.id }}" name="specialite"
+                           value="{{ t.specialite }}" placeholder="Psychologie...">
+                    <span class="field-error" id="edit-err-specialite-{{ t.id }}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Email * <span style="color:var(--text3);font-weight:400;">(format valide)</span></label>
+                    <input type="text" id="edit-email-{{ t.id }}" name="email"
+                           value="{{ t.email ?? '' }}" placeholder="ahmed@exemple.com">
+                    <span class="field-error" id="edit-err-email-{{ t.id }}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone * <span style="color:var(--text3);font-weight:400;">(8-15 chiffres)</span></label>
+                    <input type="text" id="edit-telephone-{{ t.id }}" name="telephone"
+                           value="{{ t.telephone ?? '' }}" placeholder="58140402">
+                    <span class="field-error" id="edit-err-telephone-{{ t.id }}"></span>
+                </div>
+                <div class="form-group">
+                    <label>Nouvelle photo <span style="color:var(--text3);font-weight:400;">(laisser vide = garder)</span></label>
+                    <div class="file-input-wrap">
+                        <input type="file" id="edit-image-{{ t.id }}" name="image"
+                               accept="image/jpeg,image/png,image/webp,image/gif">
+                    </div>
+                    <span class="field-error" id="edit-err-image-{{ t.id }}"></span>
+                </div>
+
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Certificat <span style="color:var(--text3);font-weight:400;">(PDF/JPG/PNG — analysé par IA Google Vision)</span></label>
+                    {% if t.certificat %}
+                    <div style="font-size:12px;color:#0b7a8f;margin-bottom:6px;">
+                        📄 Certificat actuel :
+                        <a href="{{ t.certificat }}" target="_blank">Voir le fichier</a>
+                        — Statut :
+                        {% if t.statutCertificat == 'verifie' %}<strong style="color:green;">✅ Vérifié</strong>
+                        {% elseif t.statutCertificat == 'en_attente' %}<strong style="color:orange;">⏳ En attente</strong>
+                        {% elseif t.statutCertificat == 'refuse' %}<strong style="color:red;">❌ Refusé</strong>
+                        {% else %}—{% endif %}
+                    </div>
+                    {% endif %}
+                    <div class="file-input-wrap">
+                        <input type="file" name="certificat_file" accept="image/jpeg,image/png,application/pdf">
+                    </div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+                <button type="button" onclick="closeModal('modal-{{ t.id }}')"
+                        class="btn" style="background:var(--bg3); color:var(--text2);">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endfor %}
+
+{# ======================================================= #}
+{# PAGE HEADER                                             #}
+{# ======================================================= #}
+<div class="th-page-header">
+    <h1 class="page-title" style="margin-bottom:0;">👨‍⚕️ Gestion des Thérapeutes</h1>
+    {% for message in app.flashes('success') %}
+    <div class="toast-success">✔ {{ message }}</div>
+    {% endfor %}
+    <span class="th-count-badge">{{ therapeutes|length }} thérapeute(s)</span>
+</div>
+
+{% if errors is defined and errors|length > 0 %}
+<div style="margin-bottom:20px;">
+    {% for err in errors %}
+    <div class="alert-error" style="margin-bottom:6px;">⚠️ {{ err }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ======================================================= #}
+{# FORMULAIRE AJOUT                                        #}
+{# ======================================================= #}
+<div class="add-card">
+    <h3>➕ Ajouter un thérapeute</h3>
+    <form method="post" action="{{ path('admin_therapeute_new') }}"
+          enctype="multipart/form-data"
+          id="addForm"
+          novalidate>
+        <div class="form-grid-3">
+
+            <div class="form-group">
+                <label>Nom * <span style="color:var(--text3);font-weight:400;">(min. 2 caract.)</span></label>
+                <input type="text" id="add-nom" name="nom"
+                       value="{{ form.nom ?? '' }}" maxlength="100" placeholder="Ben Ali">
+                <span class="field-error" id="add-err-nom"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Prénom * <span style="color:var(--text3);font-weight:400;">(min. 2 caract.)</span></label>
+                <input type="text" id="add-prenom" name="prenom"
+                       value="{{ form.prenom ?? '' }}" maxlength="100" placeholder="Ahmed">
+                <span class="field-error" id="add-err-prenom"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Spécialité *</label>
+                <input type="text" id="add-specialite" name="specialite"
+                       value="{{ form.specialite ?? '' }}" placeholder="Psychologie, Sophrologie...">
+                <span class="field-error" id="add-err-specialite"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Email * <span style="color:var(--text3);font-weight:400;">(format valide)</span></label>
+                <input type="text" id="add-email" name="email"
+                       value="{{ form.email ?? '' }}" placeholder="ahmed@exemple.com">
+                <span class="field-error" id="add-err-email"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Téléphone * <span style="color:var(--text3);font-weight:400;">(8-15 chiffres)</span></label>
+                <input type="text" id="add-telephone" name="telephone"
+                       value="{{ form.telephone ?? '' }}" placeholder="58140402">
+                <span class="field-error" id="add-err-telephone"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Photo <span style="color:var(--text3);font-weight:400;">(JPG/PNG, max 3 Mo)</span></label>
+                <div class="file-input-wrap">
+                    <input type="file" id="add-image" name="image"
+                           accept="image/jpeg,image/png,image/webp,image/gif">
+                </div>
+                <span class="field-error" id="add-err-image"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Certificat <span style="color:var(--text3);font-weight:400;">(PDF/JPG/PNG — analysé par IA)</span></label>
+                <div class="file-input-wrap">
+                    <input type="file" name="certificat_file"
+                           accept="image/jpeg,image/png,application/pdf">
+                </div>
+            </div>
+
+        </div>
+        <div style="margin-top:20px;">
+            <button type="submit" class="btn btn-success">➕ Ajouter le thérapeute</button>
+        </div>
+    </form>
+</div>
+
+{# ======================================================= #}
+{# TABLEAU                                                 #}
+{# ======================================================= #}
+<div style="background:var(--bg2); border-radius:18px; overflow:hidden; box-shadow:var(--shadow-sm); border:1px solid var(--border);">
+    {% if therapeutes|length == 0 %}
+    <div style="padding:60px; text-align:center; color:var(--text3);">Aucun thérapeute enregistré.</div>
+    {% else %}
+    <table class="th-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Photo &amp; Nom</th>
+                <th>Spécialité</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>⭐ Note moy.</th>
+                <th>Certificat</th>
+                <th>Inscrit le</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for t in therapeutes %}
+        <tr>
+            <td><span class="badge-id">#{{ t.id }}</span></td>
+            <td>
+                <div class="name-cell">
+                    {% if t.image %}
+                        <img src="{{ t.image }}" alt="{{ t.prenom }}" class="avatar-circle">
+                    {% else %}
+                        <div class="avatar-emoji">🧑‍⚕️</div>
+                    {% endif %}
+                    <strong>{{ t.prenom }} {{ t.nom }}</strong>
+                </div>
+            </td>
+            <td>
+                {% if t.specialite %}
+                    <span class="badge-spec">{{ t.specialite }}</span>
+                {% else %}
+                    <span style="color:var(--text3);">—</span>
+                {% endif %}
+            </td>
+            <td style="font-size:13px; color:var(--text2);">{{ t.email ?? '—' }}</td>
+            <td style="font-size:13px; color:var(--text2);">{{ t.telephone ?? '—' }}</td>
+            <td>
+                {% set note = noteMoyenne[t.id] is defined ? noteMoyenne[t.id] : 0 %}
+                {% if note > 0 %}
+                    <div class="stars-display">
+                        {% for i in 1..5 %}{{ i <= note|round ? '★' : '☆' }}{% endfor %}
+                    </div>
+                    <div style="font-size:12px; color:#0b7a8f; font-weight:700;">{{ note }}/5</div>
+                {% else %}
+                    <span style="color:var(--text3); font-size:13px;">Aucun avis</span>
+                {% endif %}
+            </td>
+            <td style="font-size:12px;">
+                {% if t.statutCertificat == 'verifie' %}
+                    <span style="background:#d1fae5;color:#065f46;padding:3px 10px;border-radius:20px;font-weight:700;">✅ Vérifié</span>
+                {% elseif t.statutCertificat == 'en_attente' %}
+                    <span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:20px;font-weight:700;">⏳ En attente</span>
+                    <div style="margin-top:6px;display:flex;gap:4px;">
+                        <a href="{{ path('admin_therapeute_certifier', {id: t.id, statut: 'verifie'}) }}"
+                           class="btn btn-success btn-sm" style="font-size:11px;padding:3px 8px;">✅ Valider</a>
+                        <a href="{{ path('admin_therapeute_certifier', {id: t.id, statut: 'refuse'}) }}"
+                           class="btn btn-danger btn-sm" style="font-size:11px;padding:3px 8px;">❌ Refuser</a>
+                    </div>
+                {% elseif t.statutCertificat == 'refuse' %}
+                    <span style="background:#fee2e2;color:#991b1b;padding:3px 10px;border-radius:20px;font-weight:700;">❌ Refusé</span>
+                {% elseif t.certificat %}
+                    <span style="color:#94a3b8;font-size:12px;">📄 Sans analyse</span>
+                {% else %}
+                    <span style="color:#cbd5e1;">—</span>
+                {% endif %}
+            </td>
+            <td style="font-size:13px; color:var(--text2);">
+                {{ t.dateInscription ? t.dateInscription|date('d/m/Y') : '—' }}
+            </td>
+            <td>
+                <button onclick="openModal('modal-{{ t.id }}')" class="btn btn-warning btn-sm">✏️ Modifier</button>
+                <button
+                    onclick="openDeleteModal('{{ path('admin_therapeute_delete', {id: t.id}) }}','{{ t.prenom }} {{ t.nom }}')"
+                    class="btn btn-danger btn-sm">🗑️</button>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" style="text-align:center; color:var(--text3); padding:48px;">
+                Aucun thérapeute enregistré.
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</div>
+
+{# ======================================================= #}
+{# JAVASCRIPT — VALIDATION COMPLÈTE                        #}
+{# ======================================================= #}
+<script>
+// ── Helpers ──────────────────────────────────────────────
+function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = msg;
+}
+function clearErr(id) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = '';
+}
+function markInvalid(id) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.add('input-invalid'); el.classList.remove('input-valid'); }
+}
+function markValid(id) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('input-invalid'); el.classList.add('input-valid'); }
+}
+function markNeutral(id) {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('input-invalid', 'input-valid'); }
+}
+
+const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const RE_TEL   = /^\d{8,15}$/;
+const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_SIZE = 3 * 1024 * 1024;
+
+// ── Validateur générique ──────────────────────────────────
+function validateField(inputId, errId, rules) {
+    const el  = document.getElementById(inputId);
+    const val = el ? el.value.trim() : '';
+
+    if (rules.required && !val) {
+        showErr(errId, rules.requiredMsg || 'Ce champ est obligatoire.');
+        markInvalid(inputId);
+        return false;
+    }
+    if (val && rules.minLen && val.length < rules.minLen) {
+        showErr(errId, rules.minLenMsg || 'Minimum ' + rules.minLen + ' caractères.');
+        markInvalid(inputId);
+        return false;
+    }
+    // ✅ Valide le format même si le champ est optionnel mais rempli
+    if (val && rules.pattern && !rules.pattern.test(val)) {
+        showErr(errId, rules.patternMsg || 'Format invalide.');
+        markInvalid(inputId);
+        return false;
+    }
+    // Champ optionnel vide → neutre, pas d'erreur
+    if (!val && !rules.required) {
+        clearErr(errId);
+        markNeutral(inputId);
+        return true;
+    }
+
+    clearErr(errId);
+    markValid(inputId);
+    return true;
+}
+
+// ── Validateur fichier ────────────────────────────────────
+function validateFile(inputId, errId) {
+    const el = document.getElementById(inputId);
+    if (!el || !el.files || !el.files[0]) { clearErr(errId); return true; }
+    const file = el.files[0];
+    if (!ALLOWED_TYPES.includes(file.type)) {
+        showErr(errId, 'Format invalide. Utilisez JPG, PNG, WEBP ou GIF.');
+        markInvalid(inputId); return false;
+    }
+    if (file.size > MAX_SIZE) {
+        showErr(errId, 'La photo ne doit pas dépasser 3 Mo.');
+        markInvalid(inputId); return false;
+    }
+    clearErr(errId); markValid(inputId); return true;
+}
+
+// ── Formulaire AJOUT ─────────────────────────────────────
+const addFields = [
+    ['add-nom',        'add-err-nom',
+        { required: true, minLen: 2,
+          requiredMsg: 'Le nom est obligatoire.',
+          minLenMsg:   'Le nom doit avoir au moins 2 caractères.' }],
+
+    ['add-prenom',     'add-err-prenom',
+        { required: true, minLen: 2,
+          requiredMsg: 'Le prénom est obligatoire.',
+          minLenMsg:   'Le prénom doit avoir au moins 2 caractères.' }],
+
+    ['add-specialite', 'add-err-specialite',
+        { required: true,
+          requiredMsg: 'La spécialité est obligatoire.' }],
+
+    // ✅ Email : optionnel MAIS validé si rempli
+    ['add-email',      'add-err-email',
+        { required: true, pattern: RE_EMAIL,
+          requiredMsg: 'L\'email est obligatoire.',
+          patternMsg: 'Format email invalide (ex : nom@domaine.com).' }],
+
+    ['add-telephone',  'add-err-telephone',
+        { required: true, pattern: RE_TEL,
+          requiredMsg: 'Le téléphone est obligatoire.',
+          patternMsg: 'Le téléphone doit contenir entre 8 et 15 chiffres.' }],
+];
+
+document.getElementById('addForm').addEventListener('submit', function (e) {
+    const results = addFields.map(([iId, eId, r]) => validateField(iId, eId, r));
+    results.push(validateFile('add-image', 'add-err-image'));
+    if (!results.every(Boolean)) {
+        e.preventDefault();
+        const first = this.querySelector('.input-invalid');
+        if (first) first.focus();
+    }
+});
+
+addFields.forEach(([inputId, errId, rules]) => {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.addEventListener('blur',  () => validateField(inputId, errId, rules));
+    el.addEventListener('input', () => {
+        if (el.classList.contains('input-invalid')) validateField(inputId, errId, rules);
+    });
+});
+document.getElementById('add-image').addEventListener('change', () =>
+    validateFile('add-image', 'add-err-image'));
+
+// ── Formulaires MODIFIER ─────────────────────────────────
+{% for t in therapeutes %}
+(function () {
+    const tid  = '{{ t.id }}';
+    const form = document.getElementById('editForm-' + tid);
+    if (!form) return;
+
+    const fields = [
+        ['edit-nom-'        + tid, 'edit-err-nom-'        + tid,
+            { required: true, minLen: 2,
+              requiredMsg: 'Le nom est obligatoire.',
+              minLenMsg:   'Le nom doit avoir au moins 2 caractères.' }],
+
+        ['edit-prenom-'     + tid, 'edit-err-prenom-'     + tid,
+            { required: true, minLen: 2,
+              requiredMsg: 'Le prénom est obligatoire.',
+              minLenMsg:   'Le prénom doit avoir au moins 2 caractères.' }],
+
+        ['edit-specialite-' + tid, 'edit-err-specialite-' + tid,
+            { required: true,
+              requiredMsg: 'La spécialité est obligatoire.' }],
+
+        ['edit-email-'      + tid, 'edit-err-email-'      + tid,
+            { required: true, pattern: RE_EMAIL,
+              requiredMsg: 'L\'email est obligatoire.',
+              patternMsg: 'Format email invalide (ex : nom@domaine.com).' }],
+
+        ['edit-telephone-'  + tid, 'edit-err-telephone-'  + tid,
+            { required: true, pattern: RE_TEL,
+              requiredMsg: 'Le téléphone est obligatoire.',
+              patternMsg: 'Le téléphone doit contenir entre 8 et 15 chiffres.' }],
+    ];
+
+    form.addEventListener('submit', function (e) {
+        const results = fields.map(([iId, eId, r]) => validateField(iId, eId, r));
+        results.push(validateFile('edit-image-' + tid, 'edit-err-image-' + tid));
+        if (!results.every(Boolean)) {
+            e.preventDefault();
+            const first = form.querySelector('.input-invalid');
+            if (first) first.focus();
+        }
+    });
+
+    fields.forEach(([inputId, errId, rules]) => {
+        const el = document.getElementById(inputId);
+        if (!el) return;
+        el.addEventListener('blur',  () => validateField(inputId, errId, rules));
+        el.addEventListener('input', () => {
+            if (el.classList.contains('input-invalid')) validateField(inputId, errId, rules);
+        });
+    });
+
+    const imgEl = document.getElementById('edit-image-' + tid);
+    if (imgEl) imgEl.addEventListener('change', () =>
+        validateFile('edit-image-' + tid, 'edit-err-image-' + tid));
+})();
+{% endfor %}
+
+// ── Modal ─────────────────────────────────────────────────
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+}
+document.querySelectorAll('.modal-overlay').forEach(el => {
+    el.addEventListener('click', function (e) {
+        if (e.target === this) closeModal(this.id);
+    });
+});
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape')
+        document.querySelectorAll('.modal-overlay.open').forEach(el => closeModal(el.id));
+});
+</script>
+
+{# ======================================================= #}
+{# MODAL SUPPRESSION                                       #}
+{# ======================================================= #}
+<div id="deleteModal" class="delete-modal">
+    <div class="delete-box">
+        <h3>🗑️ Supprimer le thérapeute ?</h3>
+        <p id="deleteText" style="color:#64748b; margin-top:8px;"></p>
+        <div class="delete-actions">
+            <button onclick="confirmDelete()" class="btn btn-danger">Oui, supprimer</button>
+            <button onclick="closeDeleteModal()" class="btn" style="background:var(--bg3); color:var(--text2);">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<script>
+let deleteUrl = null;
+
+function openDeleteModal(url, nom) {
+    deleteUrl = url;
+    document.getElementById('deleteModal').style.display = 'flex';
+    document.getElementById('deleteText').innerText = 'Voulez-vous supprimer : ' + nom + ' ?';
+}
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+function confirmDelete() {
+    window.location.href = deleteUrl;
+}
+
+// Auto-hide toast after 4s
+document.addEventListener('DOMContentLoaded', function () {
+    const toast = document.querySelector('.toast-success');
+    if (toast) setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.5s'; setTimeout(() => toast.remove(), 500); }, 4000);
+});
+</script>
+
+{% endblock %}
