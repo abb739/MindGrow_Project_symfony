@@ -1,0 +1,1046 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nos Thérapeutes — MindGrow{% endblock %}
+{% block body %}
+
+{# ══════ MODAL IA ══════ #}
+<div id="ia-modal-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:#f0f0f0;border-radius:8px;width:500px;max-width:95vw;box-shadow:0 8px 32px rgba(0,0,0,.25);overflow:hidden;font-family:Arial,sans-serif;">
+    <div style="background:#e0e0e0;padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #ccc;">
+      <span style="font-size:16px;">🖥️</span>
+      <span style="font-size:14px;font-weight:700;color:#333;">Assistant Orientation MindGrow</span>
+      <button onclick="fermerIA()" style="margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:#555;">✕</button>
+    </div>
+    <div style="background:#f8f8f8;padding:10px 16px;font-size:13px;color:#444;border-bottom:1px solid #ddd;">
+      Décrivez-moi vos besoins ou symptômes (ex: stress, anxiété...)
+    </div>
+    <div style="padding:20px 18px;">
+      <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-bottom:6px;">Votre message :</label>
+      <textarea id="ia-input" rows="5" placeholder="Ex: Je me sens très stressé par mon travail en ce moment..."
+        style="width:100%;box-sizing:border-box;border:1px solid #bbb;border-radius:4px;padding:10px;font-size:13px;resize:vertical;outline:none;font-family:inherit;background:white;"></textarea>
+      <button onclick="envoyerIA()" id="ia-btn"
+        style="margin-top:14px;padding:10px 22px;background:#7c5cbf;color:white;border:none;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;">
+        Obtenir une recommandation ✦
+      </button>
+      <label style="font-size:13px;font-weight:600;color:#333;display:block;margin-top:18px;margin-bottom:6px;">Conseil de l'IA :</label>
+      <textarea id="ia-output" rows="6" readonly placeholder="La recommandation de l'IA apparaîtra ici..."
+        style="width:100%;box-sizing:border-box;border:1px solid #bbb;border-radius:4px;padding:10px;font-size:13px;resize:vertical;outline:none;font-family:inherit;background:white;color:#333;"></textarea>
+      <div style="text-align:right;margin-top:14px;">
+        <button onclick="fermerIA()" style="padding:7px 22px;background:white;color:#333;border:1px solid #bbb;border-radius:4px;cursor:pointer;font-size:13px;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ══════ LIVE 3D CANVAS (dark) + light fallback ══════ #}
+<canvas id="bg-canvas" style="position:fixed;inset:0;z-index:-1;width:100%;height:100%;"></canvas>
+
+<style>
+/* dark default */
+body { background: #030d1a; }
+
+/* light theme overrides */
+[data-theme="light"] body { background: #f0f9ff; }
+
+[data-theme="light"] .th-hero h1 {
+  background: linear-gradient(135deg,#0b7a8f 0%,#065f6e 50%,#1a9db5 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter: none;
+}
+[data-theme="light"] .th-hero p { color: #64748b; }
+[data-theme="light"] .th-hero-pulse { background:#0b7a8f; box-shadow:0 0 10px rgba(11,122,143,.5); }
+@keyframes hpulse-light {
+  0%,100%{box-shadow:0 0 0 0 rgba(11,122,143,.6);}
+  50%{box-shadow:0 0 0 10px rgba(11,122,143,0);}
+}
+
+[data-theme="light"] .search-bar {
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(11,122,143,.15);
+  box-shadow: 0 4px 24px rgba(11,122,143,.10);
+}
+[data-theme="light"] .search-bar input[type=text],
+[data-theme="light"] .search-bar select {
+  background: white !important;
+  border: 1px solid rgba(11,122,143,.25) !important;
+  color: #1e293b !important;
+}
+[data-theme="light"] .search-bar input[type=text]::placeholder { color: #94a3b8; }
+[data-theme="light"] .search-bar select option { background: white; color: #1e293b; }
+
+[data-theme="light"] .th-card {
+  background: rgba(255,255,255,.88);
+  border-color: rgba(11,122,143,.15);
+  box-shadow: 0 8px 32px rgba(11,122,143,.10), 0 2px 8px rgba(0,0,0,.06);
+}
+[data-theme="light"] .th-card:hover {
+  border-color: rgba(11,122,143,.45);
+  box-shadow: 0 20px 50px rgba(11,122,143,.18), 0 4px 16px rgba(0,0,0,.08);
+}
+[data-theme="light"] .th-card::after {
+  background: linear-gradient(90deg,transparent,#0b7a8f,transparent);
+}
+[data-theme="light"] .th-body h2 { color: #1e293b !important; }
+[data-theme="light"] .th-spec-badge { background:rgba(11,122,143,.08); color:#0b7a8f; border-color:rgba(11,122,143,.2); }
+[data-theme="light"] .badge-certified { background:linear-gradient(135deg,#d1fae5,#a7f3d0); color:#065f46; border-color:rgba(6,95,70,.2); box-shadow:none; }
+[data-theme="light"] .note-label { color: #0b7a8f; }
+[data-theme="light"] .note-count  { color: #94a3b8; }
+[data-theme="light"] .stars { color: #f59e0b; }
+[data-theme="light"] .th-contact { color: #64748b; }
+[data-theme="light"] .cmts-title { color: rgba(11,122,143,.65); }
+[data-theme="light"] .cmts-title::before,
+[data-theme="light"] .cmts-title::after { background: rgba(11,122,143,.12); }
+[data-theme="light"] .cmts-scroll::-webkit-scrollbar-thumb { background: rgba(11,122,143,.3); }
+[data-theme="light"] .cmt-card { background:rgba(11,122,143,.05); border-color:rgba(11,122,143,.12); }
+[data-theme="light"] .cmt-card:hover { background:rgba(11,122,143,.10); border-color:rgba(11,122,143,.25); }
+[data-theme="light"] .cmt-text { color: #334155; }
+[data-theme="light"] .cmt-stars { color: #f59e0b; }
+[data-theme="light"] .cmt-meta { color: rgba(11,122,143,.55); }
+[data-theme="light"] .cmt-dot { background: rgba(11,122,143,.3); }
+[data-theme="light"] .no-cmts { color: #94a3b8; }
+[data-theme="light"] .avis-sep { border-color: rgba(11,122,143,.1); }
+[data-theme="light"] .avis-toggle-btn { color: #0b7a8f; border-color:rgba(11,122,143,.25); }
+[data-theme="light"] .avis-toggle-btn:hover { color:#065f6e; border-color:rgba(11,122,143,.5); background:rgba(11,122,143,.06); }
+[data-theme="light"] .avis-form-wrap > form > label { color: rgba(11,122,143,.7); }
+[data-theme="light"] .star-picker label { color:rgba(0,0,0,.18) !important; }
+[data-theme="light"] .star-picker input:checked ~ label,
+[data-theme="light"] .star-picker label:hover,
+[data-theme="light"] .star-picker label:hover ~ label { color:#f59e0b !important; }
+[data-theme="light"] .avis-form-wrap textarea {
+  background: white !important; border-color:rgba(11,122,143,.25) !important; color:#1e293b !important;
+}
+[data-theme="light"] .avis-form-wrap textarea::placeholder { color:#94a3b8; }
+[data-theme="light"] .star-picker label { color: #d1d5db; }
+[data-theme="light"] .th-avatar-emoji { filter: drop-shadow(0 4px 12px rgba(11,122,143,.2)); }
+[data-theme="light"] .th-card:hover .th-avatar-emoji { filter: drop-shadow(0 6px 18px rgba(11,122,143,.35)); transform: scale(1.1) rotate(-5deg); }
+
+/* ── Hero ── */
+.th-hero { text-align:center; padding:60px 0 44px; }
+.th-hero h1 {
+  font-size:52px; font-weight:900; letter-spacing:-2px; line-height:1.1;
+  background:linear-gradient(135deg,#00e5ff 0%,#4fc3f7 50%,#00bcd4 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(0,229,255,.3));
+}
+.th-hero p { font-size:18px; color:rgba(180,220,255,.7); margin-top:12px; }
+.th-hero-pulse {
+  display:inline-block; width:11px; height:11px; background:#00e5ff;
+  border-radius:50%; margin-right:10px; vertical-align:middle;
+  animation:hpulse 1.8s infinite; box-shadow:0 0 12px #00e5ff;
+}
+@keyframes hpulse {
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(0,229,255,.7);}
+  50%{transform:scale(1.4);box-shadow:0 0 0 10px rgba(0,229,255,0);}
+}
+
+/* ── Search bar ── */
+.search-bar {
+  background:rgba(3,20,40,.7); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+  border-radius:20px; padding:20px 24px; margin-bottom:36px;
+  box-shadow:0 4px 32px rgba(0,229,255,.10),0 0 0 1px rgba(0,229,255,.15);
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  border:1px solid rgba(0,229,255,.15);
+}
+.search-bar input[type=text], .search-bar select {
+  background:rgba(255,255,255,.07)!important; border:1px solid rgba(0,229,255,.25)!important;
+  color:#e0f7fa!important; border-radius:10px!important;
+}
+.search-bar input[type=text]::placeholder { color:rgba(180,220,255,.45); }
+.search-bar input[type=text]{flex:2;min-width:200px;margin:0;}
+.search-bar select{flex:1;min-width:160px;margin:0;}
+.search-bar select option{background:#071a2e;color:#e0f7fa;}
+
+/* ══════════════════════════════════
+   CAROUSEL
+══════════════════════════════════ */
+.carousel-wrap {
+  position: relative;
+  padding-bottom: 80px;
+}
+.carousel-viewport {
+  overflow: hidden;
+  border-radius: 12px;
+}
+.th-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 28px;
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+  align-items: stretch;
+}
+/* Each card fills exactly 1/3 of viewport minus gaps */
+.th-card {
+  flex: 0 0 calc((100% - 56px) / 3);
+  min-width: 0;
+}
+
+/* ══════════════════════════════════
+   CARD — enhanced design
+══════════════════════════════════ */
+.th-card {
+  background:rgba(4,16,32,.78);
+  backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+  border-radius:24px; width:320px;
+  border:1.5px solid rgba(0,229,255,.16);
+  box-shadow:0 0 0 1px rgba(0,229,255,.08),0 12px 48px rgba(0,0,0,.55);
+  transition:transform .4s cubic-bezier(.34,1.56,.64,1),box-shadow .4s,border-color .4s;
+  overflow:hidden; display:flex; flex-direction:column;
+  position:relative;
+}
+.th-card::after {
+  content:''; position:absolute; top:0; left:15%; right:15%; height:1.5px;
+  background:linear-gradient(90deg,transparent,#00e5ff,transparent);
+  opacity:0; transition:opacity .4s;
+}
+.th-card:hover { border-color:rgba(0,229,255,.5); transform:translateY(-12px) scale(1.02); box-shadow:0 0 0 1px rgba(0,229,255,.4),0 24px 60px rgba(0,0,0,.65),0 0 40px rgba(0,229,255,.12); }
+.th-card:hover::after { opacity:1; }
+
+/* Photo */
+.th-photo-wrap {
+  height:200px; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,#031628,#065f6e);
+  display:flex; align-items:center; justify-content:center;
+}
+.th-photo-wrap img { width:100%;height:100%;object-fit:cover;transition:transform .5s; }
+.th-card:hover .th-photo-wrap img { transform:scale(1.08); }
+.th-photo-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(3,12,28,.88) 0%,transparent 55%); }
+.th-photo-name { position:absolute;bottom:14px;left:18px;right:18px;color:white;font-size:17px;font-weight:800;line-height:1.25;text-shadow:0 2px 8px rgba(0,0,0,.6); }
+.th-photo-spec {
+  display:inline-block; background:rgba(0,229,255,.18); backdrop-filter:blur(6px);
+  border:1px solid rgba(0,229,255,.3); color:#b2ebf2;
+  font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:20px;margin-top:4px;
+}
+.th-avatar-emoji {
+  font-size:64px;user-select:none;line-height:1;
+  filter:drop-shadow(0 0 18px rgba(0,229,255,.5));
+  transition:transform .4s,filter .4s;
+}
+.th-card:hover .th-avatar-emoji { transform:scale(1.12) rotate(-5deg); filter:drop-shadow(0 0 28px rgba(0,229,255,.8)); }
+
+/* Card body */
+.th-body { padding:20px 22px; flex:1; display:flex; flex-direction:column; }
+.th-body h2 { color:#e0f7fa!important; }
+.th-spec-badge {
+  background:rgba(0,229,255,.1); color:#4fc3f7;
+  padding:4px 14px; border-radius:20px; font-size:12px; font-weight:700;
+  border:1px solid rgba(0,229,255,.2);
+}
+.badge-certified {
+  display:inline-flex; align-items:center; gap:5px;
+  background:linear-gradient(135deg,rgba(0,229,255,.15),rgba(0,188,212,.12));
+  color:#00e5ff; padding:4px 14px; border-radius:20px;
+  font-size:12px; font-weight:700; border:1px solid rgba(0,229,255,.28);
+  box-shadow:0 0 12px rgba(0,229,255,.15);
+}
+
+/* Stars */
+.star-row { display:flex; align-items:center; gap:8px; margin-bottom:14px; }
+.stars { color:#f59e0b; font-size:17px; letter-spacing:1.5px; }
+.note-label { font-size:13px; color:#00e5ff; font-weight:700; }
+.note-count { font-size:12px; color:rgba(180,220,255,.45); }
+
+/* Contact */
+.th-contact { font-size:13px; color:rgba(180,220,255,.65); margin-bottom:5px; }
+
+/* ══════════════════════════════════
+   COMMENTS SECTION
+══════════════════════════════════ */
+.cmts-section { margin-top:14px; }
+.cmts-title {
+  font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:rgba(0,229,255,.6); margin-bottom:10px;
+  display:flex; align-items:center; gap:6px;
+}
+.cmts-title::before { content:''; flex:1; height:1px; background:rgba(0,229,255,.12); }
+.cmts-title::after  { content:''; flex:1; height:1px; background:rgba(0,229,255,.12); }
+
+.cmts-scroll {
+  max-height:200px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;
+  padding-right:4px;
+}
+.cmts-scroll::-webkit-scrollbar { width:4px; }
+.cmts-scroll::-webkit-scrollbar-track { background:rgba(255,255,255,.04); border-radius:4px; }
+.cmts-scroll::-webkit-scrollbar-thumb { background:rgba(0,229,255,.25); border-radius:4px; }
+
+.cmt-card {
+  background:rgba(0,229,255,.05);
+  border:1px solid rgba(0,229,255,.10);
+  border-radius:12px; padding:10px 13px;
+  position:relative; transition:background .25s;
+}
+.cmt-card:hover { background:rgba(0,229,255,.10); border-color:rgba(0,229,255,.22); }
+
+.cmt-stars { color:#f59e0b; font-size:13px; letter-spacing:1px; margin-bottom:5px; }
+.cmt-text {
+  font-size:13px; color:rgba(200,230,255,.82); line-height:1.5;
+  margin:0; word-break:break-word;
+}
+.cmt-meta {
+  font-size:11px; color:rgba(0,229,255,.45); margin-top:6px;
+  display:flex; align-items:center; gap:5px;
+}
+.cmt-dot { width:3px; height:3px; border-radius:50%; background:rgba(0,229,255,.3); }
+
+.no-cmts {
+  text-align:center; padding:20px 12px;
+  color:rgba(180,220,255,.3); font-size:13px; font-style:italic;
+}
+@keyframes fadeInDown {
+  from { opacity:0; transform:translateY(-10px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ══════════════════════════════════
+   LEAVE REVIEW FORM
+══════════════════════════════════ */
+.avis-sep { border:none; border-top:1px solid rgba(0,229,255,.08); margin:16px 0 12px; }
+.avis-toggle-btn {
+  background:none; border:none; cursor:pointer;
+  font-size:13px; font-weight:700; color:rgba(0,229,255,.7);
+  padding:6px 12px; display:flex; align-items:center; gap:6px;
+  border:1px solid rgba(0,229,255,.18); border-radius:20px; width:100%;
+  justify-content:center; transition:all .25s;
+}
+.avis-toggle-btn:hover { color:#00e5ff; border-color:rgba(0,229,255,.4); background:rgba(0,229,255,.07); }
+
+.avis-form-wrap { display:none; margin-top:14px; }
+.avis-form-wrap.open { display:block; }
+
+.star-picker { display:flex;gap:6px;margin-bottom:10px;flex-direction:row-reverse;justify-content:flex-end; }
+.star-picker input { display:none; }
+.star-picker label {
+  font-size:28px !important;
+  color:rgba(255,255,255,.18) !important;
+  cursor:pointer;
+  transition:color .15s, transform .12s;
+  text-transform:none !important;
+  letter-spacing:normal !important;
+  font-weight:normal !important;
+}
+.star-picker label:hover { transform:scale(1.2); }
+.star-picker input:checked ~ label,
+.star-picker label:hover,
+.star-picker label:hover ~ label { color:#f59e0b !important; }
+
+/* Form labels — only direct children, not star labels */
+.avis-form-wrap > form > label { color:rgba(0,229,255,.6); font-size:11px; text-transform:uppercase; letter-spacing:.5px; font-weight:700; }
+.avis-form-wrap textarea {
+  background:rgba(0,229,255,.05)!important; border:1px solid rgba(0,229,255,.2)!important;
+  color:#e0f7fa!important; border-radius:10px!important; padding:10px!important;
+}
+.avis-form-wrap textarea::placeholder { color:rgba(180,220,255,.3); }
+</style>
+
+{# ══════ HERO ══════ #}
+<div class="th-hero">
+  <h1><span class="th-hero-pulse"></span>Nos Thérapeutes</h1>
+  <p>Des professionnels qualifiés pour vous accompagner sur votre chemin</p>
+</div>
+
+{# ══════ SEARCH ══════ #}
+<div class="search-bar">
+  <form method="get" action="{{ path('therapeutes') }}" style="display:contents;">
+    <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher par nom ou prénom...">
+    <select name="specialite">
+      <option value="">Toutes les spécialités</option>
+      {% for spec in specialites %}
+      <option value="{{ spec }}" {{ specialite == spec ? 'selected' : '' }}>{{ spec }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Filtrer</button>
+    <a href="{{ path('stats_therapeutes') }}"
+      style="display:inline-flex;align-items:center;gap:6px;padding:10px 18px;
+             background:linear-gradient(135deg,rgba(0,229,255,.12),rgba(0,188,212,.08));
+             color:#00e5ff;border:1px solid rgba(0,229,255,.28);border-radius:25px;
+             font-weight:700;font-size:13px;text-decoration:none;transition:all .25s;">
+      📊 Statistiques
+    </a>
+    <button type="button" class="btn" onclick="ouvrirConseillerIA()"
+      style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;font-weight:700;border-radius:25px;padding:10px 20px;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(108,92,231,.4);">
+      🤖 Conseiller IA
+    </button>
+    {% if search or specialite %}
+    <a href="{{ path('therapeutes') }}" class="btn" style="background:rgba(220,38,38,.2);color:#fca5a5;border:1px solid rgba(220,38,38,.3);">✕ Réinitialiser</a>
+    {% endif %}
+  </form>
+</div>
+
+{% if search or specialite %}
+<p style="color:rgba(180,220,255,.6);margin-bottom:28px;font-size:14px;">
+  <strong style="color:#00e5ff;">{{ therapeutes|length }}</strong> thérapeute(s) trouvé(s)
+  {% if search %} pour "<strong style="color:#4fc3f7;">{{ search }}</strong>"{% endif %}
+  {% if specialite %} — spécialité : <strong style="color:#4fc3f7;">{{ specialite }}</strong>{% endif %}
+</p>
+{% endif %}
+
+{# ══════ CAROUSEL ══════ #}
+<div class="carousel-wrap">
+
+  {# Prev button #}
+  <button id="carousel-prev" onclick="carouselMove(-1)" aria-label="Précédent"
+    style="position:absolute;left:-24px;top:50%;transform:translateY(-50%);z-index:10;
+           width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+           background:rgba(0,229,255,.15);backdrop-filter:blur(10px);
+           color:#00e5ff;font-size:22px;display:flex;align-items:center;justify-content:center;
+           box-shadow:0 0 0 1px rgba(0,229,255,.3),0 4px 20px rgba(0,0,0,.4);
+           transition:all .25s;">‹</button>
+
+  {# Next button #}
+  <button id="carousel-next" onclick="carouselMove(1)" aria-label="Suivant"
+    style="position:absolute;right:-24px;top:50%;transform:translateY(-50%);z-index:10;
+           width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+           background:rgba(0,229,255,.15);backdrop-filter:blur(10px);
+           color:#00e5ff;font-size:22px;display:flex;align-items:center;justify-content:center;
+           box-shadow:0 0 0 1px rgba(0,229,255,.3),0 4px 20px rgba(0,0,0,.4);
+           transition:all .25s;">›</button>
+
+  <div class="carousel-viewport">
+    <div class="th-grid" id="carousel-track">
+{% for therapeute in therapeutes %}
+{% set note  = noteMoyenne[therapeute.id] is defined ? noteMoyenne[therapeute.id] : 0 %}
+{% set nb    = nbAvis[therapeute.id]      is defined ? nbAvis[therapeute.id]      : 0 %}
+{% set avis  = avisList[therapeute.id]    is defined ? avisList[therapeute.id]    : [] %}
+
+<div class="th-card">
+
+  {# Photo / avatar #}
+  <div class="th-photo-wrap">
+    {% if therapeute.image %}
+      <img src="{{ therapeute.image }}" alt="{{ therapeute.prenom }} {{ therapeute.nom }}">
+      <div class="th-photo-overlay"></div>
+      <div class="th-photo-name">
+        {{ therapeute.prenom }} {{ therapeute.nom }}
+        {% if therapeute.specialite %}<br><span class="th-photo-spec">{{ therapeute.specialite }}</span>{% endif %}
+      </div>
+    {% else %}
+      <div class="th-avatar-emoji">🧑‍⚕️</div>
+    {% endif %}
+  </div>
+
+  <div class="th-body">
+
+    {# Name (no photo) #}
+    {% if not therapeute.image %}
+    <h2 style="font-size:18px;font-weight:800;color:#e0f7fa;margin-bottom:4px;text-align:center;">
+      {{ therapeute.prenom }} {{ therapeute.nom }}
+    </h2>
+    {% if therapeute.specialite %}
+    <div style="text-align:center;margin-bottom:12px;">
+      <span class="th-spec-badge">{{ therapeute.specialite }}</span>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {# Certified badge #}
+    {% if therapeute.statutCertificat == 'verifie' %}
+    <div style="text-align:center;margin-bottom:12px;">
+      <span class="badge-certified">✅ Certifié MindGrow</span>
+    </div>
+    {% endif %}
+
+    {# Stars summary #}
+    <div class="star-row">
+      <div class="stars" id="card-stars-{{ therapeute.id }}">{% for i in 1..5 %}{{ i <= note|round ? '★' : '☆' }}{% endfor %}</div>
+      {% if nb > 0 %}
+      <span class="note-label" id="card-note-{{ therapeute.id }}">{{ note }}/5</span>
+      <span class="note-count" id="card-nb-{{ therapeute.id }}">({{ nb }} avis)</span>
+      {% else %}
+      <span class="note-label" id="card-note-{{ therapeute.id }}" style="display:none;"></span>
+      <span class="note-count" id="card-nb-{{ therapeute.id }}" style="display:none;"></span>
+      <span class="note-count" style="font-style:italic;">Aucun avis</span>
+      {% endif %}
+    </div>
+
+    {# Contact #}
+    {% if therapeute.email %}<div class="th-contact">✉️ {{ therapeute.email }}</div>{% endif %}
+    {% if therapeute.telephone %}<div class="th-contact">📞 {{ therapeute.telephone }}</div>{% endif %}
+
+    {# ── COMMENTS ── #}
+    <div id="cmts-section-{{ therapeute.id }}" class="cmts-section" {% if avis|length == 0 %}style="display:none"{% endif %}>
+      <div class="cmts-title">Avis clients</div>
+      <div class="cmts-scroll" id="cmts-scroll-{{ therapeute.id }}">
+        {% for a in avis %}
+        <div class="cmt-card">
+          <div class="cmt-stars">{% for i in 1..5 %}{{ i <= a.note ? '★' : '☆' }}{% endfor %}</div>
+          {% if a.commentaire %}<p class="cmt-text">{{ a.commentaire }}</p>{% endif %}
+          <div class="cmt-meta">
+            👤 Utilisateur #{{ a.idUtilisateur }}
+            <span class="cmt-dot"></span>
+            {% if a.dateAvis %}{{ a.dateAvis|date('d/m/Y') }}{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div id="no-cmts-{{ therapeute.id }}" class="no-cmts" {% if avis|length > 0 %}style="display:none"{% endif %}>
+      Soyez le premier à laisser un avis ✨
+    </div>
+
+    {# ── LEAVE REVIEW ── #}
+    <hr class="avis-sep">
+    <button class="avis-toggle-btn" onclick="toggleAvis({{ therapeute.id }})">
+      <span id="avis-icon-{{ therapeute.id }}">✏️</span>
+      <span id="avis-label-{{ therapeute.id }}">Laisser un avis</span>
+    </button>
+
+    <div class="avis-form-wrap" id="avis-form-{{ therapeute.id }}">
+      <form id="form-avis-{{ therapeute.id }}"
+            onsubmit="submitAvis(event, {{ therapeute.id }}, '{{ path('avis_new', {idTherapeute: therapeute.id}) }}')">
+
+        {# Star rating — required, standalone #}
+        <label style="display:block;margin-bottom:6px;margin-top:10px;">Note <span style="color:#f59e0b;">★</span> (obligatoire)</label>
+        <div class="star-picker" id="star-picker-{{ therapeute.id }}" style="margin-bottom:12px;">
+          {% for i in [5,4,3,2,1] %}
+          <input type="radio" name="note" id="star-{{ therapeute.id }}-{{ i }}" value="{{ i }}" required>
+          <label for="star-{{ therapeute.id }}-{{ i }}">★</label>
+          {% endfor %}
+        </div>
+
+        {# Comment — optional #}
+        <label style="display:block;margin-bottom:6px;">Commentaire <span style="color:rgba(180,220,255,.4);font-size:11px;">(optionnel)</span></label>
+        <textarea name="commentaire" rows="3"
+          placeholder="Votre expérience avec ce thérapeute..."
+          style="width:100%;box-sizing:border-box;margin-bottom:10px;"></textarea>
+
+        <div id="avis-msg-{{ therapeute.id }}" style="font-size:12px;margin-bottom:8px;display:none;"></div>
+
+        <button type="submit" id="avis-btn-{{ therapeute.id }}"
+          class="btn btn-primary btn-sm" style="width:100%;border-radius:10px;">
+          Publier mon avis
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% else %}
+<div style="text-align:center;width:100%;padding:80px;color:rgba(180,220,255,.35);">
+  {% if search or specialite %}
+    Aucun thérapeute trouvé — <a href="{{ path('therapeutes') }}" style="color:#00e5ff;">Voir tous</a>
+  {% else %}
+    Aucun thérapeute disponible.
+  {% endif %}
+</div>
+{% endfor %}
+
+  </div>{# /carousel-viewport #}
+
+  {# Dot indicators #}
+  <div id="carousel-dots"
+    style="display:flex;justify-content:center;gap:10px;margin-top:28px;"></div>
+
+</div>{# /carousel-wrap #}
+
+{# ══════ THREE.JS LIVE 6D BACKGROUND (theme-aware) ══════ #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+
+  /* ── Palettes ── */
+  const DARK = {
+    bg:      0x030d1a,
+    fog:     0x030d1a,
+    ambient: 0x001a33,
+    l1:      0x00e5ff,
+    l2:      0x0077aa,
+    l3:      0x00bcd4,
+    node:    0x00e5ff,
+    nodeEm:  0x004455,
+    line:    0x00e5ff,
+    dna1:    0x00e5ff,
+    dna2:    0x26c6da,
+    dnaRung: 0x00bcd4,
+    orbs:    [0x00e5ff,0x0077aa,0x26c6da,0x006064,0x00bcd4],
+    cross:   'rgba(0,229,255,0.9)',
+    grid1:   0x003344,
+    grid2:   0x001a2e,
+    ptOpacity: 0.70,
+    nodeOpacity: 0.85,
+  };
+  const LIGHT = {
+    bg:      0xf0f8ff,
+    fog:     0xe8f4fb,
+    ambient: 0xc8e8f8,
+    l1:      0x0b7a8f,
+    l2:      0x4fc3f7,
+    l3:      0x0288d1,
+    node:    0x0b7a8f,
+    nodeEm:  0xb2ebf2,
+    line:    0x0b7a8f,
+    dna1:    0x0b7a8f,
+    dna2:    0x29b6f6,
+    dnaRung: 0x0097a7,
+    orbs:    [0x0b7a8f,0x4fc3f7,0x29b6f6,0x006064,0x0288d1],
+    cross:   'rgba(11,122,143,0.85)',
+    grid1:   0xb2ebf2,
+    grid2:   0xd4f0f7,
+    ptOpacity: 0.55,
+    nodeOpacity: 0.70,
+  };
+
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 2000);
+  camera.position.z = 500;
+
+  const ambLight = new THREE.AmbientLight(DARK.ambient, 2); scene.add(ambLight);
+  const light1   = new THREE.PointLight(DARK.l1, 3, 600);  light1.position.set(0,0,200);    scene.add(light1);
+  const light2   = new THREE.PointLight(DARK.l2, 2, 500);  light2.position.set(-300,200,100); scene.add(light2);
+  const light3   = new THREE.PointLight(DARK.l3, 2, 500);  light3.position.set(300,-200,150); scene.add(light3);
+
+  renderer.setClearColor(DARK.bg, 1);
+  scene.fog = new THREE.FogExp2(DARK.fog, 0.0012);
+
+  /* ── Particles ── */
+  const PC = 2800, pGeo = new THREE.BufferGeometry();
+  const pP = new Float32Array(PC*3), pC = new Float32Array(PC*3), pS = new Float32Array(PC);
+  for(let i=0;i<PC;i++){
+    pP[i*3]=(Math.random()-.5)*1800; pP[i*3+1]=(Math.random()-.5)*1200; pP[i*3+2]=(Math.random()-.5)*1000-200;
+    const t=Math.random(); pC[i*3]=t*.3; pC[i*3+1]=.5+t*.5; pC[i*3+2]=.7+t*.3;
+    pS[i]=Math.random()*3+.5;
+  }
+  pGeo.setAttribute('position', new THREE.BufferAttribute(pP,3));
+  pGeo.setAttribute('color',    new THREE.BufferAttribute(pC,3));
+  pGeo.setAttribute('size',     new THREE.BufferAttribute(pS,1));
+  const ptsMat = new THREE.PointsMaterial({size:2, vertexColors:true, transparent:true, opacity:DARK.ptOpacity, sizeAttenuation:true, depthWrite:false});
+  const pts = new THREE.Points(pGeo, ptsMat);
+  scene.add(pts);
+
+  /* ── Nodes ── */
+  const NC=80, nodes=[], nvels=[], nodeMeshes=[];
+  const nGeo = new THREE.SphereGeometry(4,8,8);
+  for(let i=0;i<NC;i++){
+    const mat = new THREE.MeshPhongMaterial({color:DARK.node, emissive:DARK.nodeEm, transparent:true, opacity:DARK.nodeOpacity});
+    const m   = new THREE.Mesh(nGeo, mat);
+    m.position.set((Math.random()-.5)*1200,(Math.random()-.5)*800,(Math.random()-.5)*400-100);
+    m.scale.setScalar(.3+Math.random()*.7);
+    scene.add(m); nodes.push(m); nodeMeshes.push(mat);
+    nvels.push(new THREE.Vector3((Math.random()-.5)*.4,(Math.random()-.5)*.3,(Math.random()-.5)*.15));
+  }
+  const lMat = new THREE.LineBasicMaterial({color:DARK.line, transparent:true, opacity:.12, depthWrite:false});
+  const lGrp = new THREE.Group(); scene.add(lGrp);
+  function rebuildLines(){
+    while(lGrp.children.length) lGrp.remove(lGrp.children[0]);
+    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++)
+      if(nodes[i].position.distanceTo(nodes[j].position)<220)
+        lGrp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([nodes[i].position,nodes[j].position]), lMat));
+  }
+
+  /* ── DNA ── */
+  const dnaMats = []; // store refs for recoloring
+  function makeDNA(pos,rotY){
+    const g  = new THREE.Group(); g.position.copy(pos); g.rotation.y=rotY; scene.add(g);
+    const m1 = new THREE.MeshPhongMaterial({color:DARK.dna1, transparent:true, opacity:.65});
+    const m2 = new THREE.MeshPhongMaterial({color:DARK.dna2, transparent:true, opacity:.65});
+    const mr = new THREE.MeshPhongMaterial({color:DARK.dnaRung, transparent:true, opacity:.70});
+    dnaMats.push(m1, m2, mr);
+    const bG = new THREE.SphereGeometry(5,10,10);
+    for(let i=0;i<40;i++){
+      const t=i/40, ang=t*Math.PI*8, y=(t-.5)*600;
+      const x1=Math.cos(ang)*40,z1=Math.sin(ang)*40,x2=-Math.cos(ang)*40,z2=-Math.sin(ang)*40;
+      const b1=new THREE.Mesh(bG,m1); b1.position.set(x1,y,z1); g.add(b1);
+      const b2=new THREE.Mesh(bG,m2); b2.position.set(x2,y,z2); g.add(b2);
+      if(i%4===0){
+        const r=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,1,6),mr);
+        r.position.set((x1+x2)/2,y,(z1+z2)/2);
+        r.scale.set(1,Math.sqrt((x2-x1)**2+(z2-z1)**2),1);
+        r.rotation.z=Math.PI/2; r.rotation.y=-Math.atan2(z2-z1,x2-x1);
+        g.add(r);
+      }
+    }
+    return g;
+  }
+  const dna1=makeDNA(new THREE.Vector3(-420,0,-80),0);
+  const dna2=makeDNA(new THREE.Vector3( 420,0,-80),Math.PI);
+
+  /* ── Orbs ── */
+  const orbData=[], orbMats=[];
+  for(let i=0;i<14;i++){
+    const r=18+Math.random()*40;
+    const mat=new THREE.MeshPhongMaterial({
+      color:DARK.orbs[i%5], emissive:DARK.orbs[i%5], emissiveIntensity:.25,
+      transparent:true, opacity:.06+Math.random()*.08, wireframe:Math.random()>.6
+    });
+    const m=new THREE.Mesh(new THREE.SphereGeometry(r,20,20),mat);
+    m.position.set((Math.random()-.5)*1400,(Math.random()-.5)*900,(Math.random()-.5)*500-100);
+    scene.add(m); orbMats.push(mat);
+    orbData.push({mesh:m, speed:.0002+Math.random()*.0004, phase:Math.random()*Math.PI*2, rx:(Math.random()-.5)*.003, ry:(Math.random()-.5)*.003});
+  }
+
+  /* ── Cross sprites ── */
+  let crossTexDark, crossTexLight;
+  function makeCrossTex(color){
+    const c=document.createElement('canvas'); c.width=c.height=64;
+    const ctx=c.getContext('2d'); ctx.fillStyle=color;
+    ctx.fillRect(26,8,12,48); ctx.fillRect(8,26,48,12);
+    return new THREE.CanvasTexture(c);
+  }
+  crossTexDark  = makeCrossTex('rgba(0,229,255,0.9)');
+  crossTexLight = makeCrossTex('rgba(11,122,143,0.85)');
+  const cGrp=new THREE.Group(); scene.add(cGrp);
+  const crossSprites=[];
+  for(let i=0;i<22;i++){
+    const mat=new THREE.SpriteMaterial({map:crossTexDark, transparent:true, opacity:.1+Math.random()*.12, depthWrite:false});
+    const sp=new THREE.Sprite(mat);
+    const s=20+Math.random()*40; sp.scale.set(s,s,1);
+    sp.position.set((Math.random()-.5)*1600,(Math.random()-.5)*1000,(Math.random()-.5)*600-150);
+    cGrp.add(sp); crossSprites.push(mat);
+  }
+
+  /* ── Grid (two versions, swap on theme change) ── */
+  const gridDark  = new THREE.GridHelper(2000,40,DARK.grid1, DARK.grid2);
+  const gridLight = new THREE.GridHelper(2000,40,LIGHT.grid1,LIGHT.grid2);
+  [gridDark,gridLight].forEach(g=>{g.position.y=-350;g.rotation.x=.1;scene.add(g);});
+  gridLight.visible=false;
+
+  /* ── Particle color arrays for light/dark ── */
+  const pC_dark  = new Float32Array(PC*3);
+  const pC_light = new Float32Array(PC*3);
+  for(let i=0;i<PC;i++){
+    const t=Math.random();
+    pC_dark[i*3]=t*.3;   pC_dark[i*3+1]=.5+t*.5;  pC_dark[i*3+2]=.7+t*.3;
+    pC_light[i*3]=.0+t*.3; pC_light[i*3+1]=.45+t*.4; pC_light[i*3+2]=.55+t*.35;
+  }
+  // store initial dark colors
+  for(let i=0;i<PC*3;i++) pC_dark[i]=pC[i];
+
+  /* ── Theme switch ── */
+  window._bgSetTheme = function(theme){
+    try {
+      const P = theme==='light' ? LIGHT : DARK;
+      renderer.setClearColor(P.bg, 1);
+      scene.fog.color.setHex(P.fog);
+      ambLight.color.setHex(P.ambient);
+      light1.color.setHex(P.l1);
+      light2.color.setHex(P.l2);
+      light3.color.setHex(P.l3);
+      // nodes
+      nodeMeshes.forEach(m=>{ m.color.setHex(P.node); m.emissive.setHex(P.nodeEm); m.opacity=P.nodeOpacity; });
+      lMat.color.setHex(P.line);
+      // DNA
+      for(let i=0;i<dnaMats.length;i+=3){
+        dnaMats[i].color.setHex(P.dna1);
+        dnaMats[i+1].color.setHex(P.dna2);
+        dnaMats[i+2].color.setHex(P.dnaRung);
+      }
+      // orbs
+      orbMats.forEach((m,i)=>{ m.color.setHex(P.orbs[i%5]); m.emissive.setHex(P.orbs[i%5]); });
+      // crosses
+      const cTex = theme==='light' ? crossTexLight : crossTexDark;
+      crossSprites.forEach(m=>{ m.map=cTex; m.needsUpdate=true; });
+      // grid — swap pre-built helpers
+      gridDark.visible  = (theme!=='light');
+      gridLight.visible = (theme==='light');
+      // particles — swap color buffer
+      const src = theme==='light' ? pC_light : pC_dark;
+      const attr = pGeo.getAttribute('color');
+      for(let i=0;i<PC*3;i++) attr.array[i]=src[i];
+      attr.needsUpdate=true;
+      ptsMat.opacity = P.ptOpacity;
+      rebuildLines();
+    } catch(e){ console.error('_bgSetTheme error', e); }
+  };
+
+  /* ── Mouse parallax ── */
+  let mx=0,my=0;
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2;});
+  window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+
+  /* ── Animate ── */
+  let frame=0,lt=0;
+  function animate(){
+    requestAnimationFrame(animate); frame++;
+    const t=frame*.005;
+    camera.position.x+=(mx*60-camera.position.x)*.025;
+    camera.position.y+=(-my*40-camera.position.y)*.025;
+    camera.lookAt(scene.position);
+    pts.rotation.y=t*.04; pts.rotation.x=t*.015;
+    dna1.rotation.y=t*.5; dna2.rotation.y=-t*.5;
+    for(let i=0;i<nodes.length;i++){
+      nodes[i].position.addScaledVector(nvels[i],1);
+      const p=nodes[i].position;
+      if(Math.abs(p.x)>600)nvels[i].x*=-1;
+      if(Math.abs(p.y)>400)nvels[i].y*=-1;
+      if(Math.abs(p.z)>200)nvels[i].z*=-1;
+      nodes[i].material.emissiveIntensity=.3+.3*Math.sin(t*2+i);
+    }
+    lt++; if(lt%30===0)rebuildLines();
+    for(const d of orbData){d.mesh.position.y+=Math.sin(t*d.speed*1000+d.phase)*.3;d.mesh.rotation.x+=d.rx;d.mesh.rotation.y+=d.ry;}
+    light1.intensity=3+Math.sin(t*1.3)*1.2;
+    light1.position.x=Math.sin(t*.7)*200; light1.position.y=Math.cos(t*.5)*150;
+    cGrp.rotation.z=t*.02; cGrp.rotation.y=t*.015;
+    const activeGrid=gridDark.visible?gridDark:gridLight;
+    activeGrid.material.opacity=.25+.15*Math.sin(t*.8);
+    renderer.render(scene,camera);
+  }
+  rebuildLines(); animate();
+})();
+</script>
+
+<script>
+/* ── Theme-aware background ── */
+function applyBgTheme(theme) {
+  if(window._bgSetTheme) window._bgSetTheme(theme);
+}
+applyBgTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+new MutationObserver(() => {
+  applyBgTheme(document.documentElement.getAttribute('data-theme') || 'dark');
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+function ouvrirConseillerIA(){document.getElementById('ia-modal-overlay').style.display='flex';document.getElementById('ia-input').value='';document.getElementById('ia-output').value='';}
+function fermerIA(){document.getElementById('ia-modal-overlay').style.display='none';}
+function envoyerIA(){
+  const input=document.getElementById('ia-input'),output=document.getElementById('ia-output'),btn=document.getElementById('ia-btn');
+  const text=input.value.trim(); if(!text)return;
+  btn.disabled=true; btn.textContent='⏳ Analyse en cours...'; output.value='';
+  fetch('/chatbot/recommander-therapeute',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})})
+  .then(r=>r.json()).then(d=>{output.value=d.response||d.error||'Erreur.';})
+  .catch(()=>{output.value='Erreur de connexion.';})
+  .finally(()=>{btn.disabled=false;btn.textContent='Obtenir une recommandation ✦';});
+}
+function toggleAvis(id){
+  const wrap=document.getElementById('avis-form-'+id);
+  const icon=document.getElementById('avis-icon-'+id);
+  const label=document.getElementById('avis-label-'+id);
+  const open=wrap.classList.toggle('open');
+  icon.textContent=open?'✕':'✏️';
+  label.textContent=open?'Annuler':'Laisser un avis';
+}
+
+function submitAvis(e, id, url) {
+  e.preventDefault();
+  const form    = document.getElementById('form-avis-' + id);
+  const btn     = document.getElementById('avis-btn-' + id);
+  const msgBox  = document.getElementById('avis-msg-' + id);
+  const noteEl  = form.querySelector('input[name="note"]:checked');
+  const cmntEl  = form.querySelector('textarea[name="commentaire"]');
+
+  if (!noteEl) {
+    showAvisMsg(id, '⚠️ Veuillez sélectionner une note.', 'warn');
+    return;
+  }
+
+  const body = new URLSearchParams();
+  body.append('note', noteEl.value);
+  if (cmntEl.value.trim()) body.append('commentaire', cmntEl.value.trim());
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Envoi...';
+
+  fetch(url, {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body.toString()
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) {
+      showAvisMsg(id, '❌ ' + data.error, 'error');
+      return;
+    }
+    /* Update average stars display */
+    const starsEl = document.querySelector('#card-stars-' + id);
+    const noteLabel = document.querySelector('#card-note-' + id);
+    const nbLabel   = document.querySelector('#card-nb-' + id);
+    if (starsEl) starsEl.textContent = starsStr(data.moyenne);
+    if (noteLabel) { noteLabel.textContent = data.moyenne + '/5'; noteLabel.style.display=''; }
+    if (nbLabel)   { nbLabel.textContent = '(' + data.nbAvis + ' avis)'; nbLabel.style.display=''; }
+
+    /* Inject new comment card at top of scroll list */
+    const scrollEl = document.querySelector('#cmts-scroll-' + id);
+    if (scrollEl && data.commentaire) {
+      const card = document.createElement('div');
+      card.className = 'cmt-card';
+      card.style.animation = 'fadeInDown .4s ease';
+      card.innerHTML = `<div class="cmt-stars">${starsStr(data.note)}</div>
+        <p class="cmt-text">${escHtml(data.commentaire)}</p>
+        <div class="cmt-meta">👤 Vous <span class="cmt-dot"></span>${data.date}</div>`;
+      scrollEl.prepend(card);
+    } else if (scrollEl && !data.commentaire) {
+      /* Rating only — show minimal entry */
+      const card = document.createElement('div');
+      card.className = 'cmt-card';
+      card.style.animation = 'fadeInDown .4s ease';
+      card.innerHTML = `<div class="cmt-stars">${starsStr(data.note)}</div>
+        <div class="cmt-meta">👤 Vous <span class="cmt-dot"></span>${data.date}</div>`;
+      scrollEl.prepend(card);
+    }
+
+    /* Hide "no reviews" placeholder if present */
+    const noEl = document.querySelector('#no-cmts-' + id);
+    if (noEl) noEl.style.display = 'none';
+    const secEl = document.querySelector('#cmts-section-' + id);
+    if (secEl) secEl.style.display = '';
+
+    showAvisMsg(id, '✅ Avis publié !', 'success');
+    form.reset();
+    setTimeout(() => toggleAvis(id), 1200);
+  })
+  .catch(() => showAvisMsg(id, '❌ Erreur de connexion.', 'error'))
+  .finally(() => { btn.disabled = false; btn.textContent = 'Publier mon avis'; });
+}
+
+function showAvisMsg(id, text, type) {
+  const el = document.getElementById('avis-msg-' + id);
+  if (!el) return;
+  const colors = { success:'#4ade80', error:'#f87171', warn:'#fbbf24' };
+  el.style.color   = colors[type] || '#e0f7fa';
+  el.textContent   = text;
+  el.style.display = 'block';
+  if (type === 'success') setTimeout(() => { el.style.display='none'; }, 2500);
+}
+
+function starsStr(n) {
+  const r = Math.round(n);
+  return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  /* ── 3D card tilt ── */
+  document.querySelectorAll('.th-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`translateY(-12px) rotateX(${-y*7}deg) rotateY(${x*7}deg) scale(1.02)`;
+    });
+    card.addEventListener('mouseleave',()=>{card.style.transform='';});
+  });
+
+  /* ══════════════════════════════════
+     CAROUSEL — 3 cards per page
+  ══════════════════════════════════ */
+  const track    = document.getElementById('carousel-track');
+  const dotsWrap = document.getElementById('carousel-dots');
+  const btnPrev  = document.getElementById('carousel-prev');
+  const btnNext  = document.getElementById('carousel-next');
+
+  if (!track) return;
+
+  const cards     = Array.from(track.querySelectorAll('.th-card'));
+  const PER_PAGE  = 3;
+  const total     = cards.length;
+  const pages     = Math.ceil(total / PER_PAGE);
+  let   current   = 0;
+  let   animating = false;
+
+  /* ── Build dot indicators ── */
+  const dots = [];
+  for (let i = 0; i < pages; i++) {
+    const d = document.createElement('button');
+    d.style.cssText = `width:10px;height:10px;border-radius:50%;border:none;cursor:pointer;
+      background:rgba(0,229,255,.25);transition:all .3s;padding:0;`;
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+    dots.push(d);
+  }
+
+  function updateDots() {
+    dots.forEach((d, i) => {
+      d.style.background = i === current
+        ? '#00e5ff'
+        : 'rgba(0,229,255,.25)';
+      d.style.transform = i === current ? 'scale(1.35)' : 'scale(1)';
+      d.style.boxShadow = i === current ? '0 0 8px #00e5ff' : 'none';
+    });
+  }
+
+  function updateButtons() {
+    btnPrev.style.opacity = current === 0        ? '0.35' : '1';
+    btnNext.style.opacity = current === pages - 1 ? '0.35' : '1';
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = current === pages - 1;
+  }
+
+  function getSlideX(page) {
+    /* Width of viewport */
+    const vw   = track.parentElement.offsetWidth;
+    const gap  = 28;
+    const cardW = (vw - gap * (PER_PAGE - 1)) / PER_PAGE;
+    return page * PER_PAGE * (cardW + gap);
+  }
+
+  function goTo(page, direction) {
+    if (animating || page === current) return;
+    animating = true;
+
+    const prev = current;
+    current    = page;
+
+    /* Slide the track */
+    track.style.transform = `translateX(-${getSlideX(current)}px)`;
+
+    updateDots();
+    updateButtons();
+
+    track.addEventListener('transitionend', () => { animating = false; }, { once: true });
+  }
+
+  window.carouselMove = function(dir) {
+    const next = current + dir;
+    if (next < 0 || next >= pages) return;
+    goTo(next, dir);
+  };
+
+  /* ── Touch / drag swipe support ── */
+  let touchStartX = 0;
+  track.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend',   e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) carouselMove(dx < 0 ? 1 : -1);
+  });
+
+  /* ── Mouse drag support ── */
+  let dragStartX = 0, dragging = false;
+  track.addEventListener('mousedown',  e => { dragStartX = e.clientX; dragging = true; });
+  track.addEventListener('mouseup',    e => {
+    if (!dragging) return; dragging = false;
+    const dx = e.clientX - dragStartX;
+    if (Math.abs(dx) > 60) carouselMove(dx < 0 ? 1 : -1);
+  });
+  track.addEventListener('mouseleave', () => { dragging = false; });
+
+  /* ── Keyboard arrows ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft')  carouselMove(-1);
+    if (e.key === 'ArrowRight') carouselMove(1);
+  });
+
+  /* ── Recalculate on resize ── */
+  window.addEventListener('resize', () => {
+    track.style.transition = 'none';
+    track.style.transform  = `translateX(-${getSlideX(current)}px)`;
+    requestAnimationFrame(() => { track.style.transition = ''; });
+  });
+
+  /* ── Hover buttons styling ── */
+  [btnPrev, btnNext].forEach(b => {
+    b.addEventListener('mouseenter', () => { if(!b.disabled) b.style.background='rgba(0,229,255,.3)'; b.style.boxShadow='0 0 0 1px rgba(0,229,255,.6),0 6px 24px rgba(0,0,0,.5)'; });
+    b.addEventListener('mouseleave', () => { b.style.background='rgba(0,229,255,.15)'; b.style.boxShadow='0 0 0 1px rgba(0,229,255,.3),0 4px 20px rgba(0,0,0,.4)'; });
+  });
+
+  /* ── Light theme dot color fix ── */
+  function updateDotTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    dots.forEach((d, i) => {
+      if (i !== current) d.style.background = isLight ? 'rgba(11,122,143,.25)' : 'rgba(0,229,255,.25)';
+    });
+    if (btnPrev) { btnPrev.style.color = isLight ? '#0b7a8f' : '#00e5ff'; btnPrev.style.background = isLight ? 'rgba(11,122,143,.12)' : 'rgba(0,229,255,.15)'; }
+    if (btnNext) { btnNext.style.color = isLight ? '#0b7a8f' : '#00e5ff'; btnNext.style.background = isLight ? 'rgba(11,122,143,.12)' : 'rgba(0,229,255,.15)'; }
+  }
+  new MutationObserver(updateDotTheme).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+
+  /* ── Init ── */
+  updateDots();
+  updateButtons();
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,171 @@
+{% extends 'base.html.twig' %}
+{% block title %}Connexion{% endblock %}
+{% block body %}
+<div style="max-width:450px; margin:60px auto;">
+    <div class="card">
+        <h2 style="text-align:center; color:#0b7a8f; margin-bottom:20px;">🌱 Connexion MindGrow</h2>
+        {% if error %}
+            <div class="alert-error">{{ error }}</div>
+        {% endif %}
+        <form method="post" id="loginForm" novalidate>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="votre@email.com" autocomplete="email">
+                <span class="field-error" id="err-email"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="pass-wrap">
+                    <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+                    <button type="button" class="eye-btn" onclick="togglePass('password', this)" tabindex="-1">👁</button>
+                </div>
+                <span class="field-error" id="err-password"></span>
+            </div>
+            <div class="form-group">
+                <div class="g-recaptcha" data-sitekey="{{ recaptcha_site_key }}"></div>
+                <span class="field-error" id="err-captcha"></span>
+            </div>
+            <p style="text-align:center; margin-top:10px; font-size:14px;">
+                <a href="{{ path('forgot_password') }}" style="color:#0b7a8f; font-weight:600;">Mot de passe oublié ?</a>
+            </p>
+            <button type="submit" class="btn btn-primary" style="width:100%; padding:12px; font-size:16px; margin-top:8px;">Se connecter</button>
+        </form>
+        <p style="text-align:center; margin-top:15px; font-size:14px; color:#64748b;">
+            Pas de compte ? <a href="{{ path('register') }}" style="color:#0b7a8f; font-weight:600;">S'inscrire</a>
+        </p>
+    </div>
+</div>
+
+<style>
+  .field-error { color:#e53e3e; font-size:12px; margin-top:4px; display:block; min-height:16px; }
+
+  /* ── Inputs toujours lisibles ── */
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    caret-color: #1e293b !important;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-text-fill-color: #1e293b !important;
+  }
+
+  input[type="email"]::placeholder,
+  input[type="password"]::placeholder,
+  input[type="text"]::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1;
+  }
+
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="text"]:focus {
+    outline: none;
+    border-color: #0b7a8f;
+    box-shadow: 0 0 0 3px rgba(11,122,143,0.12);
+    background: #f0fdfb !important;
+    color: #1e293b !important;
+    -webkit-text-fill-color: #1e293b !important;
+  }
+
+  /* Autocomplete fix */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #1e293b !important;
+    caret-color: #1e293b !important;
+  }
+
+  input.input-invalid {
+    border-color: #e53e3e !important;
+    background: #fff5f5 !important;
+    box-shadow: 0 0 0 3px rgba(229,62,62,0.10);
+    -webkit-text-fill-color: #1e293b !important;
+  }
+
+  input.input-valid {
+    border-color: #38a169 !important;
+    box-shadow: 0 0 0 3px rgba(56,161,105,0.10);
+  }
+
+  .pass-wrap { position: relative; display: flex; align-items: center; }
+  .pass-wrap input { padding-right: 42px; }
+  .eye-btn {
+    position: absolute; right: 10px;
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: #94a3b8; padding: 4px;
+    line-height: 1; transition: color 0.2s;
+  }
+  .eye-btn:hover { color: #0b7a8f; }
+</style>
+
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+<script>
+function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+    btn.textContent = input.type === 'password' ? '👁' : '🙈';
+}
+
+(function () {
+    const form     = document.getElementById('loginForm');
+    const emailEl  = document.getElementById('email');
+    const passEl   = document.getElementById('password');
+    const errEmail = document.getElementById('err-email');
+    const errPass  = document.getElementById('err-password');
+
+    function showError(input, span, msg) {
+        span.textContent = msg;
+        input.classList.add('input-invalid');
+        input.classList.remove('input-valid');
+    }
+    function showOk(input, span) {
+        span.textContent = '';
+        input.classList.remove('input-invalid');
+        input.classList.add('input-valid');
+    }
+    function validateEmail() {
+        const val = emailEl.value.trim();
+        const re  = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!val) { showError(emailEl, errEmail, "L'email est obligatoire."); return false; }
+        if (!re.test(val)) { showError(emailEl, errEmail, "Format email invalide (ex: nom@domaine.com)."); return false; }
+        showOk(emailEl, errEmail); return true;
+    }
+    function validatePassword() {
+        if (!passEl.value) { showError(passEl, errPass, "Le mot de passe est obligatoire."); return false; }
+        showOk(passEl, errPass); return true;
+    }
+
+    function validateCaptcha() {
+        const captcha = document.querySelector('textarea[name="g-recaptcha-response"]');
+        const value = captcha ? captcha.value.trim() : '';
+        const span  = document.getElementById('err-captcha');
+        if (!value) {
+            if (span) { span.textContent = 'Veuillez cocher « Je ne suis pas un robot ». '; }
+            return false;
+        }
+        if (span) { span.textContent = ''; }
+        return true;
+    }
+
+    emailEl.addEventListener('blur', validateEmail);
+    passEl.addEventListener('blur', validatePassword);
+    emailEl.addEventListener('input', function () { if (emailEl.classList.contains('input-invalid')) validateEmail(); });
+    passEl.addEventListener('input',  function () { if (passEl.classList.contains('input-invalid'))  validatePassword(); });
+
+    form.addEventListener('submit', function (e) {
+        const ok = [validateEmail(), validatePassword(), validateCaptcha()].every(Boolean);
+        if (!ok) { e.preventDefault(); const first = form.querySelector('.input-invalid'); if (first) first.focus(); }
+    });
+})();
+</script>
+{% endblock %}

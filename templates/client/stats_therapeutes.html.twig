@@ -1,0 +1,466 @@
+{% extends 'base.html.twig' %}
+{% block title %}Statistiques Thérapeutes — MindGrow{% endblock %}
+{% block body %}
+
+{# ══════ LIVE 6D CANVAS ══════ #}
+<canvas id="bg-canvas" style="position:fixed;inset:0;z-index:-1;width:100%;height:100%;"></canvas>
+
+<style>
+body { background:#030d1a; }
+
+/* ── Hero ── */
+.stats-hero { text-align:center; padding:56px 0 40px; }
+.stats-hero h1 {
+  font-size:46px; font-weight:900; letter-spacing:-2px;
+  background:linear-gradient(135deg,#00e5ff,#4fc3f7,#00bcd4);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  filter:drop-shadow(0 0 28px rgba(0,229,255,.3));
+}
+.stats-hero p { font-size:17px; color:rgba(180,220,255,.65); margin-top:10px; }
+.stats-hero-pulse {
+  display:inline-block; width:10px; height:10px; background:#00e5ff;
+  border-radius:50%; margin-right:10px; vertical-align:middle;
+  animation:hpulse 1.8s infinite; box-shadow:0 0 10px #00e5ff;
+}
+@keyframes hpulse {
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(0,229,255,.7);}
+  50%{transform:scale(1.4);box-shadow:0 0 0 10px rgba(0,229,255,0);}
+}
+
+/* ── Back link ── */
+.stats-back {
+  display:inline-flex; align-items:center; gap:8px;
+  color:rgba(0,229,255,.7); font-size:14px; font-weight:600;
+  text-decoration:none; margin-bottom:32px;
+  padding:8px 16px; border-radius:20px;
+  border:1px solid rgba(0,229,255,.2);
+  background:rgba(0,229,255,.06);
+  transition:all .25s;
+}
+.stats-back:hover { color:#00e5ff; border-color:rgba(0,229,255,.5); background:rgba(0,229,255,.12); }
+
+/* ── KPI row ── */
+.kpi-row { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:36px; }
+.kpi-card {
+  flex:1; min-width:160px;
+  background:rgba(4,16,32,.78); backdrop-filter:blur(20px);
+  border:1.5px solid rgba(0,229,255,.18); border-radius:20px;
+  padding:22px 24px; text-align:center;
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+  transition:transform .3s, border-color .3s;
+}
+.kpi-card:hover { transform:translateY(-6px); border-color:rgba(0,229,255,.45); }
+.kpi-value { font-size:38px; font-weight:900; color:#00e5ff; line-height:1; }
+.kpi-label { font-size:13px; color:rgba(180,220,255,.55); margin-top:6px; font-weight:600; text-transform:uppercase; letter-spacing:.5px; }
+.kpi-sub   { font-size:12px; color:rgba(0,229,255,.5); margin-top:4px; }
+
+/* ── Chart grid ── */
+.charts-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  padding-bottom:60px;
+}
+@media(max-width:900px){ .charts-grid{ grid-template-columns:1fr; } }
+
+/* ── Chart card ── */
+.chart-card {
+  background:rgba(4,16,32,.78); backdrop-filter:blur(20px);
+  border:1.5px solid rgba(0,229,255,.14); border-radius:24px;
+  padding:28px 28px 22px;
+  box-shadow:0 8px 40px rgba(0,0,0,.5);
+  transition:border-color .3s, box-shadow .3s;
+  position:relative; overflow:hidden;
+}
+.chart-card:hover { border-color:rgba(0,229,255,.38); box-shadow:0 16px 56px rgba(0,0,0,.6), 0 0 30px rgba(0,229,255,.07); }
+.chart-card::before {
+  content:''; position:absolute; top:0; left:15%; right:15%; height:1.5px;
+  background:linear-gradient(90deg,transparent,rgba(0,229,255,.5),transparent);
+}
+.chart-title {
+  font-size:15px; font-weight:800; color:#e0f7fa;
+  margin-bottom:6px; display:flex; align-items:center; gap:8px;
+}
+.chart-subtitle { font-size:12px; color:rgba(180,220,255,.4); margin-bottom:20px; }
+.chart-card canvas { max-height:300px; }
+
+/* ── Light theme overrides ── */
+[data-theme="light"] body { background:#f0f9ff; }
+[data-theme="light"] .stats-hero h1 {
+  background:linear-gradient(135deg,#0b7a8f,#065f6e,#1a9db5);
+  -webkit-background-clip:text; background-clip:text; filter:none;
+}
+[data-theme="light"] .stats-hero p  { color:#64748b; }
+[data-theme="light"] .stats-hero-pulse { background:#0b7a8f; box-shadow:0 0 10px rgba(11,122,143,.5); }
+[data-theme="light"] .stats-back { color:rgba(11,122,143,.8); border-color:rgba(11,122,143,.25); background:rgba(11,122,143,.06); }
+[data-theme="light"] .stats-back:hover { color:#065f6e; border-color:rgba(11,122,143,.5); background:rgba(11,122,143,.1); }
+[data-theme="light"] .kpi-card { background:rgba(255,255,255,.85); border-color:rgba(11,122,143,.18); box-shadow:0 4px 20px rgba(11,122,143,.1); }
+[data-theme="light"] .kpi-value { color:#0b7a8f; }
+[data-theme="light"] .kpi-label { color:#64748b; }
+[data-theme="light"] .kpi-sub   { color:rgba(11,122,143,.6); }
+[data-theme="light"] .chart-card { background:rgba(255,255,255,.88); border-color:rgba(11,122,143,.15); box-shadow:0 4px 24px rgba(11,122,143,.1); }
+[data-theme="light"] .chart-card::before { background:linear-gradient(90deg,transparent,rgba(11,122,143,.4),transparent); }
+[data-theme="light"] .chart-title { color:#1e293b; }
+[data-theme="light"] .chart-subtitle { color:#94a3b8; }
+</style>
+
+{# ══════ PAGE CONTENT ══════ #}
+<div class="stats-hero">
+  <h1><span class="stats-hero-pulse"></span>Statistiques Thérapeutes</h1>
+  <p>Analyse des avis et performances de nos professionnels</p>
+</div>
+
+<a href="{{ path('therapeutes') }}" class="stats-back">← Retour aux thérapeutes</a>
+
+{# KPI cards #}
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-value" id="kpi-total">—</div>
+    <div class="kpi-label">Avis total</div>
+    <div class="kpi-sub">tous thérapeutes</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value" id="kpi-moyenne">—</div>
+    <div class="kpi-label">Note moyenne</div>
+    <div class="kpi-sub">sur 5 ★</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value" id="kpi-top">—</div>
+    <div class="kpi-label">Meilleur thérapeute</div>
+    <div class="kpi-sub" id="kpi-top-sub">par note moyenne</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value" id="kpi-mois">—</div>
+    <div class="kpi-label">Avis ce mois</div>
+    <div class="kpi-sub">30 derniers jours</div>
+  </div>
+</div>
+
+{# Charts #}
+<div class="charts-grid">
+
+  <div class="chart-card">
+    <div class="chart-title">📊 Distribution des notes</div>
+    <div class="chart-subtitle">Répartition globale des étoiles attribuées</div>
+    <canvas id="chart-distribution"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">📈 Avis par mois</div>
+    <div class="chart-subtitle">Évolution sur les 12 derniers mois</div>
+    <canvas id="chart-mois"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">🏆 Top thérapeutes — Note moyenne</div>
+    <div class="chart-subtitle">Classement par note moyenne (min. 1 avis)</div>
+    <canvas id="chart-top-moyenne"></canvas>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">💬 Top thérapeutes — Nombre d'avis</div>
+    <div class="chart-subtitle">Les thérapeutes les plus commentés</div>
+    <canvas id="chart-top-nb"></canvas>
+  </div>
+
+</div>
+
+{# ══════ THREE.JS BACKGROUND ══════ #}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  const DARK={bg:0x030d1a,fog:0x030d1a,ambient:0x001a33,l1:0x00e5ff,l2:0x0077aa,l3:0x00bcd4,node:0x00e5ff,nodeEm:0x004455,line:0x00e5ff,dna1:0x00e5ff,dna2:0x26c6da,dnaRung:0x00bcd4,orbs:[0x00e5ff,0x0077aa,0x26c6da,0x006064,0x00bcd4],grid1:0x003344,grid2:0x001a2e,ptOpacity:.70,nodeOpacity:.85};
+  const LIGHT={bg:0xf0f8ff,fog:0xe8f4fb,ambient:0xc8e8f8,l1:0x0b7a8f,l2:0x4fc3f7,l3:0x0288d1,node:0x0b7a8f,nodeEm:0xb2ebf2,line:0x0b7a8f,dna1:0x0b7a8f,dna2:0x29b6f6,dnaRung:0x0097a7,orbs:[0x0b7a8f,0x4fc3f7,0x29b6f6,0x006064,0x0288d1],grid1:0xb2ebf2,grid2:0xd4f0f7,ptOpacity:.55,nodeOpacity:.70};
+  const canvas=document.getElementById('bg-canvas');
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(DARK.bg,1);
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  const scene=new THREE.Scene(); scene.fog=new THREE.FogExp2(DARK.fog,.0012);
+  const camera=new THREE.PerspectiveCamera(70,window.innerWidth/window.innerHeight,.1,2000); camera.position.z=500;
+  const ambLight=new THREE.AmbientLight(DARK.ambient,2); scene.add(ambLight);
+  const l1=new THREE.PointLight(DARK.l1,3,600); l1.position.set(0,0,200); scene.add(l1);
+  const l2=new THREE.PointLight(DARK.l2,2,500); l2.position.set(-300,200,100); scene.add(l2);
+  const l3=new THREE.PointLight(DARK.l3,2,500); l3.position.set(300,-200,150); scene.add(l3);
+  /* Particles */
+  const PC=2000,pGeo=new THREE.BufferGeometry();
+  const pP=new Float32Array(PC*3),pC=new Float32Array(PC*3),pS=new Float32Array(PC);
+  for(let i=0;i<PC;i++){pP[i*3]=(Math.random()-.5)*1800;pP[i*3+1]=(Math.random()-.5)*1200;pP[i*3+2]=(Math.random()-.5)*1000-200;const t=Math.random();pC[i*3]=t*.3;pC[i*3+1]=.5+t*.5;pC[i*3+2]=.7+t*.3;pS[i]=Math.random()*3+.5;}
+  pGeo.setAttribute('position',new THREE.BufferAttribute(pP,3));
+  pGeo.setAttribute('color',new THREE.BufferAttribute(pC,3));
+  pGeo.setAttribute('size',new THREE.BufferAttribute(pS,1));
+  const ptsMat=new THREE.PointsMaterial({size:2,vertexColors:true,transparent:true,opacity:.7,sizeAttenuation:true,depthWrite:false});
+  const pts=new THREE.Points(pGeo,ptsMat); scene.add(pts);
+  /* Nodes */
+  const nodes=[],nvels=[],nodeMats=[];
+  const nGeo=new THREE.SphereGeometry(4,8,8);
+  for(let i=0;i<60;i++){
+    const mat=new THREE.MeshPhongMaterial({color:DARK.node,emissive:DARK.nodeEm,transparent:true,opacity:.85});
+    const m=new THREE.Mesh(nGeo,mat); m.position.set((Math.random()-.5)*1200,(Math.random()-.5)*800,(Math.random()-.5)*400-100); m.scale.setScalar(.3+Math.random()*.7);
+    scene.add(m); nodes.push(m); nodeMats.push(mat); nvels.push(new THREE.Vector3((Math.random()-.5)*.4,(Math.random()-.5)*.3,(Math.random()-.5)*.15));
+  }
+  const lMat=new THREE.LineBasicMaterial({color:DARK.line,transparent:true,opacity:.12,depthWrite:false});
+  const lGrp=new THREE.Group(); scene.add(lGrp);
+  function rebuildLines(){while(lGrp.children.length)lGrp.remove(lGrp.children[0]);for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++)if(nodes[i].position.distanceTo(nodes[j].position)<220)lGrp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([nodes[i].position,nodes[j].position]),lMat));}
+  /* Orbs */
+  const orbData=[],orbMats=[];
+  for(let i=0;i<10;i++){const r=18+Math.random()*40;const mat=new THREE.MeshPhongMaterial({color:DARK.orbs[i%5],emissive:DARK.orbs[i%5],emissiveIntensity:.25,transparent:true,opacity:.06+Math.random()*.08,wireframe:Math.random()>.6});const m=new THREE.Mesh(new THREE.SphereGeometry(r,20,20),mat);m.position.set((Math.random()-.5)*1400,(Math.random()-.5)*900,(Math.random()-.5)*500-100);scene.add(m);orbMats.push(mat);orbData.push({mesh:m,speed:.0002+Math.random()*.0004,phase:Math.random()*Math.PI*2,rx:(Math.random()-.5)*.003,ry:(Math.random()-.5)*.003});}
+  /* Grids */
+  const gridDark=new THREE.GridHelper(2000,40,DARK.grid1,DARK.grid2);
+  const gridLight=new THREE.GridHelper(2000,40,LIGHT.grid1,LIGHT.grid2);
+  [gridDark,gridLight].forEach(g=>{g.position.y=-350;g.rotation.x=.1;scene.add(g);}); gridLight.visible=false;
+  /* Particle color arrays */
+  const pCD=new Float32Array(PC*3),pCL=new Float32Array(PC*3);
+  for(let i=0;i<PC*3;i++){pCD[i]=pC[i];} for(let i=0;i<PC;i++){const t=Math.random();pCL[i*3]=t*.3;pCL[i*3+1]=.45+t*.4;pCL[i*3+2]=.55+t*.35;}
+  /* Theme switch */
+  window._bgSetTheme=function(theme){
+    try{
+      const P=theme==='light'?LIGHT:DARK;
+      renderer.setClearColor(P.bg,1); scene.fog.color.setHex(P.fog); ambLight.color.setHex(P.ambient);
+      l1.color.setHex(P.l1); l2.color.setHex(P.l2); l3.color.setHex(P.l3);
+      nodeMats.forEach(m=>{m.color.setHex(P.node);m.emissive.setHex(P.nodeEm);m.opacity=P.nodeOpacity;});
+      lMat.color.setHex(P.line);
+      orbMats.forEach((m,i)=>{m.color.setHex(P.orbs[i%5]);m.emissive.setHex(P.orbs[i%5]);});
+      gridDark.visible=theme!=='light'; gridLight.visible=theme==='light';
+      const src=theme==='light'?pCL:pCD; const attr=pGeo.getAttribute('color');
+      for(let i=0;i<PC*3;i++)attr.array[i]=src[i]; attr.needsUpdate=true;
+      ptsMat.opacity=P.ptOpacity; rebuildLines();
+    }catch(e){console.error(e);}
+  };
+  let mx=0,my=0;
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5)*2;my=(e.clientY/window.innerHeight-.5)*2;});
+  window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+  let frame=0,lt=0;
+  function animate(){requestAnimationFrame(animate);frame++;const t=frame*.005;
+    camera.position.x+=(mx*60-camera.position.x)*.025; camera.position.y+=(-my*40-camera.position.y)*.025; camera.lookAt(scene.position);
+    pts.rotation.y=t*.04; pts.rotation.x=t*.015;
+    for(let i=0;i<nodes.length;i++){nodes[i].position.addScaledVector(nvels[i],1);const p=nodes[i].position;if(Math.abs(p.x)>600)nvels[i].x*=-1;if(Math.abs(p.y)>400)nvels[i].y*=-1;if(Math.abs(p.z)>200)nvels[i].z*=-1;nodes[i].material.emissiveIntensity=.3+.3*Math.sin(t*2+i);}
+    lt++;if(lt%30===0)rebuildLines();
+    for(const d of orbData){d.mesh.position.y+=Math.sin(t*d.speed*1000+d.phase)*.3;d.mesh.rotation.x+=d.rx;d.mesh.rotation.y+=d.ry;}
+    l1.intensity=3+Math.sin(t*1.3)*1.2; l1.position.x=Math.sin(t*.7)*200; l1.position.y=Math.cos(t*.5)*150;
+    const ag=gridDark.visible?gridDark:gridLight; if(ag.material)ag.material.opacity=.25+.15*Math.sin(t*.8);
+    renderer.render(scene,camera);}
+  rebuildLines(); animate();
+  /* Init theme */
+  window._bgSetTheme(document.documentElement.getAttribute('data-theme')||'dark');
+  new MutationObserver(()=>window._bgSetTheme(document.documentElement.getAttribute('data-theme')||'dark')).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
+
+{# ══════ CHART.JS ══════ #}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ── Shared palette ── */
+const CYAN   = 'rgba(0,229,255,';
+const TEAL   = 'rgba(11,122,143,';
+const AMBER  = 'rgba(245,158,11,';
+const GREEN  = 'rgba(52,211,153,';
+const PURPLE = 'rgba(167,139,250,';
+
+function isLight(){ return document.documentElement.getAttribute('data-theme')==='light'; }
+function textColor(){ return isLight()?'#334155':'rgba(200,230,255,.75)'; }
+function gridColor(){ return isLight()?'rgba(11,122,143,.1)':'rgba(0,229,255,.08)'; }
+function accentBase(){ return isLight()?TEAL:CYAN; }
+
+Chart.defaults.font.family = 'inherit';
+
+/* ── Gradient helper ── */
+function makeGrad(ctx, color, alpha1=0.8, alpha2=0.1){
+  const g=ctx.createLinearGradient(0,0,0,300);
+  g.addColorStop(0, color+alpha1+')');
+  g.addColorStop(1, color+alpha2+')');
+  return g;
+}
+
+/* ── Shared chart options ── */
+function baseOpts(title){
+  return {
+    responsive:true, maintainAspectRatio:true,
+    plugins:{
+      legend:{ labels:{ color:textColor(), font:{size:12} } },
+      tooltip:{ backgroundColor:'rgba(3,12,28,.9)', titleColor:'#00e5ff', bodyColor:'#e0f7fa', borderColor:'rgba(0,229,255,.3)', borderWidth:1 }
+    },
+    scales:{
+      x:{ ticks:{ color:textColor(), font:{size:11} }, grid:{ color:gridColor() } },
+      y:{ ticks:{ color:textColor(), font:{size:11} }, grid:{ color:gridColor() }, beginAtZero:true }
+    }
+  };
+}
+
+let charts = {};
+
+/* ══════════════════════════════
+   1. DISTRIBUTION DES NOTES
+══════════════════════════════ */
+async function loadDistribution(){
+  const r    = await fetch('/api/stats/avis/distribution');
+  const data = await r.json();
+  const ctx  = document.getElementById('chart-distribution').getContext('2d');
+
+  const barColors = [
+    'rgba(239,68,68,.8)', 'rgba(249,115,22,.8)', 'rgba(234,179,8,.8)',
+    'rgba(34,197,94,.8)', 'rgba(0,229,255,.8)'
+  ];
+
+  if(charts.dist) charts.dist.destroy();
+  charts.dist = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: data.labels,
+      datasets:[{
+        label:'Nombre d\'avis',
+        data: data.values,
+        backgroundColor: barColors,
+        borderColor: barColors.map(c=>c.replace('.8)','.95)')),
+        borderWidth:2, borderRadius:8, borderSkipped:false,
+      }]
+    },
+    options:{
+      ...baseOpts(),
+      plugins:{ ...baseOpts().plugins, legend:{display:false} }
+    }
+  });
+
+  /* KPIs */
+  const total = data.values.reduce((a,b)=>a+b,0);
+  const wsum  = data.values.reduce((s,v,i)=>s+v*(i+1),0);
+  document.getElementById('kpi-total').textContent   = total.toLocaleString('fr');
+  document.getElementById('kpi-moyenne').textContent = total>0 ? (wsum/total).toFixed(1)+'★' : '—';
+}
+
+/* ══════════════════════════════
+   2. AVIS PAR MOIS
+══════════════════════════════ */
+async function loadParMois(){
+  const r    = await fetch('/api/stats/avis/par-mois');
+  const data = await r.json();
+  const ctx  = document.getElementById('chart-mois').getContext('2d');
+
+  const ab = accentBase();
+  const grad = makeGrad(ctx, ab);
+
+  if(charts.mois) charts.mois.destroy();
+  charts.mois = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: data.labels,
+      datasets:[{
+        label:'Avis publiés',
+        data: data.values,
+        fill:true,
+        backgroundColor: grad,
+        borderColor: ab+'1)',
+        pointBackgroundColor: ab+'1)',
+        pointRadius:5, pointHoverRadius:7,
+        tension:.4, borderWidth:2.5,
+      }]
+    },
+    options: baseOpts()
+  });
+
+  /* KPI ce mois */
+  const last = data.values.length > 0 ? data.values[data.values.length-1] : 0;
+  document.getElementById('kpi-mois').textContent = last;
+}
+
+/* ══════════════════════════════
+   3. TOP THÉRAPEUTES — MOYENNE
+══════════════════════════════ */
+async function loadTopMoyenne(){
+  const r    = await fetch('/api/stats/avis/top-moyenne');
+  const data = await r.json();
+  const ctx  = document.getElementById('chart-top-moyenne').getContext('2d');
+
+  const ab = accentBase();
+
+  if(charts.topMoy) charts.topMoy.destroy();
+  charts.topMoy = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: data.labels,
+      datasets:[{
+        label:'Note moyenne',
+        data: data.values,
+        backgroundColor: data.values.map(v=>`hsla(${160+v*16},80%,55%,.75)`),
+        borderColor:     data.values.map(v=>`hsla(${160+v*16},80%,65%,.95)`),
+        borderWidth:2, borderRadius:8, borderSkipped:false,
+      }]
+    },
+    options:{
+      ...baseOpts(),
+      indexAxis:'y',
+      plugins:{ ...baseOpts().plugins, legend:{display:false} },
+      scales:{
+        x:{ ...baseOpts().scales.x, max:5, ticks:{ ...baseOpts().scales.x.ticks, callback:v=>v+'★' } },
+        y:{ ...baseOpts().scales.y, ticks:{ ...baseOpts().scales.y.ticks, font:{size:11} } }
+      }
+    }
+  });
+
+  /* KPI top thérapeute */
+  if(data.labels.length>0){
+    const name = data.labels[0];
+    const short = name.split(' ').map((w,i)=>i===0?w:w[0]+'.').join(' ');
+    document.getElementById('kpi-top').textContent     = data.values[0]+'★';
+    document.getElementById('kpi-top-sub').textContent = short;
+  }
+}
+
+/* ══════════════════════════════
+   4. TOP THÉRAPEUTES — NB AVIS
+══════════════════════════════ */
+async function loadTopNb(){
+  const r    = await fetch('/api/stats/avis/top-nb');
+  const data = await r.json();
+  const ctx  = document.getElementById('chart-top-nb').getContext('2d');
+
+  const colors = [CYAN,TEAL,GREEN,AMBER,PURPLE,CYAN,TEAL,GREEN].map(c=>c+'0.7)');
+  const borders= [CYAN,TEAL,GREEN,AMBER,PURPLE,CYAN,TEAL,GREEN].map(c=>c+'0.95)');
+
+  if(charts.topNb) charts.topNb.destroy();
+  charts.topNb = new Chart(ctx, {
+    type:'doughnut',
+    data:{
+      labels: data.labels,
+      datasets:[{
+        data: data.values,
+        backgroundColor: colors,
+        borderColor: borders,
+        borderWidth:2, hoverOffset:12,
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{
+        legend:{ position:'right', labels:{ color:textColor(), font:{size:11}, boxWidth:14, padding:10 } },
+        tooltip:{ backgroundColor:'rgba(3,12,28,.9)', titleColor:'#00e5ff', bodyColor:'#e0f7fa', borderColor:'rgba(0,229,255,.3)', borderWidth:1,
+          callbacks:{ label: ctx => ` ${ctx.label}: ${ctx.parsed} avis` }
+        }
+      }
+    }
+  });
+}
+
+/* ── Load all ── */
+Promise.all([loadDistribution(), loadParMois(), loadTopMoyenne(), loadTopNb()])
+  .catch(e => console.error('Stats load error:', e));
+
+/* ── Refresh charts on theme toggle (recolor) ── */
+new MutationObserver(()=>{
+  setTimeout(()=>{
+    Object.values(charts).forEach(c=>{
+      if(!c) return;
+      if(c.options.scales){
+        Object.values(c.options.scales).forEach(ax=>{
+          if(ax.ticks) ax.ticks.color = textColor();
+          if(ax.grid)  ax.grid.color  = gridColor();
+        });
+      }
+      if(c.options.plugins?.legend?.labels) c.options.plugins.legend.labels.color = textColor();
+      c.update();
+    });
+  }, 50);
+}).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+</script>
+
+{% endblock %}

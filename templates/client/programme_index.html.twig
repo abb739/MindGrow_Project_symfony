@@ -1,0 +1,517 @@
+{% extends 'base.html.twig' %}
+{% block title %}Programmes — MindGrow{% endblock %}
+{% block body %}
+
+{# ══════════════════════════════════════════════════════════ #}
+{# CHATBOT IA PROGRAMME — MODAL CENTRÉ (style abonnement)     #}
+{# ══════════════════════════════════════════════════════════ #}
+<div id="ia-prog-overlay"
+     onclick="if(event.target===this) fermerIAProg();"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:24px;width:500px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;">
+
+    {# Header #}
+    <div style="background:linear-gradient(135deg,#0b7a8f,#065f6e);padding:20px 24px;color:white;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">🌿</span>
+      <div>
+        <div style="font-size:17px;font-weight:800;">Coach Programmes IA</div>
+        <div style="font-size:12px;opacity:.85;">Je vous aide à trouver le programme parfait</div>
+      </div>
+      <button onclick="fermerIAProg()" style="margin-left:auto;background:none;border:none;color:white;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+
+    {# Suggestions rapides #}
+    <div style="padding:12px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:#64748b;font-weight:600;align-self:center;">Suggestions :</span>
+      <button onclick="envoyerIAProg('Quel programme recommandes-tu pour débuter ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        🌱 Pour débuter
+      </button>
+      <button onclick="envoyerIAProg('Quel programme est le plus efficace pour la relaxation ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        😌 Relaxation
+      </button>
+      <button onclick="envoyerIAProg('Quels programmes sont disponibles ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        ❓ Tous les programmes
+      </button>
+    </div>
+
+    {# Messages #}
+    <div id="ia-prog-msgs" style="min-height:100px;max-height:280px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:85%;">
+        Bonjour ! 🌿 Je suis votre coach bien-être IA. Dites-moi vos objectifs et je vous recommande le programme MindGrow idéal pour vous !
+      </div>
+    </div>
+
+    {# Input #}
+    <div style="display:flex;gap:8px;padding:14px 16px;border-top:1px solid #e2e8f0;background:white;">
+      <input id="ia-prog-input" type="text" placeholder="Ex: Je veux améliorer mon sommeil..."
+        style="flex:1;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit;color:#1e293b;"
+        onkeydown="if(event.key==='Enter') envoyerIAProg()">
+      <button onclick="envoyerIAProg()"
+        style="padding:10px 18px;background:linear-gradient(135deg,#0b7a8f,#065f6e);color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:13px;">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function ouvrirIAProg() { document.getElementById('ia-prog-overlay').style.display = 'flex'; }
+function fermerIAProg() { document.getElementById('ia-prog-overlay').style.display = 'none'; }
+
+function envoyerIAProg(texteFixe) {
+  const input = document.getElementById('ia-prog-input');
+  const msgs  = document.getElementById('ia-prog-msgs');
+  const text  = texteFixe || input.value.trim();
+  if (!text) return;
+
+  msgs.innerHTML += `<div style="background:#0b7a8f;color:white;padding:10px 16px;border-radius:16px 4px 16px 16px;font-size:13px;max-width:82%;align-self:flex-end;margin-left:auto;">${text}</div>`;
+  if (!texteFixe) input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const tid = 'ty-' + Date.now();
+  msgs.innerHTML += `<div id="${tid}" style="background:#f1f5f9;padding:10px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#94a3b8;">⏳ Analyse en cours…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  fetch('/chatbot/programme', {
+    method:  'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:    JSON.stringify({message: text, programme_id: null})
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(tid)?.remove();
+    const rep = data.response || data.error || 'Erreur.';
+    msgs.innerHTML += `<div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:90%;white-space:pre-wrap;">${rep}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  })
+  .catch(() => { document.getElementById(tid)?.remove(); });
+}
+</script>
+
+{# ── TOASTS FLASH ── #}
+{% for message in app.flashes('success') %}
+<div style="position:fixed;top:24px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:16px 22px;border-radius:14px;box-shadow:0 10px 30px rgba(16,185,129,.35);z-index:99999;font-weight:600;font-size:15px;animation:toastIn .4s ease;">
+    ✅ {{ message }}
+</div>
+{% endfor %}
+
+<style>
+@keyframes toastIn { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+* { box-sizing: border-box; }
+
+/* ── HERO ── */
+.pg-hero {
+  text-align: center; padding: 3rem 1rem 2rem;
+}
+.pg-hero-tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #d0f0f5; color: #0b7a8f; font-size: 12px;
+  font-weight: 600; padding: 4px 14px; border-radius: 20px;
+  letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 1rem;
+}
+.pg-hero h1 {
+  font-family: 'DM Serif Display', serif; font-size: 2.8rem;
+  font-weight: 400; color: #0b7a8f; letter-spacing: -0.5px; margin: 0 0 0.5rem;
+}
+.pg-hero p { color: var(--text2, #64748b); font-size: 1.05rem; margin: 0; }
+
+/* ── FILTRES ── */
+.pg-filters {
+  max-width: 1100px; margin: 0 auto 1rem;
+  background: var(--bg2, white); border-radius: 16px; padding: 20px 24px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+  box-shadow: 0 2px 16px rgba(11,122,143,.08);
+}
+.search-wrap { flex: 2; min-width: 200px; position: relative; display: flex; align-items: center; }
+.search-wrap input {
+  width: 100%; padding-left: 36px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; border: 1.5px solid var(--border2, #e2e8f0); border-radius: 10px;
+  height: 42px; outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  background: var(--bg3, #f8fafc); color: var(--text, #1e293b);
+}
+.search-wrap input:focus {
+  border-color: #0b7a8f; background: var(--bg2, white);
+  box-shadow: 0 0 0 3px rgba(11,122,143,0.1);
+}
+.search-icon { position: absolute; left: 12px; color: var(--text3, #94a3b8); font-size: 15px; }
+.pg-filters select {
+  flex: 1; min-width: 180px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  border: 1.5px solid var(--border2, #e2e8f0); border-radius: 10px; height: 42px;
+  padding: 0 14px; background: var(--bg3, #f8fafc); color: var(--text, #1e293b);
+  outline: none; cursor: pointer;
+}
+.pg-filters select:focus { border-color: #0b7a8f; }
+
+.btn-coach-ia {
+  background: linear-gradient(135deg,#0b7a8f,#065f6e); color: white; font-weight: 700;
+  border-radius: 25px; padding: 10px 22px; border: none; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(11,122,143,.35); font-size: 14px;
+  white-space: nowrap;
+}
+.btn-coach-ia:hover { opacity: .9; transform: translateY(-1px); }
+
+.btn-filtrer {
+  padding: 11px 22px; background: #0b7a8f; color: white; border: none;
+  border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px; white-space: nowrap;
+}
+.btn-filtrer:hover { background: #085f70; }
+
+.btn-reset {
+  background: var(--bg3, #f1f5f9); color: var(--text2, #475569); border: none;
+  border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer;
+  text-decoration: none; display: inline-flex; align-items: center;
+}
+.btn-reset:hover { background: var(--border2, #e2e8f0); }
+
+/* ── RÉSULTATS ── */
+.results-bar {
+  max-width: 1100px; margin: 0 auto 1.25rem;
+  font-size: 14px; color: var(--text2, #64748b);
+}
+.results-bar strong { color: var(--text, #1e293b); font-weight: 700; }
+
+/* ── GRID ── */
+.prog-grid {
+  max-width: 1100px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 22px;
+}
+
+/* ── CARD ── */
+.prog-card {
+  background: var(--bg2, white); border-radius: 20px; overflow: hidden;
+  border: 1.5px solid var(--border, #e8edf2);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex; flex-direction: column;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  text-decoration: none; color: inherit;
+}
+.prog-card:hover {
+  border-color: #0b7a8f; transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(11,122,143,0.15);
+}
+
+.prog-thumb-wrap {
+  height: 160px; width: 100%; overflow: hidden; position: relative;
+  background: linear-gradient(135deg, #0b7a8f 0%, #065f6e 60%, #054f5b 100%);
+}
+.prog-thumb {
+  width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.85;
+}
+.prog-thumb-placeholder {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; color: rgba(255,255,255,0.15);
+}
+.prog-num-badge {
+  position: absolute; top: 12px; right: 14px;
+  background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9);
+  font-size: 11px; font-weight: 600; padding: 3px 9px;
+  border-radius: 20px; letter-spacing: 0.5px; backdrop-filter: blur(4px);
+}
+.prog-title-overlay {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(transparent, rgba(4,44,51,0.75));
+  padding: 1rem 1.25rem 0.9rem;
+}
+.prog-title-overlay h2 {
+  font-family: 'DM Serif Display', serif; font-size: 1.3rem;
+  font-weight: 400; color: white; margin: 0; line-height: 1.3;
+}
+
+.prog-card-body {
+  padding: 1rem 1.25rem 1.25rem; flex: 1;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.cat-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #E1F5EE; color: #085041;
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+  width: fit-content;
+}
+.cat-dot { width: 6px; height: 6px; background: #0b7a8f; border-radius: 50%; flex-shrink: 0; }
+.prog-desc { font-size: 13px; color: var(--text2, #64748b); line-height: 1.7; flex: 1; }
+.prog-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.meta-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--bg3, #f1f5f9); color: var(--text2, #475569);
+  font-size: 11px; font-weight: 500; padding: 2px 9px; border-radius: 8px;
+}
+
+.prog-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.8rem 1.25rem; border-top: 1px solid var(--border2, #f1f5f9);
+  background: var(--bg3, #fafcfd);
+}
+.prog-link {
+  font-size: 12px; font-weight: 700; color: #0b7a8f;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+  transition: gap 0.2s;
+}
+.prog-link:hover { gap: 9px; color: #065f6e; }
+.prog-fav {
+  background: none; border: none; cursor: pointer; color: var(--text3, #cbd5e1);
+  font-size: 19px; transition: color 0.2s, transform 0.2s; padding: 2px; line-height: 1;
+}
+.prog-fav:hover { color: #e05c5c; transform: scale(1.25); }
+.prog-fav.active { color: #e05c5c; }
+
+.empty-state {
+  grid-column: 1 / -1; text-align: center; padding: 5rem 2rem; color: var(--text3, #94a3b8);
+}
+.empty-icon {
+  width: 72px; height: 72px; background: var(--bg3, #f8fafc); border-radius: 50%;
+  margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center;
+  font-size: 28px; border: 1px solid var(--border, #e2e8f0);
+}
+.empty-state h3 { font-size: 16px; color: var(--text2, #64748b); margin-bottom: 0.4rem; }
+
+/* ── RECOMMANDATIONS ── */
+.reco-section {
+  max-width: 1100px; margin: 2.5rem auto 0; padding: 0 0 4rem;
+}
+.reco-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.2rem; flex-wrap: wrap; gap: 10px;
+}
+.reco-header h2 {
+  font-family: 'DM Serif Display', serif; font-size: 1.7rem; color: #0b7a8f; margin: 0;
+}
+.btn-reco {
+  background: #0b7a8f; color: white; border: none; border-radius: 12px;
+  padding: 0.65rem 1.4rem; font-size: 14px; font-weight: 600; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.btn-reco:hover { background: #085f70; }
+
+/* ── DARK MODE ── */
+[data-theme="dark"] .pg-hero-tag { background: rgba(11,122,143,0.2); color: #7dd3fc; }
+[data-theme="dark"] .pg-hero h1  { color: #7dd3fc; }
+[data-theme="dark"] .cat-badge   { background: rgba(11,122,143,0.2); color: #7dd3fc; }
+[data-theme="dark"] .prog-card-footer { background: var(--bg3, #1e293b); }
+[data-theme="dark"] .meta-tag { background: rgba(255,255,255,0.07); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@media (max-width:600px) {
+  .pg-hero h1 { font-size: 2rem; }
+  .prog-grid  { grid-template-columns: 1fr; }
+}
+</style>
+
+<div style="font-family:'DM Sans',sans-serif; min-height:100vh; background: var(--bg, #f0f4f8); padding:0 1.5rem;">
+
+  {# ── HERO ── #}
+  <div class="pg-hero">
+    <div class="pg-hero-tag">🌿 Bien-être &amp; Santé</div>
+    <h1>Nos Programmes</h1>
+    <p>Découvrez nos programmes de bien-être conçus pour vous</p>
+  </div>
+
+  {# ── FILTRES ── #}
+  <div class="pg-filters">
+    <form method="get" style="display:flex; gap:10px; flex-wrap:wrap; width:100%; align-items:center;">
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" name="search" value="{{ search }}" placeholder="Rechercher un programme...">
+      </div>
+      <select name="categorie">
+        <option value="">Toutes les catégories</option>
+        {% for cat in categories %}
+          <option value="{{ cat.id }}" {{ catId == cat.id ? 'selected' : '' }}>
+            {{ cat.nom }}
+          </option>
+        {% endfor %}
+      </select>
+      <button type="button" class="btn-coach-ia" onclick="ouvrirIAProg()">
+        🤖 Coach IA
+      </button>
+      <button type="submit" class="btn-filtrer">🔎 Filtrer</button>
+      {% if search or catId %}
+        <a href="{{ path('programmes') }}" class="btn-reset">✕ Reset</a>
+      {% endif %}
+    </form>
+  </div>
+
+  {# ── COMPTEUR ── #}
+  <div class="results-bar">
+    <strong>{{ programmes|length }}</strong>
+    programme{{ programmes|length != 1 ? 's' : '' }}
+    trouvé{{ programmes|length != 1 ? 's' : '' }}
+  </div>
+
+  {# ── GRILLE ── #}
+  <div class="prog-grid">
+    {% for prog in programmes %}
+
+      {% set catNom = 'Sans catégorie' %}
+      {% for cat in categories %}
+        {% if cat.id == prog.idCategorie %}{% set catNom = cat.nom %}{% endif %}
+      {% endfor %}
+
+      <a href="{{ path('programme_show', {id: prog.id}) }}"
+         class="prog-card"
+         style="animation: fadeUp 0.4s ease both; animation-delay: {{ loop.index0 * 0.07 }}s;">
+
+        {# ── Thumbnail ── #}
+        <div class="prog-thumb-wrap">
+          {% if prog.image %}
+            <img src="{{ asset(prog.image) }}" alt="{{ prog.titre }}" class="prog-thumb"
+                 onerror="this.style.display='none';">
+          {% else %}
+            <div class="prog-thumb-placeholder">🧠</div>
+          {% endif %}
+          <span class="prog-num-badge">#{{ '%02d'|format(loop.index) }}</span>
+          <div class="prog-title-overlay">
+            <h2>{{ prog.titre }}</h2>
+          </div>
+        </div>
+
+        {# ── Body ── #}
+        <div class="prog-card-body">
+          <span class="cat-badge">
+            <span class="cat-dot"></span>
+            {{ catNom }}
+          </span>
+          <p class="prog-desc">
+            {% if prog.description %}
+              {{ prog.description|slice(0, 110) }}{{ prog.description|length > 110 ? '…' : '' }}
+            {% else %}
+              Aucune description disponible.
+            {% endif %}
+          </p>
+          <div class="prog-meta">
+            {% if prog.video %}<span class="meta-tag">🎬 Vidéo incluse</span>{% endif %}
+            {% if prog.image %}<span class="meta-tag">🖼️ Illustration</span>{% endif %}
+          </div>
+        </div>
+
+        {# ── Footer ── #}
+        <div class="prog-card-footer">
+          <span class="prog-link">Voir le programme →</span>
+          <button type="button"
+                  class="prog-fav {{ prog.id in (favoris ?? []) ? 'active' : '' }}"
+                  data-id="{{ prog.id }}"
+                  onclick="event.preventDefault(); toggleFavori(this)">♥</button>
+        </div>
+
+      </a>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>Aucun programme trouvé</h3>
+        <p>Essayez de modifier vos critères de recherche</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  {# ── RECOMMANDATIONS IA ── #}
+  <div class="reco-section">
+    <div class="reco-header">
+      <h2>🤖 Recommandations personnalisées</h2>
+      <button id="btn-recommandations" class="btn-reco" onclick="chargerRecommandations()">
+        ✨ Générer mes recommandations IA
+      </button>
+    </div>
+    <div id="recommandations-result" style="display:none;">
+      <div id="recommandations-loading" style="text-align:center; padding:2rem; color:#64748b;">
+        <div style="font-size:2rem; margin-bottom:0.5rem;">⏳</div>
+        <p>L'IA analyse vos favoris et préférences…</p>
+      </div>
+      <div id="recommandations-grid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px;"></div>
+      <div id="recommandations-error" style="display:none; text-align:center; color:#e05c5c; padding:1.5rem;"></div>
+    </div>
+  </div>
+
+</div>
+
+{# ── TOAST ── #}
+<div id="toast" style="position:fixed; bottom:24px; right:24px; z-index:9999;
+     background:#10b981; color:white; padding:12px 20px; border-radius:12px;
+     font-size:14px; font-weight:500; opacity:0; transition:opacity 0.3s;
+     pointer-events:none; max-width:300px; box-shadow:0 8px 24px rgba(0,0,0,0.2);"></div>
+
+<script>
+function showToast(msg, ok) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = (ok === false) ? '#ef4444' : '#10b981';
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 2800);
+}
+
+function toggleFavori(btn) {
+  const id = btn.dataset.id;
+  btn.disabled = true;
+  fetch('/api/programmes/' + id + '/favori', {
+    method: 'POST',
+    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(data){
+    btn.classList.toggle('active');
+    showToast(btn.classList.contains('active') ? '❤️ Ajouté aux favoris' : '💔 Retiré des favoris');
+  })
+  .catch(function(){ showToast('❌ Erreur de connexion', false); })
+  .finally(function(){ btn.disabled = false; });
+}
+
+function chargerRecommandations() {
+  const btn     = document.getElementById('btn-recommandations');
+  const result  = document.getElementById('recommandations-result');
+  const loading = document.getElementById('recommandations-loading');
+  const grid    = document.getElementById('recommandations-grid');
+  const errDiv  = document.getElementById('recommandations-error');
+  btn.disabled = true;
+  btn.textContent = '⏳ Chargement…';
+  result.style.display = 'block';
+  loading.style.display = 'block';
+  grid.innerHTML = '';
+  errDiv.style.display = 'none';
+
+  fetch('/api/programmes/recommandations', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      loading.style.display = 'none';
+      if (!data.recommandations || data.recommandations.length === 0) {
+        grid.innerHTML = '<p style="color:#64748b;text-align:center;grid-column:1/-1;padding:2rem;">Ajoutez des programmes en favoris pour obtenir des recommandations personnalisées !</p>';
+        return;
+      }
+      data.recommandations.forEach(function(prog){
+        const imgHtml = prog.image
+          ? '<img src="/' + prog.image + '" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML=\'🧠\'">'
+          : '🧠';
+        grid.innerHTML += '<a href="/programmes/' + prog.id + '" style="text-decoration:none;color:inherit;">'
+          + '<div style="background:white;border-radius:18px;border:1.5px solid #e8edf2;box-shadow:0 2px 12px rgba(0,0,0,0.05);overflow:hidden;transition:all 0.3s;"'
+          + ' onmouseover="this.style.borderColor=\'#0b7a8f\';this.style.transform=\'translateY(-4px)\'"'
+          + ' onmouseout="this.style.borderColor=\'#e8edf2\';this.style.transform=\'\'">'
+          + '<div style="height:120px;background:linear-gradient(135deg,#0b7a8f,#043d48);display:flex;align-items:center;justify-content:center;font-size:2.5rem;overflow:hidden;">' + imgHtml + '</div>'
+          + '<div style="padding:1rem;">'
+          + '<div style="font-size:11px;font-weight:700;color:#0b7a8f;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px;">' + (prog.categorie || '') + '</div>'
+          + '<div style="font-weight:700;color:#1e293b;margin-bottom:6px;font-size:15px;">' + prog.titre + '</div>'
+          + '<div style="font-size:12px;color:#64748b;line-height:1.5;font-style:italic;">🤖 ' + (prog.raison_ia || 'Recommandé pour vous') + '</div>'
+          + '</div></div></a>';
+      });
+    })
+    .catch(function(){
+      loading.style.display = 'none';
+      errDiv.style.display = 'block';
+      errDiv.textContent = '❌ Impossible de charger les recommandations.';
+    })
+    .finally(function(){
+      btn.disabled = false;
+      btn.textContent = '✨ Actualiser les recommandations';
+    });
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,232 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Admin Réservations{% endblock %}
+
+{% block body %}
+<h1 style="margin-bottom:20px;">Gestion des Réservations</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Séance</th>
+            <th>Utilisateur</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for res in reservations %}
+    <tr>
+        <td>{{ res.id }}</td>
+        <td>{{ seances[res.id] ? seances[res.id].titre : 'N/A' }}</td>
+        <td>{{ res.idUtilisateur }}</td>
+        <td>{{ res.dateReservation ? res.dateReservation|date('d/m/Y H:i') : 'N/A' }}</td>
+        <td>{{ res.statut }}</td>
+        <td>
+
+            {% if res.statut == 'en attente' %}
+            <button 
+                class="btn btn-success"
+                style="padding:4px 8px;"
+                onclick="openConfirm('{{ path('admin_reservation_confirmer', {id: res.id}) }}','Confirmer cette réservation ?')">
+                ✔ Confirmer
+            </button>
+            {% endif %}
+
+            <button 
+                class="btn btn-danger"
+                style="padding:4px 8px;"
+                onclick="openConfirm('{{ path('admin_reservation_delete', {id: res.id}) }}','Supprimer cette réservation ?')">
+                🗑 Supprimer
+            </button>
+
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+<div id="confirmModal" class="modalConfirm">
+    <div class="modalBox">
+        <p id="confirmText"></p>
+        <div style="margin-top:15px;">
+            <a id="confirmYes" class="btn btn-danger">Oui</a>
+            <button onclick="closeConfirm()" class="btn">Annuler</button>
+        </div>
+    </div>
+</div>
+
+
+<style>
+.modalConfirm{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5);
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modalBox{
+background:white;
+padding:25px;
+border-radius:10px;
+text-align:center;
+min-width:320px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+<style>
+.card-chart{
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+.card-chart:hover{
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+}
+
+.card-chart h3{
+    margin-bottom: 15px;
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+</style>
+</style>
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:40px;">
+
+    <div class="card-chart">
+        <h3>📊 Répartition des réservations</h3>
+        <canvas id="pieChart"></canvas>
+    </div>
+
+    <div class="card-chart">
+        <h3>📈 Évolution des réservations</h3>
+        <canvas id="lineChart"></canvas>
+    </div>
+
+</div>
+
+
+<script>
+fetch('/api/stats')
+.then(res => res.json())
+.then(data => {
+    document.getElementById('total').innerText = data.total;
+    document.getElementById('confirme').innerText = data.confirme;
+    document.getElementById('attente').innerText = data.en_attente;
+    document.getElementById('annule').innerText = data.annule;
+});
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+fetch('/api/stats')
+.then(res => res.json())
+.then(data => {
+
+    // ===== PIE CHART (MODERNE) =====
+    new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Confirmées', 'En attente', 'Annulées'],
+            datasets: [{
+                data: [data.confirme, data.attente, data.annule],
+                backgroundColor: [
+                    '#4ade80',   // vert doux
+                    '#fbbf24',   // jaune doux
+                    '#f87171'    // rouge doux
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20
+                    }
+                }
+            }
+        }
+    });
+
+    // ===== LINE CHART (SMOOTH MODERNE) =====
+    new Chart(document.getElementById('lineChart'), {
+        type: 'line',
+        data: {
+            labels: ['Total', 'Confirmées', 'En attente', 'Annulées'],
+            datasets: [{
+                label: 'Réservations',
+                data: [data.total, data.confirme, data.attente, data.annule],
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99,102,241,0.1)',
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#6366f1',
+                pointRadius: 5,
+                pointHoverRadius: 7
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    }
+                },
+                y: {
+                    grid: {
+                        color: '#f1f1f1'
+                    }
+                }
+            }
+        }
+    });
+
+});
+</script>
+<script>
+let confirmUrl = null;
+
+function openConfirm(url, message) {
+    confirmUrl = url;
+
+    document.getElementById("confirmText").innerText = message;
+    document.getElementById("confirmYes").setAttribute("href", url);
+
+    document.getElementById("confirmModal").style.display = "flex";
+}
+
+function closeConfirm() {
+    document.getElementById("confirmModal").style.display = "none";
+    confirmUrl = null;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% endblock %}

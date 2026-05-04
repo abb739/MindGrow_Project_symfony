@@ -1,0 +1,340 @@
+{% extends 'base.html.twig' %}
+{% block title %}Séances disponibles{% endblock %}
+{% block body %}
+
+{# ══ MODAL IA SÉANCE ══ #}
+<div id="ia-seance-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:24px;width:520px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;">
+    <div style="background:linear-gradient(135deg,#0b7a8f,#065f6e);padding:20px 24px;color:white;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">🧘</span>
+      <div>
+        <div style="font-size:17px;font-weight:800;">Conseiller Séance IA</div>
+        <div style="font-size:12px;opacity:.85;">Dites-nous comment vous vous sentez, on trouve la séance idéale</div>
+      </div>
+      <button onclick="fermerIASeance()" style="margin-left:auto;background:none;border:none;color:white;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+    <div style="padding:24px;">
+      <div id="ia-seance-msgs" style="min-height:80px;max-height:260px;overflow-y:auto;margin-bottom:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:85%;">
+          Bonjour ! 🌿 Dites-moi ce qui vous intéresse ou comment vous vous sentez (ex: je veux réduire mon stress, je cherche une activité de relaxation…)
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <textarea id="ia-seance-input" rows="2" placeholder="Ex: Je veux apprendre à mieux gérer mes émotions…"
+          style="flex:1;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;font-size:13px;resize:none;outline:none;font-family:inherit;"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();envoyerIASeance();}"></textarea>
+        <button onclick="envoyerIASeance()"
+          style="padding:10px 18px;background:linear-gradient(135deg,#0b7a8f,#065f6e);color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:13px;">
+          Envoyer
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function ouvrirIASeance()  { document.getElementById('ia-seance-overlay').style.display='flex'; }
+function fermerIASeance()  { document.getElementById('ia-seance-overlay').style.display='none'; }
+function envoyerIASeance() {
+  const input = document.getElementById('ia-seance-input');
+  const msgs  = document.getElementById('ia-seance-msgs');
+  const text  = input.value.trim();
+  if (!text) return;
+  msgs.innerHTML += `<div style="background:#0b7a8f;color:white;padding:10px 16px;border-radius:16px 4px 16px 16px;font-size:13px;max-width:85%;align-self:flex-end;margin-left:auto;">${text}</div>`;
+  input.value = '';
+  const tid = 'ty-' + Date.now();
+  msgs.innerHTML += `<div id="${tid}" style="background:#f1f5f9;padding:10px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#94a3b8;">⏳ Recherche de séances adaptées…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+ fetch('/chatbot/recommander-seance', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ message: text })
+})
+.then(r => r.json())
+.then(data => {
+  document.getElementById(tid)?.remove();
+
+  msgs.innerHTML += `
+    <div style="background:#f1f5f9;padding:12px 14px;border-radius:12px;font-size:13px;line-height:1.5;white-space:pre-wrap;">
+      ${data.response ?? data.error ?? 'Erreur'}
+    </div>
+  `;
+
+  msgs.scrollTop = msgs.scrollHeight;
+})
+.catch(() => {
+  document.getElementById(tid)?.remove();
+});
+}
+</script>
+
+<div id="chat-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:24px;width:520px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;">
+
+    <div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);padding:20px 24px;color:white;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">💬</span>
+      <div>
+        <div style="font-size:17px;font-weight:800;">Chat MindGrow</div>
+        <div style="font-size:12px;opacity:.85;">Discute avec l’assistant</div>
+      </div>
+      <button onclick="fermerChat()" style="margin-left:auto;background:none;border:none;color:white;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+
+    <div style="padding:24px;">
+      <div id="chat-msgs" style="min-height:200px;max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:#f1f5f9;padding:12px;border-radius:12px;font-size:13px;">
+          Bonjour 👋 Comment puis-je vous aider ?
+        </div>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <textarea id="chat-input" rows="2"
+          style="flex:1;border:1px solid #e2e8f0;border-radius:12px;padding:10px;font-size:13px;resize:none;"
+          placeholder="Écris ton message..."
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+        </textarea>
+
+        <button onclick="sendChat()"
+          style="background:#4f46e5;color:white;border:none;padding:10px 16px;border-radius:12px;font-weight:700;">
+          Envoyer
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<div style="text-align:center; margin-bottom:40px;">
+    <h1 style="font-size:36px; font-weight:700; color:#0b7a8f;">🎯 Séances MindGrow</h1>
+    <p style="color:var(--text2); font-size:16px; margin-top:8px;">Réservez votre place dans nos séances de bien-être</p>
+</div>
+
+<div class="card" style="margin-bottom:30px;">
+    <form method="get" action="{{ path('seances') }}" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <input type="text" name="search" value="{{ search }}" placeholder="🔍 Rechercher par titre ou lieu..."
+               style="flex:2; min-width:200px; margin:0;">
+        <div style="display:flex; gap:8px;">
+        <button type="button" onclick="ouvrirChat()"
+    style="background:linear-gradient(135deg,#7c3aed,#4f46e5);
+    color:white;font-weight:700;border-radius:25px;
+    padding:10px 20px;border:none;cursor:pointer;
+    box-shadow:0 4px 15px rgba(124,58,237,.35);">
+    💬 Chat
+</button>
+            <button type="submit" name="filtre" value="toutes"
+                    class="btn {{ filtre == 'toutes' ? 'btn-primary' : '' }}"
+                    style="{{ filtre != 'toutes' ? 'background:var(--bg3); color:var(--text2);' : '' }}">Toutes</button>
+            <button type="submit" name="filtre" value="avenir"
+                    class="btn {{ filtre == 'avenir' ? 'btn-success' : '' }}"
+                    style="{{ filtre != 'avenir' ? 'background:var(--bg3); color:var(--text2);' : '' }}">📅 À venir</button>
+        </div>
+        {% if search %}
+        <a href="{{ path('seances') }}" class="btn" style="background:#fee2e2; color:#dc2626;">✕</a>
+        <button type="button" onclick="ouvrirIASeance()"
+            style="background:linear-gradient(135deg,#0b7a8f,#065f6e);color:white;font-weight:700;border-radius:25px;padding:10px 20px;border:none;cursor:pointer;box-shadow:0 4px 15px rgba(11,122,143,.35);">
+            🧘 Séance IA
+        </button>
+        {% endif %}
+    </form>
+</div>
+
+{% if search %}
+<p style="color:var(--text2); margin-bottom:20px;">
+    {{ seances|length }} résultat(s) pour "<strong>{{ search }}</strong>"
+</p>
+{% endif %}
+
+<div style="display:flex; flex-wrap:wrap; gap:24px; justify-content:flex-start;">
+{% for seance in seances %}
+{% set places = placesRestantes[seance.id] is defined ? placesRestantes[seance.id] : 0 %}
+{% set reserve = dejaReserve[seance.id] is defined ? dejaReserve[seance.id] : false %}
+
+<div style="background:var(--bg2); border-radius:20px; width:310px;
+     box-shadow:0 4px 24px rgba(0,0,0,0.07);
+     border:2px solid {{ places <= 0 ? '#fee2e2' : (reserve ? '#dcfce7' : 'var(--border2)') }};
+     transition:all 0.3s; overflow:hidden;"
+     onmouseenter="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 12px 40px rgba(11,122,143,0.15)'"
+     onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0,0,0,0.07)'">
+
+    {# ── IMAGE en haut si elle existe ── #}
+    {% if seance.image %}
+    <div style="width:100%; height:160px; overflow:hidden; position:relative; flex-shrink:0;">
+        <img src="{{ asset('uploads/seances/' ~ seance.image) }}" alt="{{ seance.titre }}"
+             style="width:100%; height:100%; object-fit:cover; display:block;">
+        <div style="position:absolute; top:10px; left:10px; display:flex; gap:6px; flex-wrap:wrap;">
+            <span style="background:{% if places <= 0 %}rgba(153,27,27,0.9){% elseif places <= 3 %}rgba(146,64,14,0.9){% else %}rgba(22,101,52,0.9){% endif %};
+                        color:white; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;
+                        backdrop-filter:blur(4px);">
+                {% if places <= 0 %}COMPLET{% elseif places <= 3 %}⚠️ {{ places }} place(s){% else %}✅ {{ places }} places{% endif %}
+            </span>
+            {% if reserve %}
+            <span style="background:rgba(22,101,52,0.9); color:white; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">✓ Réservé</span>
+            {% endif %}
+        </div>
+    </div>
+    <div style="padding:20px;">
+    {% else %}
+    <div style="padding:28px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span style="background:{% if places <= 0 %}#fee2e2; color:#991b1b{% elseif places <= 3 %}#fef3c7; color:#92400e{% else %}#dcfce7; color:#166534{% endif %};
+                        padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700;">
+                {% if places <= 0 %}COMPLET{% elseif places <= 3 %}⚠️ {{ places }} place(s){% else %}✅ {{ places }} places{% endif %}
+            </span>
+            {% if reserve %}
+            <span style="background:#dcfce7; color:#166534; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700;">✓ Réservé</span>
+            {% endif %}
+        </div>
+    {% endif %}
+
+        <h2 style="font-size:20px; font-weight:700; color:var(--text); margin-bottom:10px;">{{ seance.titre }}</h2>
+
+        <div style="color:var(--text2); font-size:13px; margin-bottom:8px;">
+            📍 {{ seance.lieu|slice(0,50) }}{% if seance.lieu|length > 50 %}...{% endif %}
+        </div>
+        <div style="color:#0b7a8f; font-size:13px; font-weight:600; margin-bottom:4px;">
+            📅 {{ seance.dateDebut ? seance.dateDebut|date('d/m/Y à H:i') : '—' }}
+        </div>
+        <div style="color:var(--text3); font-size:12px; margin-bottom:16px;">
+            🏁 {{ seance.dateFin ? seance.dateFin|date('d/m/Y à H:i') : '—' }}
+        </div>
+
+        {% if seance.description %}
+        <p style="color:var(--text2); font-size:13px; line-height:1.5; margin-bottom:16px;">
+            {{ seance.description|slice(0,100) }}{% if seance.description|length > 100 %}...{% endif %}
+        </p>
+        {% endif %}
+
+        <div style="margin-bottom:16px;">
+            {% set taux = seance.capacite > 0 ? ((seance.capacite - places) / seance.capacite * 100)|round : 100 %}
+            <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text3); margin-bottom:4px;">
+                <span>Remplissage</span><span>{{ seance.capacite - places }}/{{ seance.capacite }}</span>
+            </div>
+            <div style="background:var(--bg3); border-radius:6px; height:8px; overflow:hidden;">
+                <div style="background:{{ taux >= 90 ? '#ef4444' : (taux >= 60 ? '#f59e0b' : '#10b981') }};
+                            height:100%; width:{{ taux }}%; transition:width 0.3s;"></div>
+            </div>
+        </div>
+
+        {% if reserve %}
+            <div style="background:#f0fdf4; color:#166534; padding:12px; border-radius:12px; text-align:center; font-weight:600; font-size:14px;">
+                ✓ Vous avez réservé cette séance
+            </div>
+        {% elseif places <= 0 %}
+            <div style="background:#fef2f2; color:#991b1b; padding:12px; border-radius:12px; text-align:center; font-weight:600; font-size:14px;">
+                Cette séance est complète
+            </div>
+        {% else %}
+            <a href="{{ path('reservation_new', {idSeance: seance.id}) }}"
+               style="display:block; background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white;
+                      padding:13px; border-radius:12px; text-decoration:none; font-weight:600;
+                      font-size:15px; text-align:center; transition:opacity 0.2s;"
+               onmouseenter="this.style.opacity='0.9'" onmouseleave="this.style.opacity='1'">
+                Réserver ma place →
+            </a>
+        {% endif %}
+
+    </div>{# fin padding div #}
+</div>{# fin card #}
+{% else %}
+<div style="text-align:center; width:100%; padding:60px; color:var(--text3);">
+    {% if search %}
+        Aucune séance pour "{{ search }}" — <a href="{{ path('seances') }}" style="color:#0b7a8f;">Voir toutes les séances</a>
+    {% else %}
+        Aucune séance disponible pour le moment.
+    {% endif %}
+</div>
+{% endfor %}
+</div>
+<script>
+function ouvrirIASeance(){
+  document.getElementById('ia-seance-overlay').style.display='flex';
+}
+
+function fermerIASeance(){
+  document.getElementById('ia-seance-overlay').style.display='none';
+}
+
+function envoyerIASeance(){
+  const input = document.getElementById('ia-seance-input');
+  const msgs = document.getElementById('ia-seance-msgs');
+  const text = input.value.trim();
+
+  if(!text) return;
+
+  msgs.innerHTML += `<div style="margin:5px 0;padding:8px;background:#0b7a8f;color:white;border-radius:10px;">${text}</div>`;
+  input.value='';
+
+  const loadingId = 'load-' + Date.now();
+  msgs.innerHTML += `<div id="${loadingId}">⏳ Recherche...</div>`;
+
+  fetch('/chatbot/recommander-seance', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({message:text})
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(loadingId)?.remove();
+
+    msgs.innerHTML += `
+      <div style="background:#f1f5f9;padding:10px;border-radius:10px;margin-top:5px;">
+        ${data.response ?? data.error ?? 'Erreur'}
+      </div>`;
+  })
+  .catch(() => {
+    document.getElementById(loadingId)?.remove();
+  });
+}
+
+function ouvrirChat(){
+  document.getElementById('chat-overlay').style.display = 'flex';
+}
+
+function fermerChat(){
+  document.getElementById('chat-overlay').style.display = 'none';
+}
+function sendChat(){
+  const input = document.getElementById('chat-input');
+  const msgs  = document.getElementById('chat-msgs');
+  const text  = input.value.trim();
+
+  if(!text) return;
+
+  msgs.innerHTML += `
+    <div style="background:#4f46e5;color:white;padding:10px 12px;border-radius:12px;align-self:flex-end;max-width:80%;">
+      ${text}
+    </div>
+  `;
+
+  input.value = '';
+
+  const loadingId = 'load-' + Date.now();
+
+  msgs.innerHTML += `
+    <div id="${loadingId}" style="background:#f1f5f9;padding:10px;border-radius:12px;">
+      ⏳ Réponse...
+    </div>
+  `;
+
+  fetch('/chatbot/message', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({message: text})
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(loadingId)?.remove();
+
+    msgs.innerHTML += `
+      <div style="background:#f1f5f9;padding:12px 14px;border-radius:12px;font-size:13px;white-space:pre-wrap;">
+        ${data.response ?? data.error ?? 'Erreur'}
+      </div>
+    `;
+
+    msgs.scrollTop = msgs.scrollHeight;
+  })
+  .catch(() => {
+    document.getElementById(loadingId)?.remove();
+  });
+}
+</script>
+
+{% endblock %}

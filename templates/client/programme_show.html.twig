@@ -1,0 +1,516 @@
+{% extends 'base.html.twig' %}
+{% block title %}{{ programme.titre }} — MindGrow{% endblock %}
+{% block body %}
+<script>const PROGRAMME_ID = {{ programme.id }};</script>
+
+{# ══════════════════════════════════════════════════════════ #}
+{# CHATBOT IA PROGRAMME — MODAL CENTRÉ (style abonnement)     #}
+{# ══════════════════════════════════════════════════════════ #}
+<div id="ia-prog-overlay"
+     onclick="if(event.target===this) fermerIAProg();"
+     style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:24px;width:500px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;">
+
+    {# Header #}
+    <div style="background:linear-gradient(135deg,#0b7a8f,#065f6e);padding:20px 24px;color:white;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">🌿</span>
+      <div>
+        <div style="font-size:17px;font-weight:800;">Coach Programmes IA</div>
+        <div style="font-size:12px;opacity:.85;">Je vous aide à comprendre ce programme</div>
+      </div>
+      <button onclick="fermerIAProg()" style="margin-left:auto;background:none;border:none;color:white;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+
+    {# Suggestions rapides #}
+    <div style="padding:12px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:#64748b;font-weight:600;align-self:center;">Suggestions :</span>
+      <button onclick="envoyerIAProg('Explique-moi ce programme')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        ❓ Ce programme
+      </button>
+      <button onclick="envoyerIAProg('Quel programme recommandes-tu pour débuter ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        🌱 Pour débuter
+      </button>
+      <button onclick="envoyerIAProg('Quel programme est le plus efficace pour la relaxation ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #0b7a8f;border-radius:20px;font-size:12px;color:#0b7a8f;cursor:pointer;font-weight:600;">
+        😌 Relaxation
+      </button>
+    </div>
+
+    {# Messages #}
+    <div id="ia-prog-msgs" style="min-height:100px;max-height:280px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:85%;">
+        Bonjour ! 🌿 Je suis votre coach bien-être IA. Posez-moi vos questions sur ce programme ou sur nos autres programmes !
+      </div>
+    </div>
+
+    {# Input #}
+    <div style="display:flex;gap:8px;padding:14px 16px;border-top:1px solid #e2e8f0;background:white;">
+      <input id="ia-prog-input" type="text" placeholder="Ex: Ce programme convient à quel niveau ?"
+        style="flex:1;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit;color:#1e293b;"
+        onkeydown="if(event.key==='Enter') envoyerIAProg()">
+      <button onclick="envoyerIAProg()"
+        style="padding:10px 18px;background:linear-gradient(135deg,#0b7a8f,#065f6e);color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:13px;">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function ouvrirIAProg() { document.getElementById('ia-prog-overlay').style.display = 'flex'; }
+function fermerIAProg() { document.getElementById('ia-prog-overlay').style.display = 'none'; }
+
+function envoyerIAProg(texteFixe) {
+  const input = document.getElementById('ia-prog-input');
+  const msgs  = document.getElementById('ia-prog-msgs');
+  const text  = texteFixe || input.value.trim();
+  if (!text) return;
+
+  msgs.innerHTML += `<div style="background:#0b7a8f;color:white;padding:10px 16px;border-radius:16px 4px 16px 16px;font-size:13px;max-width:82%;align-self:flex-end;margin-left:auto;">${text}</div>`;
+  if (!texteFixe) input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const tid = 'ty-' + Date.now();
+  msgs.innerHTML += `<div id="${tid}" style="background:#f1f5f9;padding:10px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#94a3b8;">⏳ Analyse en cours…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  fetch('/chatbot/programme', {
+    method:  'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:    JSON.stringify({message: text, programme_id: PROGRAMME_ID})
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(tid)?.remove();
+    const rep = data.response || data.error || 'Erreur.';
+    msgs.innerHTML += `<div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:90%;white-space:pre-wrap;">${rep}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  })
+  .catch(() => { document.getElementById(tid)?.remove(); });
+}
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  * { box-sizing: border-box; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: #94a3b8; padding: 1.5rem 0 0;
+  }
+  .breadcrumb a { color: #64748b; text-decoration: none; transition: color .2s; }
+  .breadcrumb a:hover { color: #0b7a8f; }
+  .breadcrumb span { color: #0b7a8f; font-weight: 600; }
+
+  .show-hero {
+    border-radius: 24px; overflow: hidden; margin: 1.25rem 0 0;
+    height: 340px; position: relative;
+    background: linear-gradient(135deg, #0b7a8f 0%, #043d48 100%);
+    box-shadow: 0 8px 32px rgba(11,122,143,0.2);
+  }
+  .show-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.65; }
+  .show-hero-placeholder {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6rem; color: rgba(255,255,255,0.1);
+  }
+  .show-hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(4,30,36,0.88) 0%, transparent 55%);
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem 2.5rem;
+  }
+  .show-cat-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15); color: white; backdrop-filter: blur(8px);
+    font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 20px;
+    width: fit-content; margin-bottom: 0.75rem;
+  }
+  .show-title {
+    font-family: 'DM Serif Display', serif; font-size: 2.6rem;
+    font-weight: 400; color: white; margin: 0; line-height: 1.2;
+  }
+
+  .show-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; margin-top: 1.75rem; }
+  @media (max-width: 900px) {
+    .show-layout { grid-template-columns: 1fr; }
+    .show-title  { font-size: 1.9rem; }
+    .show-hero   { height: 240px; }
+  }
+
+  .card {
+    background: var(--bg2, white); border-radius: 18px;
+    border: 1px solid var(--border, #e8edf2); box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    overflow: hidden; margin-bottom: 20px;
+  }
+  .card:last-child { margin-bottom: 0; }
+  .card-header {
+    padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border2, #f1f5f9);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card-icon {
+    width: 36px; height: 36px; background: #e8f7fa; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px; flex-shrink: 0;
+  }
+  .card-header h3 { font-size: 15px; font-weight: 700; color: var(--text, #1e293b); margin: 0; }
+  .card-body { padding: 1.4rem 1.5rem; }
+
+  .desc-text { font-size: 15px; color: var(--text2, #475569); line-height: 1.85; white-space: pre-line; }
+
+  .media-img {
+    width: 100%; border-radius: 14px;
+    border: 1px solid var(--border2, #e2e8f0); display: block;
+    max-height: 420px; object-fit: cover;
+  }
+  .video-wrap { width: 100%; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; background: #000; }
+  .video-wrap video { width: 100%; height: 100%; display: block; outline: none; }
+
+  .info-list { display: flex; flex-direction: column; }
+  .info-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 0.85rem 0; border-bottom: 1px solid var(--border2, #f8fafc);
+  }
+  .info-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-icon { font-size: 19px; flex-shrink: 0; margin-top: 1px; }
+  .info-label { font-size: 11px; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; }
+  .info-value { font-size: 14px; color: var(--text, #1e293b); font-weight: 500; margin-top: 3px; }
+
+  .action-btn {
+    display: block; width: 100%; text-align: center;
+    padding: 0.85rem; border-radius: 12px; font-size: 14px;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: all 0.2s; border: none; font-family: 'DM Sans', sans-serif;
+    margin-bottom: 10px;
+  }
+  .action-btn:last-child { margin-bottom: 0; }
+  .btn-primary { background: #0b7a8f; color: white; }
+  .btn-primary:hover { background: #085f70; }
+  .btn-secondary { background: #f1f5f9; color: #475569; }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn-fav { background: #fff0f0; color: #e05c5c; border: 1.5px solid #fecaca; }
+  .btn-fav:hover, .btn-fav.active { background: #e05c5c; color: white; border-color: #e05c5c; }
+
+  /* ── BOUTON COACH IA DANS LES ACTIONS ── */
+  .btn-coach-ia-show {
+    display: block; width: 100%; text-align: center;
+    padding: 0.85rem; border-radius: 12px; font-size: 14px; font-weight: 700;
+    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; margin-bottom: 10px;
+    background: linear-gradient(135deg,#0b7a8f,#065f6e); color: white;
+    box-shadow: 0 4px 15px rgba(11,122,143,.3); transition: all 0.2s;
+  }
+  .btn-coach-ia-show:hover { opacity: .9; transform: translateY(-1px); }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 7px;
+    color: #64748b; text-decoration: none; font-size: 13px; font-weight: 500;
+    padding: 0.55rem 1.1rem; background: var(--bg2, white); border-radius: 10px;
+    border: 1px solid var(--border2, #e2e8f0); transition: all 0.2s; margin-top: 1.5rem;
+  }
+  .back-link:hover { color: #0b7a8f; border-color: #0b7a8f; }
+
+  .fade-in { animation: fadeIn 0.45s ease both; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+</style>
+
+<div style="max-width:1100px; margin:0 auto; padding:0 1.5rem 4rem; font-family:'DM Sans',sans-serif;">
+
+  {# ── BREADCRUMB ── #}
+  <div class="breadcrumb">
+    <a href="{{ path('programmes') }}">🏠 Programmes</a>
+    <span>›</span>
+    <span>{{ programme.titre }}</span>
+  </div>
+
+  {# ── HERO ── #}
+  {% set hasImage = programme.image and 'C:\\' not in programme.image and programme.image is not empty %}
+
+  <div class="show-hero fade-in">
+    {% if hasImage %}
+      <img src="{{ asset(programme.image) }}" alt="{{ programme.titre }}" class="show-hero-img"
+           onerror="this.style.display='none'; document.getElementById('hero-placeholder').style.display='flex';">
+    {% endif %}
+    <div id="hero-placeholder" class="show-hero-placeholder" {{ hasImage ? 'style="display:none;"' : '' }}>🧠</div>
+    <div class="show-hero-overlay">
+      <div class="show-cat-badge">🏷️ {{ catNom }}</div>
+      <h1 class="show-title">{{ programme.titre }}</h1>
+    </div>
+  </div>
+
+  {# ── LAYOUT 2 colonnes ── #}
+  <div class="show-layout">
+
+    {# ── GAUCHE ── #}
+    <div>
+
+      {% if hasImage %}
+      <div class="card fade-in" style="animation-delay:.05s;">
+        <div class="card-header">
+          <div class="card-icon">🖼️</div>
+          <h3>Image du programme</h3>
+        </div>
+        <div class="card-body">
+          <img src="{{ asset(programme.image) }}" alt="{{ programme.titre }}" class="media-img"
+               onerror="this.parentElement.parentElement.style.display='none';">
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="card fade-in" style="animation-delay:.1s;">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <h3>Description du programme</h3>
+        </div>
+        <div class="card-body">
+          {% if programme.description %}
+            <p class="desc-text">{{ programme.description }}</p>
+          {% else %}
+            <p style="color:#94a3b8; font-style:italic; font-size:14px;">Aucune description disponible pour ce programme.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% set hasVideo = programme.video and 'C:\\' not in programme.video and programme.video is not empty %}
+      {% if hasVideo %}
+      <div class="card fade-in" style="animation-delay:.15s;">
+        <div class="card-header">
+          <div class="card-icon">🎬</div>
+          <h3>Vidéo du programme</h3>
+        </div>
+        <div class="card-body">
+          <div class="video-wrap">
+            <video controls preload="metadata" controlslist="nodownload">
+              <source src="{{ asset(programme.video) }}" type="video/mp4">
+              <source src="{{ asset(programme.video) }}" type="video/webm">
+              Votre navigateur ne supporte pas la lecture vidéo.
+            </video>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {# ── DROITE ── #}
+    <div>
+
+      <div class="card fade-in" style="animation-delay:.12s;">
+        <div class="card-header">
+          <div class="card-icon">ℹ️</div>
+          <h3>Informations</h3>
+        </div>
+        <div class="card-body" style="padding-top:.6rem;">
+          <div class="info-list">
+            <div class="info-item">
+              <span class="info-icon">🏷️</span>
+              <div>
+                <div class="info-label">Catégorie</div>
+                <div class="info-value">{{ catNom }}</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🎬</span>
+              <div>
+                <div class="info-label">Vidéo</div>
+                <div class="info-value">
+                  {% if hasVideo %}<span style="color:#10b981;">✅ Incluse</span>
+                  {% else %}<span style="color:#94a3b8;">❌ Non disponible</span>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">🖼️</span>
+              <div>
+                <div class="info-label">Illustration</div>
+                <div class="info-value">
+                  {% if hasImage %}<span style="color:#10b981;">✅ Disponible</span>
+                  {% else %}<span style="color:#94a3b8;">❌ Non disponible</span>{% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">#️⃣</span>
+              <div>
+                <div class="info-label">Référence</div>
+                <div class="info-value">PROG-{{ '%04d'|format(programme.id) }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-in" style="animation-delay:.18s;">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <h3>Actions</h3>
+        </div>
+        <div class="card-body">
+
+          {# ── COACH IA (style abonnement) ── #}
+          <button type="button" class="btn-coach-ia-show" onclick="ouvrirIAProg()">
+            🤖 Coach Programmes IA
+          </button>
+
+          <button type="button" id="btn-favori"
+                  class="action-btn btn-fav {{ programme.id in (favoris ?? []) ? 'active' : '' }}"
+                  data-id="{{ programme.id }}"
+                  onclick="toggleFavori(this)">
+            {% if programme.id in (favoris ?? []) %}♥ Dans vos favoris
+            {% else %}♡ Ajouter aux favoris{% endif %}
+          </button>
+
+          <a href="/api/programmes/{{ programme.id }}/pdf"
+             class="action-btn btn-secondary" target="_blank"
+             style="display:block; text-align:center; text-decoration:none; padding:0.85rem; border-radius:12px; font-size:14px; font-weight:600; background:#f1f5f9; color:#475569; margin-bottom:10px;"
+             onmouseover="this.style.background='#e2e8f0'"
+             onmouseout="this.style.background='#f1f5f9'">
+            📄 Télécharger en PDF
+          </a>
+
+          <button type="button" id="btn-ia"
+                  onclick="genererDescriptionIA()"
+                  class="action-btn"
+                  style="background:#f0f7ff; color:#2563eb; border:1.5px solid #bfdbfe; font-weight:600;">
+            🤖 Description IA
+          </button>
+
+          <div style="display:flex; gap:6px; margin-bottom:10px;">
+            <select id="select-langue" style="flex:1; border:1.5px solid var(--border2,#e2e8f0); border-radius:10px; padding:0.5rem 0.7rem; font-size:13px; background:var(--bg3,#f8fafc); color:var(--text,#1e293b); outline:none;">
+              <option value="en">🇬🇧 Anglais</option>
+              <option value="ar">🇹🇳 Arabe</option>
+              <option value="es">🇪🇸 Espagnol</option>
+              <option value="fr">🇫🇷 Français</option>
+              <option value="de">🇩🇪 Allemand</option>
+            </select>
+            <button type="button" onclick="traduire()"
+                    style="background:#8b5cf6; color:white; border:none; border-radius:10px; padding:0 14px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;">
+              🌍 Traduire
+            </button>
+          </div>
+
+          <a href="{{ path('seances') }}" class="action-btn btn-primary"
+             style="display:block; text-align:center; text-decoration:none; padding:0.85rem; border-radius:12px; font-size:14px; font-weight:600; background:#0b7a8f; color:white;">
+            📅 Voir les séances
+          </a>
+
+        </div>
+      </div>
+
+      {# Résultat IA #}
+      <div id="card-ia-result" class="card fade-in" style="display:none; animation-delay:.22s;">
+        <div class="card-header">
+          <div class="card-icon" id="ia-icon">🤖</div>
+          <h3 id="ia-card-title">Résultat IA</h3>
+        </div>
+        <div class="card-body">
+          <div id="ia-loading" style="text-align:center; color:#64748b; padding:0.5rem;">
+            <div style="font-size:1.5rem;">⏳</div>
+            <p style="margin:4px 0; font-size:13px;">Traitement en cours…</p>
+          </div>
+          <div id="ia-content" style="display:none;">
+            <p id="ia-titre" style="font-weight:700; color:var(--text,#1e293b); margin:0 0 8px; font-size:15px;"></p>
+            <p id="ia-text" style="font-size:14px; color:var(--text2,#475569); line-height:1.75; margin:0; white-space:pre-line;"></p>
+          </div>
+          <div id="ia-error" style="display:none; color:#e05c5c; font-size:14px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <a href="{{ path('programmes') }}" class="back-link">← Retour aux programmes</a>
+
+</div>
+
+<div id="toast-show" style="position:fixed; bottom:24px; right:24px; z-index:9999;
+     background:#10b981; color:white; padding:12px 20px; border-radius:12px;
+     font-size:14px; font-weight:500; opacity:0; transition:opacity 0.3s;
+     pointer-events:none; box-shadow:0 8px 24px rgba(0,0,0,0.2);"></div>
+
+<script>
+function showToast(msg, ok) {
+  const t = document.getElementById('toast-show');
+  t.textContent = msg;
+  t.style.background = (ok === false) ? '#ef4444' : '#10b981';
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 2800);
+}
+
+function toggleFavori(btn) {
+  btn.disabled = true;
+  fetch('/api/programmes/' + btn.dataset.id + '/favori', {
+    method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    btn.classList.toggle('active');
+    btn.innerHTML = btn.classList.contains('active') ? '♥ Dans vos favoris' : '♡ Ajouter aux favoris';
+    showToast(btn.classList.contains('active') ? '❤️ Ajouté aux favoris' : '💔 Retiré des favoris');
+  })
+  .catch(() => showToast('❌ Erreur de connexion', false))
+  .finally(() => { btn.disabled = false; });
+}
+
+function showIACard(icon, title) {
+  const card = document.getElementById('card-ia-result');
+  card.style.display = 'block';
+  document.getElementById('ia-icon').textContent = icon;
+  document.getElementById('ia-card-title').textContent = title;
+  document.getElementById('ia-loading').style.display = 'block';
+  document.getElementById('ia-content').style.display = 'none';
+  document.getElementById('ia-error').style.display = 'none';
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function showIAResult(titre, texte) {
+  document.getElementById('ia-loading').style.display = 'none';
+  document.getElementById('ia-content').style.display = 'block';
+  const titreEl = document.getElementById('ia-titre');
+  titreEl.textContent = titre || '';
+  titreEl.style.display = titre ? 'block' : 'none';
+  document.getElementById('ia-text').textContent = texte;
+}
+
+function showIAError(msg) {
+  document.getElementById('ia-loading').style.display = 'none';
+  const e = document.getElementById('ia-error');
+  e.style.display = 'block';
+  e.textContent = '❌ ' + msg;
+}
+
+function genererDescriptionIA() {
+  const btn = document.getElementById('btn-ia');
+  btn.disabled = true; btn.textContent = '⏳ Génération…';
+  showIACard('🤖', 'Description générée par IA');
+  fetch('/api/programmes/{{ programme.id }}/generer-description', {
+    method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.description) { showIAResult('', data.description); showToast('✅ Description générée !'); }
+    else { showIAError(data.message || 'Erreur'); showToast('❌ Erreur IA', false); }
+  })
+  .catch(() => { showIAError('Impossible de contacter l\'IA.'); showToast('❌ Erreur', false); })
+  .finally(() => { btn.disabled = false; btn.textContent = '🤖 Description IA'; });
+}
+
+function traduire() {
+  const langue = document.getElementById('select-langue').value;
+  const noms = { en: 'Anglais', ar: 'Arabe', es: 'Espagnol', fr: 'Français', de: 'Allemand' };
+  showIACard('🌍', 'Traduction en ' + (noms[langue] || langue));
+  fetch('/api/programmes/{{ programme.id }}/traduire', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+    body: JSON.stringify({ langue: langue })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.titre || data.description) { showIAResult(data.titre || '', data.description || ''); showToast('✅ Traduction effectuée !'); }
+    else { showIAError(data.message || 'Erreur de traduction'); showToast('❌ Erreur', false); }
+  })
+  .catch(() => { showIAError('Impossible de contacter le service de traduction.'); showToast('❌ Erreur', false); });
+}
+</script>
+{% endblock %}

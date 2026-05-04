@@ -1,0 +1,651 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Admin — Gestion des Programmes{% endblock %}
+{% block body %}
+
+<style>
+/* ── DELETE MODAL ── */
+.delete-modal {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+    z-index: 9999; align-items: center; justify-content: center;
+}
+.delete-box {
+    background: var(--bg2, white); padding: 28px; border-radius: 16px;
+    width: 360px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+.delete-actions { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+
+/* ── TOASTS ── */
+.toast-success, .toast-error {
+    position: fixed; top: 20px; right: 20px;
+    padding: 14px 22px; border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 99999; font-weight: 600; font-size: 14px;
+    animation: slideIn 0.4s ease;
+}
+.toast-success { background: #10b981; color: white; }
+.toast-error   { background: #ef4444; color: white; top: 74px; }
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* ── ERRORS ── */
+.error-text  { color: #ef4444; font-size: 12px; margin-bottom: 4px; display: none; }
+.input-error { border: 2px solid #ef4444 !important; background: #fff5f5 !important; }
+[data-theme="dark"] .input-error { background: #3d1515 !important; }
+
+/* ── EDIT MODAL ── */
+.edit-modal-overlay {
+    display: none; position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%; background: rgba(0,0,0,0.55);
+    z-index: 9998; align-items: center; justify-content: center;
+    backdrop-filter: blur(3px);
+}
+.edit-modal-box {
+    background: var(--bg2, white); border-radius: 20px; padding: 30px;
+    width: 680px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+    border: 1px solid var(--border, #e2e8f0);
+    animation: modalIn 0.2s ease;
+}
+@keyframes modalIn {
+    from { transform: scale(0.95) translateY(10px); opacity: 0; }
+    to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+/* ── UPLOAD ── */
+.upload-zone {
+    border: 2px dashed #cbd5e1; border-radius: 12px; padding: 18px 12px;
+    text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+    background: #f8fafc; position: relative;
+}
+[data-theme="dark"] .upload-zone { background: #1e293b; border-color: #334155; }
+.upload-zone:hover { border-color: #0b7a8f; background: #f0fafc; }
+.upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.uz-icon  { font-size: 24px; margin-bottom: 4px; }
+.uz-label { font-size: 12px; color: #64748b; font-weight: 600; }
+.uz-sub   { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.upload-preview { margin-top: 8px; display: none; border-radius: 10px; overflow: hidden; border: 1px solid #e2e8f0; }
+.upload-preview.show { display: block; }
+.upload-preview img { width: 100%; max-height: 130px; object-fit: cover; display: block; }
+.upload-preview-vid { background: linear-gradient(135deg,#0b7a8f,#043d48); height: 60px; display: flex; align-items: center; justify-content: center; gap: 8px; color: white; font-size: 13px; font-weight: 600; }
+.existing-badge {
+    display: flex; align-items: center; gap: 8px;
+    background: #e8f7fa; border: 1px solid #bae6f0; border-radius: 8px;
+    padding: 6px 12px; font-size: 12px; color: #0b7a8f; font-weight: 600; margin-bottom: 6px;
+}
+.existing-badge img { width: 44px; height: 34px; object-fit: cover; border-radius: 5px; flex-shrink: 0; }
+
+/* ── TABLE ── */
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table thead tr { background: linear-gradient(135deg, #0b7a8f, #065f6e); }
+table th { padding: 12px 16px; text-align: left; color: white; font-size: 11px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; }
+table td { padding: 13px 16px; border-bottom: 1px solid var(--border2, #f1f5f9); vertical-align: middle; }
+table tbody tr:hover td { background: var(--row-hover, #f8fafc); }
+table tbody tr:last-child td { border-bottom: none; }
+.prog-thumb { width: 60px; height: 46px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border2,#e2e8f0); display: block; }
+.prog-thumb-ph { width: 60px; height: 46px; border-radius: 8px; background: var(--bg3,#f1f5f9); border: 1px solid var(--border2,#e2e8f0); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.badge-id  { background: #e0f5f8; color: #0b7a8f; padding: 3px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+.badge-cat { background: #fef3c7; color: #92400e; padding: 3px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.badge-vid { background: #dbeafe; color: #1d4ed8; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+[data-theme="dark"] .badge-id  { background: #0c3a54; color: #7dd3fc; }
+[data-theme="dark"] .badge-cat { background: #2d1b04; color: #fcd34d; }
+[data-theme="dark"] .badge-vid { background: #1e3a8a; color: #93c5fd; }
+
+/* ── MISC ── */
+.search-box { position: relative; flex: 1; min-width: 180px; max-width: 280px; }
+.search-box input { padding-left: 34px !important; font-size: 13px !important; height: 38px; margin: 0 !important; }
+.search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 14px; pointer-events: none; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+@media(max-width:600px) { .form-grid-2 { grid-template-columns: 1fr; } }
+.form-grid-2 .form-group { margin-bottom: 14px; }
+.full-col { grid-column: 1 / -1; }
+.char-counter { font-size: 11px; color: var(--text3); text-align: right; margin-top: 3px; }
+.char-counter.warn { color: #f59e0b; } .char-counter.over { color: #ef4444; }
+.pg-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 24px; align-items: start; }
+@media(max-width:960px) { .pg-wrap { grid-template-columns: 1fr; } }
+.right-col { display: flex; flex-direction: column; gap: 22px; }
+.cat-panel { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-sm); position: sticky; top: 84px; }
+.cat-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 7px; transition: border-color .2s; }
+.cat-item:hover { border-color: #f59e0b; }
+.cat-item:last-child { margin-bottom: 0; }
+</style>
+
+{# ══ TOASTS FLASH SYMFONY ══ #}
+{% for msg in app.flashes('success') %}
+<div class="toast-success" id="flash-ok">✔ {{ msg }}</div>
+{% endfor %}
+{% for msg in app.flashes('error') %}
+<div class="toast-error" id="flash-err">⚠ {{ msg }}</div>
+{% endfor %}
+
+{# ══ MODALS EDIT (une par programme) ══ #}
+{% for prog in programmes %}
+{% set hasImg = prog.image and 'C:\\' not in prog.image %}
+{% set hasVid = prog.video and 'C:\\' not in prog.video %}
+<div class="edit-modal-overlay" id="edit-modal-{{ prog.id }}">
+  <div class="edit-modal-box">
+    <div style="font-size:17px; font-weight:700; color:var(--text); margin-bottom:22px;">✏️ Modifier — {{ prog.titre }}</div>
+    <form method="post" action="{{ path('admin_programme_edit', {id: prog.id}) }}"
+          enctype="multipart/form-data" id="editForm-{{ prog.id }}" novalidate>
+      <div class="form-grid-2">
+
+        <div class="form-group full-col">
+          <label>Titre *</label>
+          <input type="text" id="et-{{ prog.id }}" name="titre" value="{{ prog.titre }}" maxlength="100">
+          <span class="error-text" id="ete-{{ prog.id }}"></span>
+        </div>
+
+        <div class="form-group">
+          <label>Catégorie *</label>
+          <select id="ec-{{ prog.id }}" name="idCategorie">
+            <option value="">Choisir...</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {{ prog.idCategorie == cat.id ? 'selected' : '' }}>{{ cat.nom }}</option>
+            {% endfor %}
+          </select>
+          <span class="error-text" id="ece-{{ prog.id }}"></span>
+        </div>
+
+        <div class="form-group full-col">
+          <label>Description <small style="color:var(--text3);">(max 200)</small></label>
+          <textarea id="ed-{{ prog.id }}" name="description" rows="3" maxlength="200">{{ prog.description ?? '' }}</textarea>
+          <div class="char-counter" id="edc-{{ prog.id }}">0 / 200</div>
+        </div>
+
+        <div class="form-group">
+          <label>🖼️ Image</label>
+          {% if hasImg %}
+          <div class="existing-badge">
+            <img src="{{ asset(prog.image) }}" alt="" onerror="this.style.display='none'">
+            <span>Image actuelle — remplacer ci-dessous</span>
+          </div>
+          {% endif %}
+          <div class="upload-zone">
+            <input type="file" name="image_file" accept="image/jpeg,image/png,image/gif,image/webp"
+                   onchange="handleUpload(this,'eiprev-{{ prog.id }}','image')">
+            <div class="uz-icon">🖼️</div>
+            <div class="uz-label">{{ hasImg ? 'Remplacer l\'image' : 'Ajouter une image' }}</div>
+            <div class="uz-sub">JPG · PNG · WEBP · GIF</div>
+          </div>
+          <div class="upload-preview" id="eiprev-{{ prog.id }}">
+            <img src="" alt="Aperçu">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>🎬 Vidéo</label>
+          {% if hasVid %}
+          <div class="existing-badge">🎬 <span>Vidéo actuelle — remplacer ci-dessous</span></div>
+          {% endif %}
+          <div class="upload-zone">
+            <input type="file" name="video_file" accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                   onchange="handleUpload(this,'evprev-{{ prog.id }}','video')">
+            <div class="uz-icon">🎬</div>
+            <div class="uz-label">{{ hasVid ? 'Remplacer la vidéo' : 'Ajouter une vidéo' }}</div>
+            <div class="uz-sub">MP4 · WEBM · MOV</div>
+          </div>
+          <div class="upload-preview" id="evprev-{{ prog.id }}">
+            <div class="upload-preview-vid">🎬 <span></span></div>
+          </div>
+        </div>
+
+      </div>
+      <div style="display:flex; gap:10px; margin-top:8px;">
+        <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+        <button type="button" onclick="closeEdit('edit-modal-{{ prog.id }}')"
+                class="btn" style="background:var(--bg3); color:var(--text2);">Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endfor %}
+
+{# ══ MODAL SUPPRESSION PROGRAMME ══ #}
+<div id="deleteModal" class="delete-modal">
+  <div class="delete-box">
+    <div style="font-size:40px; margin-bottom:8px;">🗑️</div>
+    <h3 style="margin:0 0 8px; color:var(--text);">Confirmer la suppression</h3>
+    <p id="deleteText" style="color:#64748b; font-size:14px; margin:0 0 4px;"></p>
+    <p style="color:#ef4444; font-size:12px; margin:0;">Cette action est irréversible.</p>
+    <div class="delete-actions">
+      <form id="deleteForm" method="post" action="">
+        <input type="hidden" id="deleteToken" name="_token" value="">
+        <button type="submit" class="btn btn-danger">🗑️ Oui, supprimer</button>
+      </form>
+      <button onclick="closeDeleteModal()" class="btn" style="background:#f1f5f9; color:#475569;">Annuler</button>
+    </div>
+  </div>
+</div>
+
+{# ══ MODAL SUPPRESSION CATÉGORIE ══ #}
+<div id="deleteCatModal" class="delete-modal">
+  <div class="delete-box">
+    <div style="font-size:40px; margin-bottom:8px;">📁</div>
+    <h3 style="margin:0 0 8px; color:var(--text);">Confirmer la suppression</h3>
+    <p id="deleteCatText" style="color:#64748b; font-size:14px; margin:0 0 4px;"></p>
+    <p style="color:#ef4444; font-size:12px; margin:0;">Cette action est irréversible.</p>
+    <div class="delete-actions">
+      <form id="deleteCatForm" method="post" action="">
+        <input type="hidden" id="deleteCatToken" name="_token" value="">
+        <button type="submit" class="btn btn-danger">🗑️ Oui, supprimer</button>
+      </form>
+      <button onclick="closeCatDeleteModal()" class="btn" style="background:#f1f5f9; color:#475569;">Annuler</button>
+    </div>
+  </div>
+</div>
+
+{# ══ EN-TÊTE ══ #}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+  <h1 class="page-title" style="margin-bottom:0;">🎓 Gestion des Programmes</h1>
+  <div style="display:flex; gap:10px;">
+    <a href="{{ path('admin_stats_programmes') }}"
+       style="display:flex; align-items:center; gap:8px; padding:8px 18px;
+              background:linear-gradient(135deg,#8b5cf6,#6d28d9); color:white;
+              border:none; border-radius:12px; font-size:14px; font-weight:700;
+              cursor:pointer; box-shadow:0 4px 15px rgba(139,92,246,.35);
+              text-decoration:none; transition:all .2s;">
+        📊 Voir les statistiques
+    </a>
+    <span style="background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:5px 16px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;">
+      📂 <strong style="color:#0b7a8f;">{{ categories|length }}</strong> catégorie(s)
+    </span>
+    <span style="background:var(--bg2);border:1px solid var(--border);border-radius:999px;padding:5px 16px;font-size:13px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;">
+      🎓 <strong style="color:#0b7a8f;">{{ programmes|length }}</strong> programme(s)
+    </span>
+  </div>
+</div>
+
+{# ══ GRILLE PRINCIPALE ══ #}
+<div class="pg-wrap">
+
+  {# ── GAUCHE : Catégories ── #}
+  <div class="cat-panel">
+    <div style="padding:18px 22px 14px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px;">
+      <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#d97706);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;">📁</div>
+      <h3 style="font-size:15px;font-weight:700;color:var(--text);margin:0;">Catégories</h3>
+    </div>
+
+    <div style="padding:16px 20px; border-bottom:1px solid var(--border);">
+      <form method="post" action="{{ path('admin_categorie_new') }}" id="catForm" novalidate>
+        <div class="form-group">
+          <label>Nom * <small style="color:var(--text3);">(lettres)</small></label>
+          <input type="text" id="cat-nom" name="nom" placeholder="Nom catégorie" maxlength="100">
+          <span class="error-text" id="cat-err-nom"></span>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Description</label>
+          <input type="text" name="description" placeholder="Optionnel" maxlength="200">
+        </div>
+        <button type="submit" class="btn btn-warning" style="width:100%;margin-top:14px;">➕ Ajouter catégorie</button>
+      </form>
+    </div>
+
+    <div style="padding:14px 20px 18px;">
+      {% if categories is empty %}
+        <div style="text-align:center;padding:20px;color:var(--text3);font-size:13px;">Aucune catégorie</div>
+      {% else %}
+        {% for cat in categories %}
+        {% set cnt = 0 %}
+        {% for p in programmes %}{% if p.idCategorie == cat.id %}{% set cnt = cnt + 1 %}{% endif %}{% endfor %}
+        <div class="cat-item">
+          <div style="display:flex;align-items:center;gap:7px;flex:1;min-width:0;">
+            <div style="width:7px;height:7px;border-radius:50%;background:#f59e0b;flex-shrink:0;"></div>
+            <span style="font-weight:600;font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ cat.nom }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+            <span style="font-size:11px;color:var(--text3);background:var(--bg);border-radius:999px;padding:1px 8px;">{{ cnt }} prog.</span>
+            {# ── Bouton suppression catégorie avec modale ── #}
+            <button onclick="openCatDeleteModal(
+                '{{ path('admin_categorie_delete', {id: cat.id}) }}',
+                '{{ csrf_token('delete-cat-' ~ cat.id) }}',
+                '{{ cat.nom|replace({"'": '', '"': ''}) }}'
+            )" class="btn btn-danger btn-sm">🗑️</button>
+          </div>
+        </div>
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+
+  {# ── DROITE ── #}
+  <div class="right-col">
+
+    {# Formulaire Ajouter #}
+    <div class="card">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:20px;color:var(--label);display:flex;align-items:center;gap:8px;">
+        <span style="width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,#10b981,#059669);display:inline-flex;align-items:center;justify-content:center;font-size:14px;">➕</span>
+        Ajouter un programme
+      </h3>
+      <form method="post" action="{{ path('admin_programme_new') }}"
+            enctype="multipart/form-data" id="addProgForm" novalidate>
+        <div class="form-grid-2">
+
+          <div class="form-group">
+            <label>Titre *</label>
+            <input type="text" id="ap-titre" name="titre" maxlength="100" placeholder="Titre du programme">
+            <span class="error-text" id="ap-err-titre"></span>
+          </div>
+
+          <div class="form-group">
+            <label>Catégorie *</label>
+            <select id="ap-cat" name="idCategorie">
+              <option value="">Choisir une catégorie...</option>
+              {% for cat in categories %}
+              <option value="{{ cat.id }}">{{ cat.nom }}</option>
+              {% endfor %}
+            </select>
+            <span class="error-text" id="ap-err-cat"></span>
+          </div>
+
+          <div class="form-group full-col">
+            <label>Description <small style="color:var(--text3);">(max 200)</small></label>
+            <textarea id="ap-desc" name="description" rows="3" maxlength="200" placeholder="Description du programme..."></textarea>
+            <div class="char-counter" id="ap-char">0 / 200</div>
+          </div>
+
+          <div class="form-group">
+            <label>🖼️ Image du programme</label>
+            <div class="upload-zone">
+              <input type="file" name="image_file" accept="image/jpeg,image/png,image/gif,image/webp"
+                     onchange="handleUpload(this,'ap-iprev','image')">
+              <div class="uz-icon">🖼️</div>
+              <div class="uz-label">Cliquer ou glisser une image</div>
+              <div class="uz-sub">JPG · PNG · WEBP · GIF · max 10 Mo</div>
+            </div>
+            <div class="upload-preview" id="ap-iprev">
+              <img src="" alt="Aperçu">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>🎬 Vidéo du programme</label>
+            <div class="upload-zone">
+              <input type="file" name="video_file" accept="video/mp4,video/webm,video/ogg,video/quicktime"
+                     onchange="handleUpload(this,'ap-vprev','video')">
+              <div class="uz-icon">🎬</div>
+              <div class="uz-label">Cliquer ou glisser une vidéo</div>
+              <div class="uz-sub">MP4 · WEBM · MOV · max 50 Mo</div>
+            </div>
+            <div class="upload-preview" id="ap-vprev">
+              <div class="upload-preview-vid">🎬 <span id="ap-vname"></span></div>
+            </div>
+          </div>
+
+        </div>
+        <button type="submit" class="btn btn-success">➕ Ajouter le programme</button>
+      </form>
+    </div>
+
+    {# Table programmes #}
+    <div class="card" style="padding:0;overflow:hidden;">
+      <div style="padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <h3 style="font-size:15px;font-weight:700;color:var(--text);margin:0;">📋 Liste des Programmes</h3>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchProg" placeholder="Rechercher..." oninput="filterRows(this.value)">
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        {% if programmes is empty %}
+        <div style="text-align:center;padding:52px;color:var(--text3);">
+          <div style="font-size:48px;margin-bottom:12px;">🎓</div>
+          <p>Aucun programme. Créez-en un ci-dessus.</p>
+        </div>
+        {% else %}
+        <table id="progTable">
+          <thead>
+            <tr>
+              <th>#</th><th>Image</th><th>Titre</th><th>Catégorie</th>
+              <th>Description</th><th>Vidéo</th><th style="text-align:right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for prog in programmes %}
+          {% set catName = 'Inconnue' %}
+          {% for cat in categories %}{% if cat.id == prog.idCategorie %}{% set catName = cat.nom %}{% endif %}{% endfor %}
+          {% set hasImg = prog.image and 'C:\\' not in prog.image %}
+          {% set hasVid = prog.video and 'C:\\' not in prog.video %}
+          <tr data-title="{{ prog.titre|lower }}" data-cat="{{ catName|lower }}">
+            <td><span class="badge-id">#{{ prog.id }}</span></td>
+            <td>
+              {% if hasImg %}
+                <img src="{{ asset(prog.image) }}" alt="{{ prog.titre }}" class="prog-thumb"
+                     onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'prog-thumb-ph',textContent:'🖼️'}))">
+              {% else %}
+                <div class="prog-thumb-ph">🖼️</div>
+              {% endif %}
+            </td>
+            <td style="font-weight:700;color:var(--text);">{{ prog.titre }}</td>
+            <td><span class="badge-cat">{{ catName }}</span></td>
+            <td style="color:var(--text2);font-size:13px;max-width:180px;">
+              {% if prog.description %}{{ prog.description|slice(0,55) }}{% if prog.description|length > 55 %}…{% endif %}
+              {% else %}<span style="color:var(--text3);">—</span>{% endif %}
+            </td>
+            <td>
+              {% if hasVid %}<span class="badge-vid">🎬 Vidéo</span>
+              {% else %}<span style="color:var(--text3);font-size:12px;">—</span>{% endif %}
+            </td>
+            <td style="text-align:right;white-space:nowrap;">
+              <button onclick="openEdit('edit-modal-{{ prog.id }}')" class="btn btn-warning btn-sm">✏️ Modifier</button>
+              <button onclick="openDeleteModal(
+                  '{{ path('admin_programme_delete', {id: prog.id}) }}',
+                  '{{ csrf_token('delete-prog-' ~ prog.id) }}',
+                  '{{ prog.titre|slice(0,40)|replace({"'": '', '"': ''}) }}'
+              )" class="btn btn-danger btn-sm">🗑️</button>
+            </td>
+          </tr>
+          {% endfor %}
+          <tr id="noResults" style="display:none;">
+            <td colspan="7" style="text-align:center;padding:30px;color:var(--text3);">Aucun résultat.</td>
+          </tr>
+          </tbody>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── Upload preview ──────────────────────────────────────────────────────────
+function handleUpload(input, previewId, type) {
+    const file    = input.files[0];
+    const preview = document.getElementById(previewId);
+    if (!file || !preview) return;
+
+    const MAX = type === 'image' ? 10 * 1024 * 1024 : 50 * 1024 * 1024;
+    if (file.size > MAX) {
+        showToastError(type === 'image'
+            ? 'Image trop lourde (max 10 Mo).'
+            : 'Vidéo trop lourde (max 50 Mo). Compressez-la avant upload.');
+        input.value = '';
+        return;
+    }
+
+    preview.classList.add('show');
+    if (type === 'image') {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = preview.querySelector('img');
+            if (img) img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else {
+        const sp = preview.querySelector('span');
+        if (sp) sp.textContent = file.name;
+    }
+}
+
+// Drag highlight
+document.querySelectorAll('.upload-zone').forEach(z => {
+    z.addEventListener('dragover',  e => { e.preventDefault(); z.classList.add('dragover'); });
+    z.addEventListener('dragleave', () => z.classList.remove('dragover'));
+    z.addEventListener('drop',      () => z.classList.remove('dragover'));
+});
+
+// ── Char counter ──────────────────────────────────────────────────────────────
+function initCC(taId, ctId, max) {
+    const ta = document.getElementById(taId), ct = document.getElementById(ctId);
+    if (!ta || !ct) return;
+    const upd = () => {
+        const n = ta.value.length;
+        ct.textContent = n + ' / ' + max;
+        ct.className = 'char-counter' + (n >= max ? ' over' : n >= max * .85 ? ' warn' : '');
+    };
+    ta.addEventListener('input', upd); upd();
+}
+initCC('ap-desc', 'ap-char', 200);
+{% for prog in programmes %}
+initCC('ed-{{ prog.id }}', 'edc-{{ prog.id }}', 200);
+{% endfor %}
+
+// ── Validation ────────────────────────────────────────────────────────────────
+const RE_TITRE = /^[a-zA-Z0-9\u00C0-\u024F\s\-']+$/;
+const RE_CAT   = /^[a-zA-Z\u00C0-\u024F\s]+$/;
+
+function showErr(errId, msg) {
+    const el = document.getElementById(errId);
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+}
+
+function validateTitre(inputId, errId) {
+    const el = document.getElementById(inputId);
+    const v  = el ? el.value.trim() : '';
+    if (!v)              { showErr(errId, 'Titre obligatoire.'); return false; }
+    if (!RE_TITRE.test(v)) { showErr(errId, 'Caractères non autorisés.'); return false; }
+    showErr(errId, ''); return true;
+}
+function validateCat(selectId, errId) {
+    const el = document.getElementById(selectId);
+    if (!el || !el.value) { showErr(errId, 'Catégorie obligatoire.'); return false; }
+    showErr(errId, ''); return true;
+}
+function validateCatNom(inputId, errId) {
+    const el = document.getElementById(inputId);
+    const v  = el ? el.value.trim() : '';
+    if (!v)             { showErr(errId, 'Nom obligatoire.'); return false; }
+    if (!RE_CAT.test(v)) { showErr(errId, 'Lettres uniquement.'); return false; }
+    showErr(errId, ''); return true;
+}
+
+// Formulaire AJOUT
+document.getElementById('addProgForm').addEventListener('submit', function(e) {
+    const okT = validateTitre('ap-titre', 'ap-err-titre');
+    const okC = validateCat('ap-cat', 'ap-err-cat');
+    if (!okT || !okC) e.preventDefault();
+});
+document.getElementById('ap-titre').addEventListener('blur', () => validateTitre('ap-titre','ap-err-titre'));
+document.getElementById('ap-cat').addEventListener('change', () => validateCat('ap-cat','ap-err-cat'));
+
+// Formulaire CATÉGORIE
+document.getElementById('catForm').addEventListener('submit', function(e) {
+    if (!validateCatNom('cat-nom', 'cat-err-nom')) e.preventDefault();
+});
+document.getElementById('cat-nom').addEventListener('blur', () => validateCatNom('cat-nom','cat-err-nom'));
+
+// Formulaires EDIT
+{% for prog in programmes %}
+(function() {
+    const f = document.getElementById('editForm-{{ prog.id }}');
+    if (!f) return;
+    f.addEventListener('submit', function(e) {
+        const okT = validateTitre('et-{{ prog.id }}', 'ete-{{ prog.id }}');
+        const okC = validateCat('ec-{{ prog.id }}',  'ece-{{ prog.id }}');
+        if (!okT || !okC) e.preventDefault();
+    });
+    const ti = document.getElementById('et-{{ prog.id }}');
+    if (ti) ti.addEventListener('blur', () => validateTitre('et-{{ prog.id }}','ete-{{ prog.id }}'));
+})();
+{% endfor %}
+
+// ── Table search ──────────────────────────────────────────────────────────────
+function filterRows(q) {
+    q = q.toLowerCase();
+    let vis = 0;
+    document.querySelectorAll('#progTable tbody tr[data-title]').forEach(r => {
+        const show = r.dataset.title.includes(q) || r.dataset.cat.includes(q);
+        r.style.display = show ? '' : 'none';
+        if (show) vis++;
+    });
+    const nr = document.getElementById('noResults');
+    if (nr) nr.style.display = vis === 0 ? '' : 'none';
+}
+
+// ── Edit modal ────────────────────────────────────────────────────────────────
+function openEdit(id) {
+    document.getElementById(id).style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeEdit(id) {
+    document.getElementById(id).style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.querySelectorAll('.edit-modal-overlay').forEach(el =>
+    el.addEventListener('click', e => { if (e.target === el) closeEdit(el.id); })
+);
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.edit-modal-overlay').forEach(el => {
+            if (el.style.display === 'flex') closeEdit(el.id);
+        });
+        closeDeleteModal();
+        closeCatDeleteModal();
+    }
+});
+
+// ── Delete modal (Programme) ──────────────────────────────────────────────────
+function openDeleteModal(url, token, nom) {
+    document.getElementById('deleteModal').style.display = 'flex';
+    document.getElementById('deleteText').textContent = 'Voulez-vous supprimer "' + nom + '" ?';
+    document.getElementById('deleteForm').action = url;
+    document.getElementById('deleteToken').value = token;
+    document.body.style.overflow = 'hidden';
+}
+function closeDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteModal();
+});
+
+// ── Delete modal (Catégorie) ──────────────────────────────────────────────────
+function openCatDeleteModal(url, token, nom) {
+    document.getElementById('deleteCatModal').style.display = 'flex';
+    document.getElementById('deleteCatText').textContent = 'Voulez-vous supprimer la catégorie "' + nom + '" ?';
+    document.getElementById('deleteCatForm').action = url;
+    document.getElementById('deleteCatToken').value = token;
+    document.body.style.overflow = 'hidden';
+}
+function closeCatDeleteModal() {
+    document.getElementById('deleteCatModal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.getElementById('deleteCatModal').addEventListener('click', function(e) {
+    if (e.target === this) closeCatDeleteModal();
+});
+
+// ── Toasts ────────────────────────────────────────────────────────────────────
+function showToastError(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast-error';
+    t.style.top = '20px';
+    t.textContent = '⚠ ' + msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.transition = 'opacity .5s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 6000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    ['flash-ok', 'flash-err'].forEach(id => {
+        const t = document.getElementById(id);
+        if (t) setTimeout(() => { t.style.transition = 'opacity .5s'; t.style.opacity = '0'; setTimeout(() => t.remove(), 500); }, 5000);
+    });
+});
+</script>
+
+{% endblock %}

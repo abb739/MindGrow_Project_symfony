@@ -1,0 +1,26 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Admin Avis{% endblock %}
+{% block body %}
+<h1 style="margin-bottom:20px;">Gestion des Avis</h1>
+<table>
+    <thead>
+        <tr><th>ID</th><th>Thérapeute</th><th>Utilisateur</th><th>Note</th><th>Commentaire</th><th>Date</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+    {% for avis in avisList %}
+    <tr>
+        <td>{{ avis.id }}</td>
+        <td>{{ therapeutes[avis.id] ? therapeutes[avis.id].nom ~ ' ' ~ therapeutes[avis.id].prenom : 'N/A' }}</td>
+        <td>{{ avis.idUtilisateur }}</td>
+        <td>{{ avis.note }} ⭐</td>
+        <td>{{ avis.commentaire }}</td>
+        <td>{{ avis.dateAvis ? avis.dateAvis|date('d/m/Y') : 'N/A' }}</td>
+        <td>
+            <a href="{{ path('avis_delete', {id: avis.id}) }}"
+               onclick="return confirm('Supprimer ?')" class="btn btn-danger" style="padding:4px 8px;">Supprimer</a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

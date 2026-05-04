@@ -1,0 +1,4028 @@
+Array
+(
+    [0] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Abonnement::\$nom
+            [description:protected] => Property Abonnement::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Abonnement::\$nom
+                    [description] => Property Abonnement::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [1] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Abonnement::\$prix
+            [description:protected] => Property Abonnement::$prix has type mismatch:
+  Expected: decimal (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Abonnement::\$prix
+                    [description] => Property Abonnement::$prix has type mismatch:
+  Expected: decimal (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [2] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Abonnement::\$dureeMois
+            [description:protected] => Property Abonnement::$dureeMois has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Abonnement::\$dureeMois
+                    [description] => Property Abonnement::$dureeMois has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [3] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Avis::\$idTherapeute
+            [description:protected] => Property Avis::$idTherapeute has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Avis::\$idTherapeute
+                    [description] => Property Avis::$idTherapeute has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [4] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Avis::\$idUtilisateur
+            [description:protected] => Property Avis::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Avis::\$idUtilisateur
+                    [description] => Property Avis::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [5] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Programme::\$idCategorie
+            [description:protected] => Property Programme::$idCategorie has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Programme::\$idCategorie
+                    [description] => Property Programme::$idCategorie has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [6] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Programme::\$titre
+            [description:protected] => Property Programme::$titre has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Programme::\$titre
+                    [description] => Property Programme::$titre has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [7] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Therapeute::\$nom
+            [description:protected] => Property Therapeute::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Therapeute::\$nom
+                    [description] => Property Therapeute::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [8] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Therapeute::\$prenom
+            [description:protected] => Property Therapeute::$prenom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Therapeute::\$prenom
+                    [description] => Property Therapeute::$prenom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [9] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Achat::\$idAbonnement
+            [description:protected] => Property Achat::$idAbonnement has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Achat::\$idAbonnement
+                    [description] => Property Achat::$idAbonnement has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [10] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Achat::\$idUtilisateur
+            [description:protected] => Property Achat::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Achat::\$idUtilisateur
+                    [description] => Property Achat::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [11] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Achat::\$statut
+            [description:protected] => Property Achat::$statut has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Achat::\$statut
+                    [description] => Property Achat::$statut has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [12] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: FavoriProgramme::\$idUtilisateur
+            [description:protected] => Property FavoriProgramme::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: FavoriProgramme::\$idUtilisateur
+                    [description] => Property FavoriProgramme::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [13] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: FavoriProgramme::\$idProgramme
+            [description:protected] => Property FavoriProgramme::$idProgramme has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: FavoriProgramme::\$idProgramme
+                    [description] => Property FavoriProgramme::$idProgramme has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [14] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: FavoriProgramme::\$createdAt
+            [description:protected] => Property FavoriProgramme::$createdAt has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: FavoriProgramme::\$createdAt
+                    [description] => Property FavoriProgramme::$createdAt has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [15] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Seance::\$titre
+            [description:protected] => Property Seance::$titre has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Seance::\$titre
+                    [description] => Property Seance::$titre has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [16] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Seance::\$lieu
+            [description:protected] => Property Seance::$lieu has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Seance::\$lieu
+                    [description] => Property Seance::$lieu has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [17] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Seance::\$dateDebut
+            [description:protected] => Property Seance::$dateDebut has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Seance::\$dateDebut
+                    [description] => Property Seance::$dateDebut has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [18] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Seance::\$dateFin
+            [description:protected] => Property Seance::$dateFin has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Seance::\$dateFin
+                    [description] => Property Seance::$dateFin has type mismatch:
+  Expected: datetime (non-nullable)
+  Actual:   ?DateTimeInterface (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [19] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Seance::\$capacite
+            [description:protected] => Property Seance::$capacite has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Seance::\$capacite
+                    [description] => Property Seance::$capacite has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [20] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Categorie::\$nom
+            [description:protected] => Property Categorie::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Categorie::\$nom
+                    [description] => Property Categorie::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [21] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Reservation::\$idSeance
+            [description:protected] => Property Reservation::$idSeance has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Reservation::\$idSeance
+                    [description] => Property Reservation::$idSeance has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [22] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Reservation::\$idUtilisateur
+            [description:protected] => Property Reservation::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Reservation::\$idUtilisateur
+                    [description] => Property Reservation::$idUtilisateur has type mismatch:
+  Expected: integer (non-nullable)
+  Actual:   ?int (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [23] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Reservation::\$statut
+            [description:protected] => Property Reservation::$statut has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Reservation::\$statut
+                    [description] => Property Reservation::$statut has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [24] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Utilisateur::\$nom
+            [description:protected] => Property Utilisateur::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Utilisateur::\$nom
+                    [description] => Property Utilisateur::$nom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [25] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Utilisateur::\$prenom
+            [description:protected] => Property Utilisateur::$prenom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Utilisateur::\$prenom
+                    [description] => Property Utilisateur::$prenom has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [26] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Utilisateur::\$email
+            [description:protected] => Property Utilisateur::$email has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Utilisateur::\$email
+                    [description] => Property Utilisateur::$email has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [27] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Utilisateur::\$motDePasse
+            [description:protected] => Property Utilisateur::$motDePasse has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Utilisateur::\$motDePasse
+                    [description] => Property Utilisateur::$motDePasse has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [28] => AhmedBhs\DoctrineDoctor\Issue\PropertyTypeMismatchIssue Object
+        (
+            [type:protected] => property_type_mismatch
+            [title:protected] => Type Mismatch: Utilisateur::\$role
+            [description:protected] => Property Utilisateur::$role has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => 
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => property_type_mismatch
+                    [title] => Type Mismatch: Utilisateur::\$role
+                    [description] => Property Utilisateur::$role has type mismatch:
+  Expected: string (non-nullable)
+  Actual:   ?string (nullable)
+
+Possible causes:
+- Database column type doesn't match Doctrine mapping
+- Property type hint doesn't match mapping nullable setting
+- Migration changed database type without updating entity
+
+Solutions:
+1. Fix the property type annotation in the entity
+2. Update the Doctrine mapping to match the property type
+3. Create a migration to fix the database column type
+                    [severity] => warning
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => 
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [29] => AhmedBhs\DoctrineDoctor\Issue\SecurityIssue Object
+        (
+            [type:protected] => security
+            [title:protected] => Unprotected sensitive field: Utilisateur::$resetToken
+            [description:protected] => The sensitive field "$resetToken" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $resetToken;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setResetToken(#[SensitiveParameter] string $resetToken): self
+{
+    $this-&gt;resetToken = $resetToken;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $resetToken;</code></pre></div>
+</div>
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                    [line] => 8
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => security
+                    [title] => Unprotected sensitive field: Utilisateur::$resetToken
+                    [description] => The sensitive field "$resetToken" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+                    [severity] => warning
+                    [backtrace] => Array
+                        (
+                            [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                            [line] => 8
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $resetToken;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setResetToken(#[SensitiveParameter] string $resetToken): self
+{
+    $this-&gt;resetToken = $resetToken;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $resetToken;</code></pre></div>
+</div>
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [30] => AhmedBhs\DoctrineDoctor\Issue\SecurityIssue Object
+        (
+            [type:protected] => security
+            [title:protected] => Unprotected sensitive field: Utilisateur::$resetTokenExpiresAt
+            [description:protected] => The sensitive field "$resetTokenExpiresAt" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $resetTokenExpiresAt;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setResetTokenExpiresAt(#[SensitiveParameter] string $resetTokenExpiresAt): self
+{
+    $this-&gt;resetTokenExpiresAt = $resetTokenExpiresAt;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $resetTokenExpiresAt;</code></pre></div>
+</div>
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                    [line] => 8
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => security
+                    [title] => Unprotected sensitive field: Utilisateur::$resetTokenExpiresAt
+                    [description] => The sensitive field "$resetTokenExpiresAt" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+                    [severity] => warning
+                    [backtrace] => Array
+                        (
+                            [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                            [line] => 8
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $resetTokenExpiresAt;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setResetTokenExpiresAt(#[SensitiveParameter] string $resetTokenExpiresAt): self
+{
+    $this-&gt;resetTokenExpiresAt = $resetTokenExpiresAt;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $resetTokenExpiresAt;</code></pre></div>
+</div>
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [31] => AhmedBhs\DoctrineDoctor\Issue\SecurityIssue Object
+        (
+            [type:protected] => security
+            [title:protected] => Unprotected sensitive field: Utilisateur::$verificationToken
+            [description:protected] => The sensitive field "$verificationToken" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => WARNING
+                    [value] => warning
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $verificationToken;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setVerificationToken(#[SensitiveParameter] string $verificationToken): self
+{
+    $this-&gt;verificationToken = $verificationToken;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $verificationToken;</code></pre></div>
+</div>
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                    [line] => 8
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => security
+                    [title] => Unprotected sensitive field: Utilisateur::$verificationToken
+                    [description] => The sensitive field "$verificationToken" in entity "Utilisateur" lacks serialization protection. Without @JsonIgnore or #[Ignore] annotations, this field will be included in JSON serialization, API responses, and logs. Additionally, consider using #[SensitiveParameter] on setter methods to prevent values from appearing in stack traces. Add appropriate annotations to prevent data leakage.
+                    [severity] => warning
+                    [backtrace] => Array
+                        (
+                            [file] => /home/aziz/Desktop/pidev_web_complet 5/src/Entity/Utilisateur.php
+                            [line] => 8
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add serialization protection and sensitive parameter attributes
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => <div class="suggestion-header"><h4>Code Quality Suggestion</h4></div>
+<div class="suggestion-content">
+<p>Add serialization protection and sensitive parameter attributes</p>
+<p><strong>File:</strong> <code>App\Entity\Utilisateur</code></p>
+<h4>Suggested Code</h4>
+<div class="query-item"><pre><code class="language-php">// In Utilisateur class:
+
+use Symfony\Component\Serializer\Annotation\Ignore;
+use SensitiveParameter;
+
+// Step 1: Protect the property from serialization
+#[Ignore]
+private string $verificationToken;
+
+// Step 2: Protect the setter parameter from stack traces (PHP 8.2+)
+public function setVerificationToken(#[SensitiveParameter] string $verificationToken): self
+{
+    $this-&gt;verificationToken = $verificationToken;
+    return $this;
+}
+
+// Or with Doctrine annotations:
+/**
+ * @Ignore
+ * @Column(type=&quot;string&quot;)
+ */
+private $verificationToken;</code></pre></div>
+</div>
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [32] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => missing_blameable_trait_opportunity
+            [title:protected] => Missing Blameable Trait: FavoriProgramme
+            [description:protected] => Entity FavoriProgramme has timestamp field(s) (createdAt) but no blameable fields (createdBy/updatedBy). Consider using BlameableTrait and TimestampableTrait for proper audit trail. Missing fields: updatedAt, createdBy, updatedBy. Benefits: automatic tracking of who created/updated records, standardized audit across entities.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add blameable fields to FavoriProgramme for complete audit trail
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Add Blameable Trait to FavoriProgramme</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        Entity <strong>FavoriProgramme</strong> has timestamp field(s)
+        (<code>createdAt</code>)
+        but no blameable fields (createdBy/updatedBy).
+    </div>
+
+    <p>Adding blameable fields provides a complete audit trail by tracking <strong>who</strong> created or modified each record, not just <strong>when</strong>.</p>
+
+    <h4>Step 1: Create BlameableTrait (if not exists)</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// src/Entity/Trait/BlameableTrait.php
+namespace App\Entity\Trait;
+
+use App\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+
+trait BlameableTrait
+{
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $createdBy = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $updatedBy = null;
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?User
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?User $updatedBy): self
+    {
+        $this->updatedBy = $updatedBy;
+        return $this;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Step 2: Use the trait in FavoriProgramme</h4>
+    <div class="query-item">
+        <pre><code class="language-php">use App\Entity\Trait\BlameableTrait;
+
+class FavoriProgramme
+{
+    use BlameableTrait;
+
+    // ... existing fields
+}</code></pre>
+    </div>
+
+    <h4>Step 3: Automatic population with Doctrine Extensions (Optional)</h4>
+    <div class="query-item">
+        <pre><code class="language-bash">composer require stof/doctrine-extensions-bundle</code></pre>
+        <pre><code class="language-yaml"># config/packages/stof_doctrine_extensions.yaml
+stof_doctrine_extensions:
+    default_locale: en_US
+    orm:
+        default:
+            blameable: true</code></pre>
+        <pre><code class="language-php">use Gedmo\Mapping\Annotation as Gedmo;
+
+class FavoriProgramme
+{
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $createdBy = null;
+
+    #[Gedmo\Blameable(on: 'update')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $updatedBy = null;
+}</code></pre>
+    </div>
+
+    <h4>Benefits</h4>
+    <ul>
+        <li><strong>Complete Audit Trail:</strong> Know who created/modified each record</li>
+        <li><strong>Security:</strong> Track user actions for compliance and debugging</li>
+        <li><strong>Standardization:</strong> Consistent audit pattern across entities</li>
+        <li><strong>Performance:</strong> Query by creator/modifier without expensive joins</li>
+    </ul>
+
+    <p>
+        <a href="https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html#blameable" target="_blank" class="doc-link">
+            📖 Doctrine Extensions: Blameable →
+        </a>
+    </p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\FavoriProgramme
+                    [timestamp_fields] => Array
+                        (
+                            [0] => createdAt
+                        )
+
+                    [missing_fields] => Array
+                        (
+                            [0] => updatedAt
+                            [1] => createdBy
+                            [2] => updatedBy
+                        )
+
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => missing_blameable_trait_opportunity
+                    [title] => Missing Blameable Trait: FavoriProgramme
+                    [description] => Entity FavoriProgramme has timestamp field(s) (createdAt) but no blameable fields (createdBy/updatedBy). Consider using BlameableTrait and TimestampableTrait for proper audit trail. Missing fields: updatedAt, createdBy, updatedBy. Benefits: automatic tracking of who created/updated records, standardized audit across entities.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\FavoriProgramme
+                            [timestamp_fields] => Array
+                                (
+                                    [0] => createdAt
+                                )
+
+                            [missing_fields] => Array
+                                (
+                                    [0] => updatedAt
+                                    [1] => createdBy
+                                    [2] => updatedBy
+                                )
+
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Add blameable fields to FavoriProgramme for complete audit trail
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Add Blameable Trait to FavoriProgramme</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        Entity <strong>FavoriProgramme</strong> has timestamp field(s)
+        (<code>createdAt</code>)
+        but no blameable fields (createdBy/updatedBy).
+    </div>
+
+    <p>Adding blameable fields provides a complete audit trail by tracking <strong>who</strong> created or modified each record, not just <strong>when</strong>.</p>
+
+    <h4>Step 1: Create BlameableTrait (if not exists)</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// src/Entity/Trait/BlameableTrait.php
+namespace App\Entity\Trait;
+
+use App\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+
+trait BlameableTrait
+{
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $createdBy = null;
+
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $updatedBy = null;
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?User
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?User $updatedBy): self
+    {
+        $this->updatedBy = $updatedBy;
+        return $this;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Step 2: Use the trait in FavoriProgramme</h4>
+    <div class="query-item">
+        <pre><code class="language-php">use App\Entity\Trait\BlameableTrait;
+
+class FavoriProgramme
+{
+    use BlameableTrait;
+
+    // ... existing fields
+}</code></pre>
+    </div>
+
+    <h4>Step 3: Automatic population with Doctrine Extensions (Optional)</h4>
+    <div class="query-item">
+        <pre><code class="language-bash">composer require stof/doctrine-extensions-bundle</code></pre>
+        <pre><code class="language-yaml"># config/packages/stof_doctrine_extensions.yaml
+stof_doctrine_extensions:
+    default_locale: en_US
+    orm:
+        default:
+            blameable: true</code></pre>
+        <pre><code class="language-php">use Gedmo\Mapping\Annotation as Gedmo;
+
+class FavoriProgramme
+{
+    #[Gedmo\Blameable(on: 'create')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $createdBy = null;
+
+    #[Gedmo\Blameable(on: 'update')]
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    private ?User $updatedBy = null;
+}</code></pre>
+    </div>
+
+    <h4>Benefits</h4>
+    <ul>
+        <li><strong>Complete Audit Trail:</strong> Know who created/modified each record</li>
+        <li><strong>Security:</strong> Track user actions for compliance and debugging</li>
+        <li><strong>Standardization:</strong> Consistent audit pattern across entities</li>
+        <li><strong>Performance:</strong> Query by creator/modifier without expensive joins</li>
+    </ul>
+
+    <p>
+        <a href="https://symfony.com/bundles/StofDoctrineExtensionsBundle/current/index.html#blameable" target="_blank" class="doc-link">
+            📖 Doctrine Extensions: Blameable →
+        </a>
+    </p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [33] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => missing_embeddable_opportunity
+            [title:protected] => Missing Email Embeddable: Therapeute
+            [description:protected] => Entity Therapeute has properties ($email) that should be refactored into a Email Embeddable. Embeddables provide better cohesion by grouping related properties into Value Objects without creating separate entities (no identity, no extra joins). This improves Domain-Driven Design, code reusability, and type safety.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Extract related fields into an Embeddable Value Object
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Consider extracting an embeddable</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Therapeute</code> has related fields that could be grouped into an embeddable: <code>email</code>
+    </div>
+
+    <p>When you have several fields that belong together conceptually (like address fields or money amounts), grouping them into an embeddable value object can make your code clearer.</p>
+
+    <h4>Example refactoring</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// Before: separate fields
+class Therapeute {
+    private string $email;
+}
+
+// After: grouped as value object
+#[ORM\Embeddable]
+readonly class Address {
+    public function __construct(
+        private string $email
+    ) {}
+}
+
+class Therapeute {
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
+}</code></pre>
+    </div>
+
+    <p><strong>Benefits:</strong> Better encapsulation, reusability, validation in one place.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Therapeute
+                    [embeddable_type] => Email
+                    [fields] => Array
+                        (
+                            [0] => email
+                        )
+
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => missing_embeddable_opportunity
+                    [title] => Missing Email Embeddable: Therapeute
+                    [description] => Entity Therapeute has properties ($email) that should be refactored into a Email Embeddable. Embeddables provide better cohesion by grouping related properties into Value Objects without creating separate entities (no identity, no extra joins). This improves Domain-Driven Design, code reusability, and type safety.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Therapeute
+                            [embeddable_type] => Email
+                            [fields] => Array
+                                (
+                                    [0] => email
+                                )
+
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Extract related fields into an Embeddable Value Object
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Consider extracting an embeddable</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Therapeute</code> has related fields that could be grouped into an embeddable: <code>email</code>
+    </div>
+
+    <p>When you have several fields that belong together conceptually (like address fields or money amounts), grouping them into an embeddable value object can make your code clearer.</p>
+
+    <h4>Example refactoring</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// Before: separate fields
+class Therapeute {
+    private string $email;
+}
+
+// After: grouped as value object
+#[ORM\Embeddable]
+readonly class Address {
+    public function __construct(
+        private string $email
+    ) {}
+}
+
+class Therapeute {
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
+}</code></pre>
+    </div>
+
+    <p><strong>Benefits:</strong> Better encapsulation, reusability, validation in one place.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [34] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => missing_embeddable_opportunity
+            [title:protected] => Missing Email Embeddable: Utilisateur
+            [description:protected] => Entity Utilisateur has properties ($email) that should be refactored into a Email Embeddable. Embeddables provide better cohesion by grouping related properties into Value Objects without creating separate entities (no identity, no extra joins). This improves Domain-Driven Design, code reusability, and type safety.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Extract related fields into an Embeddable Value Object
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Consider extracting an embeddable</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur</code> has related fields that could be grouped into an embeddable: <code>email</code>
+    </div>
+
+    <p>When you have several fields that belong together conceptually (like address fields or money amounts), grouping them into an embeddable value object can make your code clearer.</p>
+
+    <h4>Example refactoring</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// Before: separate fields
+class Utilisateur {
+    private string $email;
+}
+
+// After: grouped as value object
+#[ORM\Embeddable]
+readonly class Address {
+    public function __construct(
+        private string $email
+    ) {}
+}
+
+class Utilisateur {
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
+}</code></pre>
+    </div>
+
+    <p><strong>Benefits:</strong> Better encapsulation, reusability, validation in one place.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Utilisateur
+                    [embeddable_type] => Email
+                    [fields] => Array
+                        (
+                            [0] => email
+                        )
+
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => missing_embeddable_opportunity
+                    [title] => Missing Email Embeddable: Utilisateur
+                    [description] => Entity Utilisateur has properties ($email) that should be refactored into a Email Embeddable. Embeddables provide better cohesion by grouping related properties into Value Objects without creating separate entities (no identity, no extra joins). This improves Domain-Driven Design, code reusability, and type safety.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Utilisateur
+                            [embeddable_type] => Email
+                            [fields] => Array
+                                (
+                                    [0] => email
+                                )
+
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Extract related fields into an Embeddable Value Object
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Consider extracting an embeddable</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur</code> has related fields that could be grouped into an embeddable: <code>email</code>
+    </div>
+
+    <p>When you have several fields that belong together conceptually (like address fields or money amounts), grouping them into an embeddable value object can make your code clearer.</p>
+
+    <h4>Example refactoring</h4>
+    <div class="query-item">
+        <pre><code class="language-php">// Before: separate fields
+class Utilisateur {
+    private string $email;
+}
+
+// After: grouped as value object
+#[ORM\Embeddable]
+readonly class Address {
+    public function __construct(
+        private string $email
+    ) {}
+}
+
+class Utilisateur {
+    #[ORM\Embedded(class: Address::class)]
+    private Address $address;
+}</code></pre>
+    </div>
+
+    <p><strong>Benefits:</strong> Better encapsulation, reusability, validation in one place.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [35] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => integrity
+            [title:protected] => Table Name Should Be Singular
+            [description:protected] => Table <code>avis</code> should be singular to match entity naming. ORM best practice is to use singular table names (e.g., 'user' not 'users').
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Rename table from 'avis' to 'avi'
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Fix Table Naming</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-warning">
+        <strong>Table naming violation:</strong> 'avis' should be 'avi'
+    </div>
+
+    <h4>Current</h4>
+    <pre><code class="language-php">#[ORM\Table(name: 'avis')]
+class Avis {}</code></pre>
+
+    <h4>Recommended</h4>
+    <pre><code class="language-php">#[ORM\Table(name: 'avi')]
+class Avis {}</code></pre>
+
+    <p><strong>Convention:</strong> snake_case, plural (users, order_items). Avoid SQL keywords. Create migration with <code>make:migration</code>.</p>
+
+    <p>
+        <a href="https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/naming-strategy.html" target="_blank" class="doc-link">
+            📖 Doctrine Naming Strategy Documentation →
+        </a>
+    </p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => 
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => integrity
+                    [title] => Table Name Should Be Singular
+                    [description] => Table <code>avis</code> should be singular to match entity naming. ORM best practice is to use singular table names (e.g., 'user' not 'users').
+                    [severity] => info
+                    [backtrace] => 
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Rename table from 'avis' to 'avi'
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Fix Table Naming</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-warning">
+        <strong>Table naming violation:</strong> 'avis' should be 'avi'
+    </div>
+
+    <h4>Current</h4>
+    <pre><code class="language-php">#[ORM\Table(name: 'avis')]
+class Avis {}</code></pre>
+
+    <h4>Recommended</h4>
+    <pre><code class="language-php">#[ORM\Table(name: 'avi')]
+class Avis {}</code></pre>
+
+    <p><strong>Convention:</strong> snake_case, plural (users, order_items). Avoid SQL keywords. Create migration with <code>make:migration</code>.</p>
+
+    <p>
+        <a href="https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/naming-strategy.html" target="_blank" class="doc-link">
+            📖 Doctrine Naming Strategy Documentation →
+        </a>
+    </p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [36] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Avis::$dateAvis
+            [description:protected] => Timestamp field Avis::$dateAvis has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Avis::$dateAvis</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Avis {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAvis;
+
+    public function setDateAvis(\DateTimeImmutable $date): void {
+        $this->dateAvis = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Avis {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAvis;
+
+    public function getDateAvis(): \DateTimeImmutable {
+        return $this->dateAvis;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Avis
+                    [field] => dateAvis
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Avis::$dateAvis
+                    [description] => Timestamp field Avis::$dateAvis has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Avis
+                            [field] => dateAvis
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Avis::$dateAvis</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Avis {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAvis;
+
+    public function setDateAvis(\DateTimeImmutable $date): void {
+        $this->dateAvis = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Avis {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAvis;
+
+    public function getDateAvis(): \DateTimeImmutable {
+        return $this->dateAvis;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [37] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Therapeute::$dateInscription
+            [description:protected] => Timestamp field Therapeute::$dateInscription has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Therapeute::$dateInscription</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Therapeute {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function setDateInscription(\DateTimeImmutable $date): void {
+        $this->dateInscription = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Therapeute {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function getDateInscription(): \DateTimeImmutable {
+        return $this->dateInscription;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Therapeute
+                    [field] => dateInscription
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Therapeute::$dateInscription
+                    [description] => Timestamp field Therapeute::$dateInscription has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Therapeute
+                            [field] => dateInscription
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Therapeute::$dateInscription</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Therapeute {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function setDateInscription(\DateTimeImmutable $date): void {
+        $this->dateInscription = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Therapeute {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function getDateInscription(): \DateTimeImmutable {
+        return $this->dateInscription;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [38] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Achat::$dateAchat
+            [description:protected] => Timestamp field Achat::$dateAchat has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Achat::$dateAchat</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Achat {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAchat;
+
+    public function setDateAchat(\DateTimeImmutable $date): void {
+        $this->dateAchat = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Achat {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAchat;
+
+    public function getDateAchat(): \DateTimeImmutable {
+        return $this->dateAchat;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Achat
+                    [field] => dateAchat
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Achat::$dateAchat
+                    [description] => Timestamp field Achat::$dateAchat has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Achat
+                            [field] => dateAchat
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Achat::$dateAchat</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Achat {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAchat;
+
+    public function setDateAchat(\DateTimeImmutable $date): void {
+        $this->dateAchat = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Achat {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateAchat;
+
+    public function getDateAchat(): \DateTimeImmutable {
+        return $this->dateAchat;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [39] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: FavoriProgramme::$createdAt
+            [description:protected] => Timestamp field FavoriProgramme::$createdAt has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>FavoriProgramme::$createdAt</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class FavoriProgramme {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
+
+    public function setCreatedAt(\DateTimeImmutable $date): void {
+        $this->createdAt = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class FavoriProgramme {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
+
+    public function getCreatedAt(): \DateTimeImmutable {
+        return $this->createdAt;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\FavoriProgramme
+                    [field] => createdAt
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: FavoriProgramme::$createdAt
+                    [description] => Timestamp field FavoriProgramme::$createdAt has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\FavoriProgramme
+                            [field] => createdAt
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>FavoriProgramme::$createdAt</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class FavoriProgramme {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
+
+    public function setCreatedAt(\DateTimeImmutable $date): void {
+        $this->createdAt = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class FavoriProgramme {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $createdAt;
+
+    public function getCreatedAt(): \DateTimeImmutable {
+        return $this->createdAt;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [40] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Seance::$dateDebut
+            [description:protected] => Timestamp field Seance::$dateDebut has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Seance::$dateDebut</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateDebut;
+
+    public function setDateDebut(\DateTimeImmutable $date): void {
+        $this->dateDebut = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateDebut;
+
+    public function getDateDebut(): \DateTimeImmutable {
+        return $this->dateDebut;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Seance
+                    [field] => dateDebut
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Seance::$dateDebut
+                    [description] => Timestamp field Seance::$dateDebut has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Seance
+                            [field] => dateDebut
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Seance::$dateDebut</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateDebut;
+
+    public function setDateDebut(\DateTimeImmutable $date): void {
+        $this->dateDebut = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateDebut;
+
+    public function getDateDebut(): \DateTimeImmutable {
+        return $this->dateDebut;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [41] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Seance::$dateFin
+            [description:protected] => Timestamp field Seance::$dateFin has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Seance::$dateFin</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateFin;
+
+    public function setDateFin(\DateTimeImmutable $date): void {
+        $this->dateFin = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateFin;
+
+    public function getDateFin(): \DateTimeImmutable {
+        return $this->dateFin;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Seance
+                    [field] => dateFin
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Seance::$dateFin
+                    [description] => Timestamp field Seance::$dateFin has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Seance
+                            [field] => dateFin
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Seance::$dateFin</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateFin;
+
+    public function setDateFin(\DateTimeImmutable $date): void {
+        $this->dateFin = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Seance {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateFin;
+
+    public function getDateFin(): \DateTimeImmutable {
+        return $this->dateFin;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [42] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Reservation::$dateReservation
+            [description:protected] => Timestamp field Reservation::$dateReservation has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Reservation::$dateReservation</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Reservation {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateReservation;
+
+    public function setDateReservation(\DateTimeImmutable $date): void {
+        $this->dateReservation = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Reservation {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateReservation;
+
+    public function getDateReservation(): \DateTimeImmutable {
+        return $this->dateReservation;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Reservation
+                    [field] => dateReservation
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Reservation::$dateReservation
+                    [description] => Timestamp field Reservation::$dateReservation has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Reservation
+                            [field] => dateReservation
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Reservation::$dateReservation</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Reservation {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateReservation;
+
+    public function setDateReservation(\DateTimeImmutable $date): void {
+        $this->dateReservation = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Reservation {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateReservation;
+
+    public function getDateReservation(): \DateTimeImmutable {
+        return $this->dateReservation;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [43] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Utilisateur::$resetTokenExpiresAt
+            [description:protected] => Timestamp field Utilisateur::$resetTokenExpiresAt has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur::$resetTokenExpiresAt</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $resetTokenExpiresAt;
+
+    public function setResetTokenExpiresAt(\DateTimeImmutable $date): void {
+        $this->resetTokenExpiresAt = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $resetTokenExpiresAt;
+
+    public function getResetTokenExpiresAt(): \DateTimeImmutable {
+        return $this->resetTokenExpiresAt;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Utilisateur
+                    [field] => resetTokenExpiresAt
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Utilisateur::$resetTokenExpiresAt
+                    [description] => Timestamp field Utilisateur::$resetTokenExpiresAt has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Utilisateur
+                            [field] => resetTokenExpiresAt
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur::$resetTokenExpiresAt</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $resetTokenExpiresAt;
+
+    public function setResetTokenExpiresAt(\DateTimeImmutable $date): void {
+        $this->resetTokenExpiresAt = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $resetTokenExpiresAt;
+
+    public function getResetTokenExpiresAt(): \DateTimeImmutable {
+        return $this->resetTokenExpiresAt;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+    [44] => AhmedBhs\DoctrineDoctor\Issue\IntegrityIssue Object
+        (
+            [type:protected] => timestampable_public_setter
+            [title:protected] => Public Setter on Timestamp: Utilisateur::$dateInscription
+            [description:protected] => Timestamp field Utilisateur::$dateInscription has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+            [severity:protected] => AhmedBhs\DoctrineDoctor\ValueObject\Severity Enum:string
+                (
+                    [name] => INFO
+                    [value] => info
+                )
+
+            [suggestion:protected] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                (
+                    [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                    [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur::$dateInscription</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function setDateInscription(\DateTimeImmutable $date): void {
+        $this->dateInscription = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function getDateInscription(): \DateTimeImmutable {
+        return $this->dateInscription;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                    [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                )
+
+            [backtrace:protected] => Array
+                (
+                    [entity] => App\Entity\Utilisateur
+                    [field] => dateInscription
+                )
+
+            [queries:protected] => Array
+                (
+                )
+
+            [data:protected] => Array
+                (
+                    [type] => timestampable_public_setter
+                    [title] => Public Setter on Timestamp: Utilisateur::$dateInscription
+                    [description] => Timestamp field Utilisateur::$dateInscription has a public setter. Timestamps should be managed automatically by Doctrine lifecycle callbacks or extensions. Remove public setters or make them protected to prevent manual manipulation.
+                    [severity] => info
+                    [backtrace] => Array
+                        (
+                            [entity] => App\Entity\Utilisateur
+                            [field] => dateInscription
+                        )
+
+                    [queries] => Array
+                        (
+                        )
+
+                    [suggestion] => AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion Object
+                        (
+                            [description:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => Remove public setter on timestamp field
+                            [code:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+<div class="suggestion-header">
+    <h4>Public setter on timestamp field</h4>
+</div>
+
+<div class="suggestion-content">
+    <div class="alert alert-info">
+        <code>Utilisateur::$dateInscription</code> has a public setter.
+    </div>
+
+    <p>Timestamps should be managed automatically.</p>
+
+    <h4>Current code</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function setDateInscription(\DateTimeImmutable $date): void {
+        $this->dateInscription = $date;
+    }
+}</code></pre>
+    </div>
+
+    <h4>Fix</h4>
+    <div class="query-item">
+        <pre><code class="language-php">class Utilisateur {
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeImmutable $dateInscription;
+
+    public function getDateInscription(): \DateTimeImmutable {
+        return $this->dateInscription;
+    }
+}</code></pre>
+    </div>
+
+    <p>Remove the setter.</p>
+</div>
+
+
+                            [filePath:AhmedBhs\DoctrineDoctor\Suggestion\CodeSuggestion:private] => 
+                        )
+
+                )
+
+            [duplicatedIssues:protected] => Array
+                (
+                )
+
+        )
+
+)

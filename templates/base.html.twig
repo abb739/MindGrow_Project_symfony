@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="light" id="html-root"
+    data-server-theme="{{ app.session.get('user_theme') ?? 'auto' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MindGrow{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    .alert-error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    color: #16a34a;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+        /* ═══════════════════════════════════════
+           CSS VARIABLES — LIGHT / DARK
+        ═══════════════════════════════════════ */
+        :root {
+            --bg:           #f8fafc;
+            --bg2:          #ffffff;
+            --bg3:          #f1f5f9;
+            --border:       rgba(0,0,0,0.06);
+            --border2:      #e2e8f0;
+            --text:         #1e293b;
+            --text2:        #64748b;
+            --text3:        #94a3b8;
+            --label:        #374151;
+            --input-bg:     #f8fafc;
+            --input-focus:  #ffffff;
+            --shadow-sm:    0 1px 3px rgba(0,0,0,.05), 0 8px 24px rgba(0,0,0,.06);
+            --shadow-nav:   0 2px 20px rgba(11,122,143,0.3);
+            --row-hover:    #f8fafc;
+            --thead-bg:     linear-gradient(135deg,#0b7a8f,#065f6e);
+            --nav-bg:       linear-gradient(135deg,#0b7a8f 0%,#065f6e 100%);
+            --nav-link:     rgba(255,255,255,0.85);
+            --table-border: #f1f5f9;
+        }
+
+        [data-theme="dark"] {
+            --bg:           #0f172a;
+            --bg2:          #1e293b;
+            --bg3:          #334155;
+            --border:       rgba(255,255,255,0.06);
+            --border2:      #334155;
+            --text:         #f1f5f9;
+            --text2:        #94a3b8;
+            --text3:        #64748b;
+            --label:        #cbd5e1;
+            --input-bg:     #1e293b;
+            --input-focus:  #334155;
+            --shadow-sm:    0 1px 3px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+            --shadow-nav:   0 2px 20px rgba(0,0,0,0.5);
+            --row-hover:    #334155;
+            --thead-bg:     linear-gradient(135deg,#0b4f5e,#063d4a);
+            --nav-bg:       linear-gradient(135deg,#0b4f5e 0%,#051e26 100%);
+            --nav-link:     rgba(255,255,255,0.75);
+            --table-border: #334155;
+        }
+
+        /* ═══════════════════════════════════════
+           BASE
+        ═══════════════════════════════════════ */
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background .3s, color .3s;
+        }
+
+        /* ═══════════════════════════════════════
+           NAV
+        ═══════════════════════════════════════ */
+        nav {
+            background: var(--nav-bg);
+            padding: 0 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+            box-shadow: var(--shadow-nav);
+            position: sticky; top: 0; z-index: 1000;
+            transition: background .3s, box-shadow .3s;
+        }
+        .nav-brand {
+            color: white; font-size: 22px; font-weight: 700;
+            text-decoration: none; display: flex; align-items: center; gap: 8px;
+        }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-links a {
+            color: var(--nav-link);
+            text-decoration: none; padding: 8px 14px;
+            border-radius: 8px; font-size: 14px; font-weight: 500;
+            transition: all .2s;
+        }
+        .nav-links a:hover { background: rgba(255,255,255,.15); color: white; }
+        .nav-logout {
+            background: rgba(255,255,255,.1) !important;
+            border: 1px solid rgba(255,255,255,.3) !important;
+            margin-left: 8px !important;
+        }
+
+        /* ═══════════════════════════════════════
+           DARK MODE TOGGLE BUTTON
+        ═══════════════════════════════════════ */
+        .theme-toggle {
+            width: 44px; height: 44px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.22);
+            color: white; font-size: 18px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all .2s;
+            margin-left: 6px;
+            flex-shrink: 0;
+        }
+        .theme-toggle:hover {
+            background: rgba(255,255,255,.22);
+            transform: rotate(15deg) scale(1.05);
+        }
+
+        /* ═══════════════════════════════════════
+           CONTAINER & LAYOUT
+        ═══════════════════════════════════════ */
+        .container { max-width:1200px; margin:40px auto; padding:0 24px; }
+        .page-title { font-size:28px; font-weight:700; color:#0b7a8f; margin-bottom:28px; }
+
+        /* ═══════════════════════════════════════
+           BUTTONS
+        ═══════════════════════════════════════ */
+        .btn {
+            display:inline-flex; align-items:center; gap:6px;
+            padding:10px 20px; border-radius:10px;
+            text-decoration:none; border:none; cursor:pointer;
+            font-size:14px; font-weight:600;
+            transition:all .2s; letter-spacing:.3px;
+        }
+        .btn-primary  { background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white; box-shadow:0 4px 12px rgba(11,122,143,.3); }
+        .btn-primary:hover  { transform:translateY(-1px); box-shadow:0 6px 18px rgba(11,122,143,.4); }
+        .btn-danger   { background:linear-gradient(135deg,#ef4444,#dc2626); color:white; box-shadow:0 4px 12px rgba(239,68,68,.3); }
+        .btn-danger:hover   { transform:translateY(-1px); }
+        .btn-success  { background:linear-gradient(135deg,#10b981,#059669); color:white; box-shadow:0 4px 12px rgba(16,185,129,.3); }
+        .btn-success:hover  { transform:translateY(-1px); }
+        .btn-warning  { background:linear-gradient(135deg,#f59e0b,#d97706); color:white; box-shadow:0 4px 12px rgba(245,158,11,.3); }
+        .btn-warning:hover  { transform:translateY(-1px); }
+        .btn-sm { padding:6px 14px; font-size:13px; }
+
+        /* ═══════════════════════════════════════
+           CARDS
+        ═══════════════════════════════════════ */
+        .card {
+            background: var(--bg2);
+            border-radius: 16px; padding: 24px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            transition: background .3s, border .3s, box-shadow .3s;
+        }
+        .cards-grid { display:flex; flex-wrap:wrap; gap:24px; }
+
+        /* ═══════════════════════════════════════
+           ALERTS
+        ═══════════════════════════════════════ */
+        .alert-error {
+            background: #fef2f2; color: #dc2626;
+            padding: 12px 16px; border-radius: 10px;
+            margin-bottom: 16px; border-left: 4px solid #ef4444;
+            font-size: 14px;
+        }
+        .alert-success {
+            background: #f0fdf4; color: #16a34a;
+            padding: 12px 16px; border-radius: 10px;
+            margin-bottom: 16px; border-left: 4px solid #22c55e;
+            font-size: 14px;
+        }
+        [data-theme="dark"] .alert-error  { background:#2d1515; color:#f87171; }
+        [data-theme="dark"] .alert-success { background:#052e16; color:#4ade80; }
+
+        /* ═══════════════════════════════════════
+           TABLE
+        ═══════════════════════════════════════ */
+        table {
+            width: 100%; border-collapse: collapse;
+            background: var(--bg2);
+            border-radius: 16px; overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: background .3s;
+        }
+        thead { background: var(--thead-bg); }
+        th { color:white; padding:14px 16px; text-align:left; font-size:13px; font-weight:600; letter-spacing:.5px; }
+        td { padding:12px 16px; border-bottom:1px solid var(--table-border); font-size:14px; color:var(--text); transition: color .3s, border .3s; }
+        tbody tr:hover { background:var(--row-hover); }
+        tbody tr:last-child td { border-bottom:none; }
+
+        /* ═══════════════════════════════════════
+           FORMS
+        ═══════════════════════════════════════ */
+        input, select, textarea {
+            width:100%; padding:10px 14px;
+            border:2px solid var(--border2);
+            border-radius:10px;
+            font-size:14px; margin-bottom:12px;
+            font-family:'Inter', sans-serif;
+            transition:border-color .2s, box-shadow .2s, background .3s, color .3s;
+            background: var(--input-bg);
+            color: var(--text);
+        }
+        input:focus, select:focus, textarea:focus {
+            outline:none; border-color:#0b7a8f;
+            box-shadow:0 0 0 3px rgba(11,122,143,.15);
+            background: var(--input-focus);
+        }
+        label { font-weight:600; display:block; margin-bottom:5px; font-size:13px; color:var(--label); }
+        .form-group { margin-bottom:16px; }
+
+        /* ═══════════════════════════════════════
+           BADGES
+        ═══════════════════════════════════════ */
+        .badge { display:inline-block; padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:.5px; }
+        .badge-primary { background:#e0f2fe; color:#0369a1; }
+        .badge-success { background:#dcfce7; color:#166534; }
+        .badge-danger  { background:#fee2e2; color:#991b1b; }
+        .badge-warning { background:#fef3c7; color:#92400e; }
+        [data-theme="dark"] .badge-primary { background:#0c3a54; color:#7dd3fc; }
+        [data-theme="dark"] .badge-success { background:#052e16; color:#4ade80; }
+        [data-theme="dark"] .badge-danger  { background:#2d1515; color:#f87171; }
+        [data-theme="dark"] .badge-warning { background:#2d1b04; color:#fcd34d; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="{{ path('login') }}" class="nav-brand">🌱 MindGrow</a>
+    <div class="nav-links">
+        {% if app.session.get('user_id') %}
+            {% if app.session.get('user_role') == 'admin' %}
+                <a href="{{ path('admin_dashboard') }}">Dashboard</a>
+                <a href="{{ path('admin_abonnements') }}">Abonnements</a>
+                <a href="{{ path('admin_seances') }}">Séances</a>
+                <a href="{{ path('admin_programmes') }}">Programmes</a>
+                <a href="{{ path('admin_therapeutes') }}">Thérapeutes</a>
+                <a href="{{ path('admin_reservations') }}">Réservations</a>
+                <a href="{{ path('admin_avis') }}">Avis</a>
+            {% else %}
+                <a href="{{ path('client_dashboard') }}">Accueil</a>
+                <a href="{{ path('abonnements') }}">Abonnements</a>
+                <a href="{{ path('seances') }}">Séances</a>
+                <a href="{{ path('programmes') }}">Programmes</a>
+                <a href="{{ path('therapeutes') }}">Thérapeutes</a>
+                <a href="{{ path('mes_reservations') }}">Mes réservations</a>
+            {% endif %}
+            <a href="{{ path('logout') }}" class="nav-logout">👤 {{ app.session.get('user_nom') }}</a>
+        {% else %}
+            <a href="{{ path('login') }}">Connexion</a>
+            <a href="{{ path('register') }}">Inscription</a>
+        {% endif %}
+
+        <!-- ☀️ / 🌙 TOGGLE ULTRA -->
+        <div style="display:flex;align-items:center;gap:6px;margin-left:6px;">
+            <span id="theme-indicator"
+                style="font-size:11px;color:rgba(255,255,255,.7);font-weight:600;
+                       background:rgba(255,255,255,.1);padding:3px 8px;border-radius:10px;
+                       white-space:nowrap;transition:all .3s;">
+                🌓 Auto
+            </span>
+            <button class="theme-toggle" id="themeToggle"
+                title="Cliquer pour changer : Jour → Nuit → Auto (OS)"
+                onclick="toggleTheme()"
+                style="transition: transform .4s cubic-bezier(.34,1.56,.64,1);">
+                🌙
+            </button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    {% for type, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert-{{ type }}" style="padding:12px 18px;border-radius:8px;margin-bottom:16px;font-size:14px;font-weight:600;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% block body %}{% endblock %}
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   THÈME ULTRA — MindGrow
+   ✅ Détection automatique OS (prefers-color-scheme)
+   ✅ Persistance localStorage (anti-flash immédiat)
+   ✅ Sync BDD via API REST (multi-appareils)
+   ✅ Animation de transition fluide
+   ✅ Restauration thème BDD au login
+═══════════════════════════════════════════════════════════════ */
+(function () {
+
+    // ── 1. ANTI-FLASH : appliquer le thème IMMÉDIATEMENT avant rendu ──
+    function getOSTheme() {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    function resolveTheme(pref) {
+        if (pref === 'auto' || !pref) return getOSTheme();
+        return pref; // 'light' ou 'dark'
+    }
+
+    // Thème serveur (session PHP) — priorité maximale pour anti-flash précis
+    const serverTheme = document.documentElement.getAttribute('data-server-theme') || 'auto';
+    const localPref   = serverTheme !== 'auto' ? serverTheme : (localStorage.getItem('mg_theme_pref') || 'auto');
+    const initialTheme = resolveTheme(localPref);
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    // Synchroniser localStorage avec le thème serveur
+    if (serverTheme !== 'auto') localStorage.setItem('mg_theme_pref', serverTheme);
+
+    // ── 2. SYNC BDD — récupérer la préférence serveur au chargement ──
+    document.addEventListener('DOMContentLoaded', async () => {
+        updateToggleBtn(document.documentElement.getAttribute('data-theme'));
+        updateThemeIndicator(localStorage.getItem('mg_theme_pref') || 'auto');
+
+        try {
+            const res  = await fetch('/api/theme');
+            const data = await res.json();
+
+            if (data.source === 'database' && data.theme) {
+                // Thème vient de la BDD → priorité sur localStorage
+                const dbTheme = resolveTheme(data.theme);
+                applyTheme(data.theme, dbTheme, false); // ne pas re-sauvegarder en BDD
+            }
+        } catch (e) {
+            // Pas connecté ou erreur réseau → garder localStorage
+        }
+
+        // ── 3. ÉCOUTER les changements OS en temps réel ──
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            const pref = localStorage.getItem('mg_theme_pref') || 'auto';
+            if (pref === 'auto') {
+                const newTheme = e.matches ? 'dark' : 'light';
+                applyTheme('auto', newTheme, false);
+            }
+        });
+    });
+
+    // ── 4. APPLIQUER le thème avec animation ──
+    function applyTheme(pref, resolved, saveToDb = true) {
+        const html = document.documentElement;
+
+        // Animation de transition
+        html.style.transition = 'background 0.4s ease, color 0.4s ease';
+        html.setAttribute('data-theme', resolved);
+
+        // Sauvegarder localement
+        localStorage.setItem('mg_theme_pref', pref);
+
+        // Mettre à jour le bouton et l'indicateur
+        updateToggleBtn(resolved);
+        updateThemeIndicator(pref);
+
+        // Sauvegarder en BDD (async, si connecté)
+        if (saveToDb) {
+            fetch('/api/theme', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({ theme: pref }),
+            }).catch(() => {}); // silencieux si pas connecté
+        }
+
+        // Supprimer la transition après
+        setTimeout(() => { html.style.transition = ''; }, 500);
+    }
+
+    // ── 5. TOGGLE principal (3 états : light → dark → auto) ──
+    window.toggleTheme = function () {
+        const current = localStorage.getItem('mg_theme_pref') || 'auto';
+        const cycle   = { 'light': 'dark', 'dark': 'auto', 'auto': 'light' };
+        const next    = cycle[current] || 'light';
+        const resolved = resolveTheme(next);
+        applyTheme(next, resolved, true);
+
+        // Animation rotation du bouton
+        const btn = document.getElementById('themeToggle');
+        if (btn) {
+            btn.style.transform = 'rotate(360deg) scale(1.2)';
+            setTimeout(() => { btn.style.transform = ''; }, 400);
+        }
+    };
+
+    // ── 6. METTRE À JOUR l'icône du bouton ──
+    function updateToggleBtn(theme) {
+        const btn = document.getElementById('themeToggle');
+        if (!btn) return;
+        const icons = { light: '🌙', dark: '☀️', auto: '🌓' };
+        const pref  = localStorage.getItem('mg_theme_pref') || 'auto';
+        btn.textContent = icons[pref] || (theme === 'dark' ? '☀️' : '🌙');
+        btn.title = `Thème actuel : ${pref === 'auto' ? 'Auto (OS)' : pref} — Cliquer pour changer`;
+    }
+
+    // ── 7. INDICATEUR de thème dans la nav ──
+    function updateThemeIndicator(pref) {
+        const el = document.getElementById('theme-indicator');
+        if (!el) return;
+        const labels = { light: '☀️ Jour', dark: '🌙 Nuit', auto: '🌓 Auto' };
+        el.textContent = labels[pref] || '🌓 Auto';
+    }
+
+})();
+</script>
+
+{% if app.session.get('user_id') %}
+{{ include('components/_chatbot.html.twig') }}
+{% endif %}
+</body>
+</html>

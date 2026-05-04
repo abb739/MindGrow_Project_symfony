@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="6" assertions="37" errors="0" failures="0" skipped="0" time="0.006974">
+    <testsuite name="App\Tests\Entity\AbonnementTest" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/AbonnementTest.php" tests="1" assertions="5" errors="0" failures="0" skipped="0" time="0.003600">
+      <testcase name="testGettersAndSetters" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/AbonnementTest.php" line="10" class="App\Tests\Entity\AbonnementTest" classname="App.Tests.Entity.AbonnementTest" assertions="5" time="0.003600"/>
+    </testsuite>
+    <testsuite name="App\Tests\Entity\ProgrammeTest" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/ProgrammeTest.php" tests="1" assertions="6" errors="0" failures="0" skipped="0" time="0.000449">
+      <testcase name="testGettersAndSetters" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/ProgrammeTest.php" line="10" class="App\Tests\Entity\ProgrammeTest" classname="App.Tests.Entity.ProgrammeTest" assertions="6" time="0.000449"/>
+    </testsuite>
+    <testsuite name="App\Tests\Entity\SeanceTest" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/SeanceTest.php" tests="1" assertions="7" errors="0" failures="0" skipped="0" time="0.001046">
+      <testcase name="testGettersAndSetters" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/SeanceTest.php" line="10" class="App\Tests\Entity\SeanceTest" classname="App.Tests.Entity.SeanceTest" assertions="7" time="0.001046"/>
+    </testsuite>
+    <testsuite name="App\Tests\Entity\TherapeuteTest" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/TherapeuteTest.php" tests="1" assertions="8" errors="0" failures="0" skipped="0" time="0.000792">
+      <testcase name="testGettersAndSetters" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/TherapeuteTest.php" line="10" class="App\Tests\Entity\TherapeuteTest" classname="App.Tests.Entity.TherapeuteTest" assertions="8" time="0.000792"/>
+    </testsuite>
+    <testsuite name="App\Tests\Entity\UtilisateurTest" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/UtilisateurTest.php" tests="2" assertions="11" errors="0" failures="0" skipped="0" time="0.001087">
+      <testcase name="testGettersAndSetters" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/UtilisateurTest.php" line="10" class="App\Tests\Entity\UtilisateurTest" classname="App.Tests.Entity.UtilisateurTest" assertions="8" time="0.000740"/>
+      <testcase name="testDefaultValues" file="/home/aziz/Desktop/pidev_web_complet 5/tests/Entity/UtilisateurTest.php" line="40" class="App\Tests\Entity\UtilisateurTest" classname="App.Tests.Entity.UtilisateurTest" assertions="3" time="0.000347"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

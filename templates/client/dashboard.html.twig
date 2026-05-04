@@ -1,0 +1,328 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Espace — MindGrow{% endblock %}
+
+{% block body %}
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap');
+
+* { box-sizing: border-box; }
+
+.client-wrap {
+    font-family: 'DM Sans', sans-serif;
+    padding: 0 0 60px;
+}
+
+/* ── HERO ── */
+.client-hero {
+    background: linear-gradient(135deg, #064e3b 0%, #059669 60%, #34d399 100%);
+    border-radius: 24px;
+    padding: 40px 48px;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-left { position: relative; z-index: 1; }
+
+.hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 8px;
+}
+
+.hero-title span { color: #a7f3d0; }
+
+.hero-tagline {
+    font-size: 14px;
+    color: rgba(255,255,255,.8);
+    max-width: 380px;
+}
+
+/* ── CAROUSEL ── */
+.carousel-wrapper {
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    height: 65vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 40px;
+}
+
+.bg1 { background: linear-gradient(135deg, #2b6777, #52ab98); }
+.bg2 { background: linear-gradient(135deg, #0f172a, #334155); }
+.bg3 { background: linear-gradient(135deg, #7c3aed, #4c1d95); }
+.bg4 { background: linear-gradient(135deg, #f97316, #c2410c); }
+.bg5 { background: linear-gradient(135deg, #14b8a6, #0f766e); }
+
+.carousel-slide h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 34px;
+}
+
+.carousel-slide p {
+    font-size: 15px;
+    opacity: 0.9;
+    max-width: 500px;
+}
+
+/* BUTTON */
+.slide-btn {
+    margin-top: 12px;
+    padding: 10px 18px;
+    background: white;
+    color: #111;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* NAV */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.35);
+    border: none;
+    color: white;
+    font-size: 22px;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.carousel-btn.left { left: 10px; }
+.carousel-btn.right { right: 10px; }
+
+/* DOTS */
+.dots {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    cursor: pointer;
+}
+
+.dot.active { background: white; }
+
+/* ── SPACE UNDER CAROUSEL ── */
+.below-space {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.space-card {
+    width: 100%;
+    max-width: 1000px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.space-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #1e293b;
+}
+
+.space-card p {
+    font-size: 14px;
+    color: #64748b;
+    margin-bottom: 20px;
+}
+
+.mini-stats {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.mini {
+    flex: 1;
+    min-width: 200px;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.mini:hover {
+    background: #e0f2fe;
+    box-shadow: 0 4px 16px rgba(5,150,105,0.12);
+}
+
+.mini span {
+    font-size: 20px;
+}
+
+.mini p {
+    margin: 0;
+    font-size: 13px;
+    color: #334155;
+    font-weight: 500;
+}
+</style>
+
+<div class="client-wrap">
+
+    <!-- HERO -->
+    <div class="client-hero">
+        <div class="hero-left">
+            <div class="hero-title">
+                Bienvenue, <span>{{ app.session.get('user_nom') ?? 'vous' }}</span>
+            </div>
+            <div class="hero-tagline">
+                Explorez vos séances, programmes et abonnements facilement.
+            </div>
+        </div>
+    </div>
+
+    <!-- CAROUSEL -->
+    <div class="carousel-wrapper">
+
+        <div class="carousel-track" id="carousel">
+
+            <div class="carousel-slide bg1">
+                <h2>📅 Réservation</h2>
+                <p>Réservez vos séances facilement avec nos thérapeutes.</p>
+                <a href="{{ path('seances') }}" class="slide-btn">Réserver</a>
+            </div>
+
+            <div class="carousel-slide bg2">
+                <h2>🧘 Programmes</h2>
+                <p>Suivez un programme personnalisé pour votre bien-être.</p>
+                <a href="{{ path('programmes') }}" class="slide-btn">Explorer</a>
+            </div>
+
+            <div class="carousel-slide bg3">
+                <h2>💳 Abonnements</h2>
+                <p>Choisissez le plan qui vous convient.</p>
+                <a href="{{ path('abonnements') }}" class="slide-btn">Voir plans</a>
+            </div>
+
+            <div class="carousel-slide bg4">
+                <h2>👨‍⚕️ Thérapeutes</h2>
+                <p>Consultez des professionnels certifiés.</p>
+                <a href="{{ path('therapeutes') }}" class="slide-btn">Découvrir</a>
+            </div>
+
+            <div class="carousel-slide bg5">
+                <h2>📅 Séances</h2>
+                <p>Explorez et réservez vos séances bien-être.</p>
+                <a href="{{ path('seances') }}" class="slide-btn">Voir séances</a>
+            </div>
+
+        </div>
+
+        <button class="carousel-btn left" onclick="prev()">‹</button>
+        <button class="carousel-btn right" onclick="next()">›</button>
+
+        <div class="dots">
+            <div class="dot active" onclick="go(0)"></div>
+            <div class="dot" onclick="go(1)"></div>
+            <div class="dot" onclick="go(2)"></div>
+            <div class="dot" onclick="go(3)"></div>
+            <div class="dot" onclick="go(4)"></div>
+        </div>
+
+    </div>
+
+    <!-- SPACE UNDER CAROUSEL -->
+    <div class="below-space">
+
+        <div class="space-card">
+            <h3>📊 Aperçu rapide</h3>
+            <p>Vos activités principales en un coup d’œil.</p>
+
+            <div class="mini-stats">
+                <a href="{{ path('programmes') }}" class="mini">
+                    <span>📚</span>
+                    <p>Programmes disponibles</p>
+                </a>
+
+                <a href="{{ path('mes_reservations') }}" class="mini">
+                    <span>📅</span>
+                    <p>Séances réservées</p>
+                </a>
+
+                <a href="{{ path('therapeutes') }}" class="mini">
+                    <span>👨‍⚕️</span>
+                    <p>Thérapeutes actifs</p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+let index = 0;
+const carousel = document.getElementById("carousel");
+const dots = document.querySelectorAll(".dot");
+
+function update() {
+    carousel.style.transform = `translateX(-${index * 100}%)`;
+    dots.forEach(d => d.classList.remove("active"));
+    dots[index].classList.add("active");
+}
+
+function next() {
+    index = (index + 1) % 5;
+    update();
+}
+
+function prev() {
+    index = (index - 1 + 5) % 5;
+    update();
+}
+
+function go(i) {
+    index = i;
+    update();
+}
+
+setInterval(next, 6000);
+</script>
+
+{% endblock %}
