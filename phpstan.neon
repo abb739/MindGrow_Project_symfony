@@ -1,0 +1,14 @@
+parameters:
+    level: 5
+    paths:
+        - src
+    ignoreErrors:
+        - '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+ \(int\|null\) is never assigned int so it can be removed from the property type\.#'
+        - '#Property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9_]+ is never read, only written\.#'
+        - '#Unreachable statement - code above always terminates\.#'
+        - '#Parameter \#2 \$options of function curl_setopt_array expects array.*#'
+        - '#Parameter \#1 \$params of static method Stripe\\Charge::create\(\).*#'
+        - '#Parameter \#1 \$array of function usort contains unresolvable type.*#'
+        - '#Parameter \#2 \$callback of function usort contains unresolvable type.*#'
+        - '#Property [a-zA-Z0-9\\_]+::\$workingUrl \(string\|null\) is never assigned string.*#'
+        - '#Call to an undefined method DateTimeInterface::modify\(\)\.#'
