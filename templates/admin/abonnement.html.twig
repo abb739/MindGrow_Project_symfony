@@ -1,0 +1,629 @@
+{% extends 'admin/base2.html.twig' %}
+{% block title %}Gestion Abonnements{% endblock %}
+{% block body %}
+
+{# ── TOASTS FLASH ── #}
+{% for message in app.flashes('success') %}
+<div class="toast-success" id="toastMsg">
+    <span>{{ message }}</span>
+    <button class="toast-close" onclick="dismissToast()">✕</button>
+</div>
+{% endfor %}
+
+<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+    <a href="{{ path('admin_stats_abonnements') }}" 
+       style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;padding:10px 20px;border-radius:12px;text-decoration:none;font-weight:700;font-size:14px;box-shadow:0 4px 15px rgba(108,92,231,.3);">
+        📊 Voir les statistiques
+    </a>
+</div>
+
+<style>
+.v-group { position:relative; }
+.v-group input.v-ok, .v-group select.v-ok {
+    border-color:#10b981 !important;
+    box-shadow:0 0 0 3px rgba(16,185,129,.15) !important;
+}
+.v-group input.v-err, .v-group select.v-err {
+    border-color:#ef4444 !important;
+    box-shadow:0 0 0 3px rgba(239,68,68,.15) !important;
+}
+.v-hint { font-size:11px; margin-top:3px; padding-left:2px; min-height:16px; display:block; }
+.v-hint.err { color:#ef4444; }
+.v-hint.ok  { color:#10b981; }
+
+.toast-success {
+    position:fixed; top:24px; right:24px;
+    background:linear-gradient(135deg,#10b981,#059669);
+    color:white; padding:16px 22px; border-radius:14px;
+    box-shadow:0 10px 30px rgba(16,185,129,0.35);
+    z-index:99999; font-weight:600; font-size:15px;
+    display:flex; align-items:center; gap:10px;
+    animation:toastIn 0.4s cubic-bezier(.22,1,.36,1); max-width:400px;
+}
+.toast-close { margin-left:12px; cursor:pointer; opacity:0.7; font-size:18px; background:none; border:none; color:white; padding:0; }
+.toast-close:hover { opacity:1; }
+@keyframes toastIn  { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes toastOut { from{transform:translateX(0);opacity:1} to{transform:translateX(110%);opacity:0} }
+
+.edit-modal, .delete-modal {
+    display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.55); z-index:9999;
+    align-items:center; justify-content:center;
+}
+.edit-box {
+    background:var(--bg2,white); border-radius:20px; padding:36px;
+    width:600px; max-width:95vw; max-height:90vh; overflow-y:auto;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25); animation:fadeScaleIn .25s ease;
+}
+.delete-box {
+    background:white; border-radius:20px; padding:36px 32px;
+    width:380px; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25); animation:fadeScaleIn .25s ease;
+}
+@keyframes fadeScaleIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+</style>
+
+{# ── En-tête ── #}
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; flex-wrap:wrap; gap:12px;">
+    <h1 class="page-title" style="margin:0;">📋 Gestion des Abonnements</h1>
+    <div style="display:flex; align-items:center; gap:10px; background:var(--bg2,white); border-radius:12px; padding:10px 18px; box-shadow:0 2px 12px rgba(0,0,0,.07);">
+        <span style="font-size:13px; font-weight:600; color:#64748b;">💱 Devise :</span>
+        <div style="display:flex; flex-direction:column; gap:3px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+
+                {# ── Sélecteur devise custom avec drapeaux ── #}
+                <div id="deviseDropdown" style="position:relative; min-width:220px; user-select:none;">
+
+                    {# Bouton déclencheur #}
+                    <div id="deviseTrigger" onclick="toggleDeviseDropdown()"
+                        style="display:flex; align-items:center; gap:10px; padding:9px 14px;
+                               border:2px solid #0b7a8f; border-radius:10px; cursor:pointer;
+                               background:var(--bg2,white); transition:all .2s;
+                               box-shadow:0 2px 8px rgba(11,122,143,.12);">
+                        <img id="deviseFlag" src="" alt="" width="24" height="16"
+                             style="border-radius:3px; object-fit:cover; flex-shrink:0; box-shadow:0 1px 3px rgba(0,0,0,.2);">
+                        <span id="deviseLabel" style="font-size:14px; font-weight:700; color:#0b7a8f; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            Dinar Tunisien (TND)
+                        </span>
+                        <svg id="deviseChevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0b7a8f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; transition:transform .2s;">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </div>
+
+                    {# Liste déroulante #}
+                    <div id="deviseList"
+                        style="display:none; position:absolute; top:calc(100% + 6px); left:0; right:0;
+                               background:var(--bg2,white); border:2px solid #0b7a8f; border-radius:12px;
+                               box-shadow:0 16px 40px rgba(0,0,0,.18); z-index:9999;
+                               overflow:hidden; animation:deviseDropIn .15s ease;">
+
+                        {# Champ de recherche #}
+                        <div style="padding:10px; border-bottom:1px solid var(--border2,#e2e8f0);">
+                            <input id="deviseSearch" type="text" placeholder="🔍 Rechercher..."
+                                   oninput="filtrerDevises(this.value)"
+                                   style="width:100%; padding:7px 10px; border:1.5px solid #e2e8f0;
+                                          border-radius:7px; font-size:13px; outline:none;
+                                          background:var(--bg,#f8fafc); color:var(--text,#1e293b);
+                                          box-sizing:border-box;">
+                        </div>
+
+                        {# Options devises #}
+                        <div style="max-height:280px; overflow-y:auto;" id="deviseOptions">
+                            {% set devises_data = [
+                                {code:'TND', nom:'Dinar Tunisien',  cc:'tn', symbole:'TND'},
+                                {code:'EUR', nom:'Euro',            cc:'eu', symbole:'€'},
+                                {code:'USD', nom:'Dollar US',       cc:'us', symbole:'$'},
+                                {code:'GBP', nom:'Livre Sterling',  cc:'gb', symbole:'£'},
+                                {code:'SAR', nom:'Riyal Saoudien',  cc:'sa', symbole:'﷼'},
+                                {code:'MAD', nom:'Dirham Marocain', cc:'ma', symbole:'MAD'},
+                                {code:'CAD', nom:'Dollar Canadien', cc:'ca', symbole:'CA$'},
+                                {code:'JPY', nom:'Yen Japonais',    cc:'jp', symbole:'¥'},
+                                {code:'CHF', nom:'Franc Suisse',    cc:'ch', symbole:'CHF'},
+                                {code:'AED', nom:'Dirham EAU',      cc:'ae', symbole:'AED'},
+                            ] %}
+                            {% for d in devises_data %}
+                            <div class="devise-opt" data-code="{{ d.code }}" data-nom="{{ d.nom|lower }}"
+                                 data-cc="{{ d.cc }}" data-symbole="{{ d.symbole }}"
+                                 onclick="choisirDevise('{{ d.code }}','{{ d.nom }}','{{ d.cc }}')"
+                                 style="display:flex; align-items:center; gap:12px; padding:10px 14px;
+                                        cursor:pointer; transition:background .15s; border-bottom:1px solid var(--border2,#f1f5f9);">
+                                <img src="https://flagcdn.com/24x18/{{ d.cc }}.png"
+                                     srcset="https://flagcdn.com/48x36/{{ d.cc }}.png 2x"
+                                     width="24" height="18" alt="{{ d.code }}"
+                                     style="border-radius:3px; flex-shrink:0; box-shadow:0 1px 3px rgba(0,0,0,.15);">
+                                <div style="flex:1; min-width:0;">
+                                    <div style="font-size:13px; font-weight:700; color:var(--text,#1e293b);">{{ d.nom }}</div>
+                                    <div style="font-size:11px; color:var(--text3,#94a3b8);">{{ d.code }} · {{ d.symbole }}</div>
+                                </div>
+                                <span class="devise-check-{{ d.code }}" style="color:#0b7a8f; font-weight:700; display:none;">✓</span>
+                            </div>
+                            {% endfor %}
+                            <div id="deviseNoResult" style="display:none; text-align:center; padding:20px; font-size:13px; color:#94a3b8;">
+                                Aucun résultat
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Select caché pour compatibilité avec la logique existante #}
+                    <select id="deviseSelect" onchange="changerDevise(this.value)" style="display:none;">
+                        {% for code, label in currency_options %}
+                            <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <span id="devise-loading-icon" style="display:none; font-size:16px;">⏳</span>
+            </div>
+            <span id="tauxInfo" style="font-size:11px; color:#94a3b8; white-space:nowrap; padding-left:3px; font-style:italic;"></span>
+        </div>
+
+        <style>
+        @keyframes deviseDropIn {
+            from { opacity:0; transform:translateY(-6px) scale(.97); }
+            to   { opacity:1; transform:translateY(0)    scale(1);   }
+        }
+        .devise-opt:hover { background:rgba(11,122,143,.08) !important; }
+        .devise-opt.active { background:rgba(11,122,143,.12) !important; }
+        #deviseSearch:focus { border-color:#0b7a8f !important; box-shadow:0 0 0 3px rgba(11,122,143,.15); }
+        #deviseTrigger:hover { border-color:#065f6e; background:rgba(11,122,143,.04); }
+        [data-theme="dark"] #deviseList { background:#1e293b; border-color:#0b7a8f; }
+        [data-theme="dark"] .devise-opt:hover { background:rgba(11,122,143,.18) !important; }
+        [data-theme="dark"] #deviseSearch { background:#0f172a; border-color:#334155; color:#e2e8f0; }
+        </style>
+    </div>
+</div>
+
+{# ── Formulaire Ajout ── #}
+<div class="card" style="margin-bottom:32px;">
+    <h3 style="font-size:16px; font-weight:600; margin-bottom:20px; color:var(--label,#374151);">➕ Ajouter un abonnement</h3>
+    <form method="post" action="{{ path('admin_abonnement_new') }}" id="formNew" novalidate>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 2fr; gap:16px; align-items:flex-start;">
+
+            <div class="v-group">
+                <label>Nom *</label>
+                <input type="text" name="nom" id="newNom" placeholder="Ex: Premium"
+                       value="{{ form.nom ?? '' }}" maxlength="100"
+                       style="{{ errors.nom is defined ? 'border:2px solid #ef4444;' : '' }}">
+                <span class="v-hint {{ errors.nom is defined ? 'err' : '' }}" id="hintNewNom">
+                    {{ errors.nom is defined ? '⚠ ' ~ errors.nom : '' }}
+                </span>
+            </div>
+
+            <div class="v-group">
+                <label>Prix (TND) *</label>
+                <input type="number" name="prix" id="newPrix" min="0.01" max="9999.99"
+                       step="0.01" placeholder="49.99" value="{{ form.prix ?? '' }}"
+                       style="{{ errors.prix is defined ? 'border:2px solid #ef4444;' : '' }}">
+                <span class="v-hint {{ errors.prix is defined ? 'err' : '' }}" id="hintNewPrix">
+                    {{ errors.prix is defined ? '⚠ ' ~ errors.prix : '' }}
+                </span>
+            </div>
+
+            <div class="v-group">
+                <label>Durée *</label>
+                <select name="dureeMois" id="newDuree">
+                    {% for d in [1,3,6,12,24] %}
+                    <option value="{{ d }}" {{ (form.duree ?? '') == d ? 'selected' : '' }}>{{ d }} mois</option>
+                    {% endfor %}
+                </select>
+                <span class="v-hint err" id="hintNewDuree">
+                    {{ errors.duree is defined ? '⚠ ' ~ errors.duree : '' }}
+                </span>
+            </div>
+
+            <div class="v-group">
+                <label>Description *</label>
+                <input type="text" name="description" id="newDesc"
+                       placeholder="Description de l'offre"
+                       value="{{ form.description ?? '' }}" maxlength="255"
+                       style="{{ errors.description is defined ? 'border:2px solid #ef4444;' : '' }}">
+                <span class="v-hint {{ errors.description is defined ? 'err' : '' }}" id="hintNewDesc">
+                    {{ errors.description is defined ? '⚠ ' ~ errors.description : '' }}
+                </span>
+            </div>
+
+        </div>
+        <div style="margin-top:16px;">
+            <button type="submit" class="btn btn-success">➕ Ajouter l'abonnement</button>
+        </div>
+    </form>
+</div>
+
+{# ── Tableau ── #}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Prix <span id="deviseHeader" style="font-size:11px; font-weight:400; color:#94a3b8;">(TND)</span></th>
+            <th>Durée</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for abo in abonnements %}
+    <tr>
+        <td><span class="badge badge-primary">#{{ abo.id }}</span></td>
+        <td style="font-weight:600;">{{ abo.nom }}</td>
+        <td>
+            <strong style="color:#0b7a8f;">
+                <span class="prix-converti" data-tnd="{{ abo.prix }}">{{ abo.prix }}</span>
+                <span class="devise-label-cell">TND</span>
+            </strong>
+            <br><small style="color:#94a3b8; font-size:11px;">
+                ≈ <span class="prix-mois" data-tnd="{{ abo.dureeMois > 1 ? (abo.prix / abo.dureeMois)|number_format(2) : abo.prix }}">
+                    {{ abo.dureeMois > 1 ? (abo.prix / abo.dureeMois)|number_format(2) : abo.prix }}
+                </span>
+                <span class="devise-label-cell">TND</span>/mois
+            </small>
+        </td>
+        <td><span class="badge badge-warning">{{ abo.dureeMois }} mois</span></td>
+        <td style="color:#64748b; max-width:200px;">{{ abo.description }}</td>
+        <td>
+            <button onclick="openEditModal(
+                {{ abo.id }},
+                '{{ abo.nom|e('js') }}',
+                '{{ abo.prix }}',
+                {{ abo.dureeMois }},
+                '{{ abo.description|e('js') }}'
+            )" class="btn btn-warning btn-sm">✏️</button>
+
+            <button onclick="openDeleteModal(
+                '{{ path('admin_abonnement_delete', {id: abo.id}) }}',
+                '{{ abo.nom|e('js') }}'
+            )" class="btn btn-danger btn-sm">🗑️</button>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{# ══════════════════════════════════
+   MODAL MODIFICATION
+══════════════════════════════════ #}
+<div id="editModal" class="edit-modal">
+    <div class="edit-box">
+        <h3 style="font-size:20px; font-weight:700; margin-bottom:24px; color:var(--text,#1e293b);">✏️ Modifier l'abonnement</h3>
+        <form method="post" id="editForm" novalidate>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+
+                <div class="v-group">
+                    <label>Nom *</label>
+                    <input type="text" name="nom" id="editNom" maxlength="100" placeholder="Nom de l'abonnement">
+                    <span class="v-hint" id="hintEditNom"></span>
+                </div>
+
+                <div class="v-group">
+                    <label>Prix (TND) *</label>
+                    <input type="number" name="prix" id="editPrix" min="0.01" max="9999.99" step="0.01" placeholder="49.99">
+                    <span class="v-hint" id="hintEditPrix"></span>
+                </div>
+
+                <div class="v-group">
+                    <label>Durée *</label>
+                    <select name="dureeMois" id="editDuree">
+                        {% for d in [1,3,6,12,24] %}
+                        <option value="{{ d }}">{{ d }} mois</option>
+                        {% endfor %}
+                    </select>
+                    <span class="v-hint" id="hintEditDuree"></span>
+                </div>
+
+                <div class="v-group">
+                    <label>Description *</label>
+                    <input type="text" name="description" id="editDesc" maxlength="255" placeholder="Description de l'offre">
+                    <span class="v-hint" id="hintEditDesc"></span>
+                </div>
+
+            </div>
+
+            <div style="display:flex; gap:12px; margin-top:8px;">
+                <button type="submit" class="btn btn-success">💾 Sauvegarder</button>
+                <button type="button" onclick="closeEditModal()" class="btn" style="background:#f1f5f9; color:#475569;">Annuler</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# ══════════════════════════════════
+   MODAL SUPPRESSION
+══════════════════════════════════ #}
+<div id="deleteModal" class="delete-modal">
+    <div class="delete-box">
+        <div style="font-size:52px; margin-bottom:12px;">🗑️</div>
+        <h3 style="font-size:20px; font-weight:700; color:#1e293b; margin-bottom:8px;">Supprimer l'abonnement ?</h3>
+        <p id="deleteText" style="color:#64748b; font-size:14px; margin-bottom:28px;"></p>
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <button onclick="confirmDelete()" class="btn btn-danger" style="padding:10px 24px;">🗑️ Oui, supprimer</button>
+            <button onclick="closeDeleteModal()" class="btn" style="padding:10px 24px; background:#f1f5f9; color:#475569;">Annuler</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Sélecteur devise custom avec drapeaux ────────────────────────
+const FLAG_CDN = 'https://flagcdn.com/24x18/';
+const COUNTRY_CODES = {
+    TND:'tn', EUR:'eu', USD:'us', GBP:'gb',
+    SAR:'sa', MAD:'ma', CAD:'ca', JPY:'jp', CHF:'ch', AED:'ae'
+};
+
+function toggleDeviseDropdown() {
+    const list    = document.getElementById('deviseList');
+    const chevron = document.getElementById('deviseChevron');
+    const isOpen  = list.style.display !== 'none';
+    list.style.display    = isOpen ? 'none' : 'block';
+    chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+    if (!isOpen) {
+        setTimeout(() => document.getElementById('deviseSearch')?.focus(), 50);
+    }
+}
+
+function choisirDevise(code, nom, cc) {
+    const flag  = document.getElementById('deviseFlag');
+    const label = document.getElementById('deviseLabel');
+    if (flag)  flag.src = FLAG_CDN + cc + '.png';
+    if (label) label.textContent = nom + ' (' + code + ')';
+    document.querySelectorAll('[class^="devise-check-"]').forEach(el => el.style.display = 'none');
+    const check = document.querySelector('.devise-check-' + code);
+    if (check) check.style.display = 'inline';
+    document.querySelectorAll('.devise-opt').forEach(el => el.classList.remove('active'));
+    const opt = document.querySelector('.devise-opt[data-code="' + code + '"]');
+    if (opt) opt.classList.add('active');
+    document.getElementById('deviseList').style.display   = 'none';
+    document.getElementById('deviseChevron').style.transform = '';
+    document.getElementById('deviseSearch').value = '';
+    filtrerDevises('');
+    const sel = document.getElementById('deviseSelect');
+    if (sel) sel.value = code;
+    changerDevise(code);
+}
+
+function filtrerDevises(q) {
+    q = q.toLowerCase();
+    let vis = 0;
+    document.querySelectorAll('.devise-opt').forEach(opt => {
+        const match = opt.dataset.code.toLowerCase().includes(q) || opt.dataset.nom.includes(q);
+        opt.style.display = match ? '' : 'none';
+        if (match) vis++;
+    });
+    const nr = document.getElementById('deviseNoResult');
+    if (nr) nr.style.display = vis === 0 ? '' : 'none';
+}
+
+document.addEventListener('click', function(e) {
+    const dd = document.getElementById('deviseDropdown');
+    if (dd && !dd.contains(e.target)) {
+        document.getElementById('deviseList').style.display   = 'none';
+        document.getElementById('deviseChevron').style.transform = '';
+    }
+});
+
+function initDeviseTrigger(code) {
+    const cc  = COUNTRY_CODES[code] || 'tn';
+    const noms = {
+        TND:'Dinar Tunisien', EUR:'Euro', USD:'Dollar US', GBP:'Livre Sterling',
+        SAR:'Riyal Saoudien', MAD:'Dirham Marocain', CAD:'Dollar Canadien',
+        JPY:'Yen Japonais', CHF:'Franc Suisse', AED:'Dirham EAU'
+    };
+    const nom = noms[code] || code;
+    const flag  = document.getElementById('deviseFlag');
+    const label = document.getElementById('deviseLabel');
+    if (flag)  flag.src = FLAG_CDN + cc + '.png';
+    if (label) label.textContent = nom + ' (' + code + ')';
+    document.querySelectorAll('[class^="devise-check-"]').forEach(el => el.style.display='none');
+    const check = document.querySelector('.devise-check-' + code);
+    if (check) check.style.display = 'inline';
+    document.querySelectorAll('.devise-opt').forEach(el => el.classList.remove('active'));
+    const opt = document.querySelector('.devise-opt[data-code="' + code + '"]');
+    if (opt) opt.classList.add('active');
+}
+</script>
+
+<script>
+// ── Devise Avancée — powered by CurrencyService ──────────────────
+let tauxData_admin = null;
+let deviseActive_admin = 'TND';
+
+const DECIMALES_ADM = { TND:3, EUR:2, USD:2, GBP:2, SAR:2, MAD:2, CAD:2, JPY:0, CHF:2, AED:2 };
+const FALLBACK_ADM  = { TND:1, EUR:0.2965, USD:0.32, GBP:0.254, SAR:1.20, MAD:3.21, CAD:0.439, JPY:47.85, CHF:0.289, AED:1.175 };
+const SYMBOLES_ADM  = { TND:'TND', EUR:'€', USD:'$', GBP:'£', SAR:'﷼', MAD:'MAD', CAD:'CA$', JPY:'¥', CHF:'CHF', AED:'AED' };
+
+async function chargerTauxAdmin() {
+    const loadIcon = document.getElementById('devise-loading-icon');
+    if (loadIcon) loadIcon.style.display = 'inline';
+    try {
+        const res = await fetch('/api/currency/rates', {
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        if (json.success && json.devises) {
+            tauxData_admin = json;
+        }
+    } catch(e) {
+        console.warn('[Devise Admin] API indisponible, fallback utilisé.', e);
+        tauxData_admin = null;
+    } finally {
+        if (loadIcon) loadIcon.style.display = 'none';
+        appliquerDeviseAdmin(deviseActive_admin);
+    }
+}
+
+function getTauxAdmin(devise) {
+    if (tauxData_admin && tauxData_admin.devises[devise]) return tauxData_admin.devises[devise].taux;
+    return FALLBACK_ADM[devise] || 1;
+}
+function getSymboleAdmin(devise) {
+    if (tauxData_admin && tauxData_admin.devises[devise]) return tauxData_admin.devises[devise].symbole;
+    return SYMBOLES_ADM[devise] || devise;
+}
+function formaterAdmin(valeur, devise) {
+    const dec = DECIMALES_ADM[devise] ?? 2;
+    return parseFloat(valeur).toLocaleString('fr-FR', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+}
+
+function appliquerDeviseAdmin(devise) {
+    deviseActive_admin = devise;
+    const t = getTauxAdmin(devise);
+    const s = getSymboleAdmin(devise);
+    const isLive = tauxData_admin && tauxData_admin.source === 'live';
+
+    document.querySelectorAll('.prix-converti').forEach(el =>
+        el.textContent = formaterAdmin(parseFloat(el.dataset.tnd) * t, devise));
+    document.querySelectorAll('.prix-mois').forEach(el =>
+        el.textContent = formaterAdmin(parseFloat(el.dataset.tnd) * t, devise));
+    document.querySelectorAll('.devise-label-cell').forEach(el => el.textContent = s);
+
+    const header = document.getElementById('deviseHeader');
+    if (header) header.textContent = '(' + s + ')';
+
+    const tauxInfo = document.getElementById('tauxInfo');
+    if (tauxInfo) {
+        if (devise === 'TND') {
+            tauxInfo.textContent = '';
+        } else {
+            tauxInfo.textContent = '1 TND ≈ ' + formaterAdmin(t, devise) + ' ' + s;
+            tauxInfo.style.color = isLive ? '#0b7a8f' : '#94a3b8';
+            tauxInfo.title = isLive ? '✅ Taux en temps réel' : '⚠️ Taux approximatif';
+        }
+    }
+
+    localStorage.setItem('devise_admin', devise);
+}
+
+function changerDevise(devise) {
+    appliquerDeviseAdmin(devise);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('devise_admin');
+    const codeInit = (saved && SYMBOLES_ADM[saved]) ? saved : 'TND';
+    deviseActive_admin = codeInit;
+    const sel = document.getElementById('deviseSelect');
+    if (sel) sel.value = codeInit;
+    initDeviseTrigger(codeInit);
+    chargerTauxAdmin();
+});
+
+// ── Validation ──
+function setV(input, hintEl, state, msg) {
+    input.classList.remove('v-ok','v-err');
+    if (hintEl) { hintEl.classList.remove('ok','err'); hintEl.textContent = msg || ''; }
+    if (state === 'ok') { input.classList.add('v-ok'); if (hintEl) hintEl.classList.add('ok'); }
+    else if (state === 'err') { input.classList.add('v-err'); if (hintEl) hintEl.classList.add('err'); }
+    return state === 'ok';
+}
+function clearV(input, hintEl) {
+    input.classList.remove('v-ok','v-err');
+    if (hintEl) { hintEl.textContent=''; hintEl.classList.remove('ok','err'); }
+}
+function validateNom(input, hintEl) {
+    const v = input.value.trim();
+    if (!v)             return setV(input, hintEl, 'err', '⚠ Nom obligatoire');
+    if (v.length < 2)   return setV(input, hintEl, 'err', '⚠ Minimum 2 caractères');
+    if (v.length > 100) return setV(input, hintEl, 'err', '⚠ Maximum 100 caractères');
+    return setV(input, hintEl, 'ok', '✓ Nom valide');
+}
+function validatePrix(input, hintEl) {
+    const raw = input.value, v = parseFloat(raw);
+    if (raw === '' || isNaN(v)) return setV(input, hintEl, 'err', '⚠ Prix obligatoire');
+    if (v <= 0)                 return setV(input, hintEl, 'err', '⚠ Doit être supérieur à 0');
+    if (v > 9999.99)            return setV(input, hintEl, 'err', '⚠ Maximum 9 999,99 TND');
+    return setV(input, hintEl, 'ok', '✓ '+v.toFixed(2)+' TND');
+}
+function validateDesc(input, hintEl) {
+    const v = input.value.trim();
+    if (!v)             return setV(input, hintEl, 'err', '⚠ Description obligatoire');
+    if (v.length < 5)   return setV(input, hintEl, 'err', '⚠ Minimum 5 caractères');
+    if (v.length > 255) return setV(input, hintEl, 'err', '⚠ Maximum 255 caractères');
+    return setV(input, hintEl, 'ok', '✓ Description valide');
+}
+
+// ── Formulaire AJOUT ──
+const newNom  = document.getElementById('newNom');
+const newPrix = document.getElementById('newPrix');
+const newDesc = document.getElementById('newDesc');
+const hintNewNom  = document.getElementById('hintNewNom');
+const hintNewPrix = document.getElementById('hintNewPrix');
+const hintNewDesc = document.getElementById('hintNewDesc');
+
+newNom.addEventListener('input',  () => { if (!newNom.value.trim()) clearV(newNom, hintNewNom); else validateNom(newNom, hintNewNom); });
+newNom.addEventListener('blur',   () => { if (newNom.value.trim()) validateNom(newNom, hintNewNom); });
+newPrix.addEventListener('input', () => { if (!newPrix.value) clearV(newPrix, hintNewPrix); else validatePrix(newPrix, hintNewPrix); });
+newPrix.addEventListener('blur',  () => { if (newPrix.value) validatePrix(newPrix, hintNewPrix); });
+newDesc.addEventListener('input', () => { if (!newDesc.value.trim()) clearV(newDesc, hintNewDesc); else validateDesc(newDesc, hintNewDesc); });
+newDesc.addEventListener('blur',  () => { if (newDesc.value.trim()) validateDesc(newDesc, hintNewDesc); });
+
+document.getElementById('formNew').addEventListener('submit', function(e) {
+    const ok = validateNom(newNom, hintNewNom) & validatePrix(newPrix, hintNewPrix) & validateDesc(newDesc, hintNewDesc);
+    if (!ok) { e.preventDefault(); const f = this.querySelector('.v-err'); if (f) f.scrollIntoView({behavior:'smooth',block:'center'}); }
+});
+
+// ── MODAL EDIT ──
+const editNom   = document.getElementById('editNom');
+const editPrix  = document.getElementById('editPrix');
+const editDuree = document.getElementById('editDuree');
+const editDesc  = document.getElementById('editDesc');
+const hintEditNom  = document.getElementById('hintEditNom');
+const hintEditPrix = document.getElementById('hintEditPrix');
+const hintEditDesc = document.getElementById('hintEditDesc');
+
+function openEditModal(id, nom, prix, duree, desc) {
+    editNom.value   = nom;
+    editPrix.value  = prix;
+    editDuree.value = duree;
+    editDesc.value  = desc;
+    [editNom, editPrix, editDuree, editDesc].forEach(i => i.classList.remove('v-ok','v-err'));
+    [hintEditNom, hintEditPrix, hintEditDesc].forEach(h => { h.textContent=''; h.classList.remove('ok','err'); });
+    document.getElementById('editForm').action = '/admin/abonnements/edit/' + id;
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+document.getElementById('editModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEditModal();
+});
+
+editNom.addEventListener('input',  () => validateNom(editNom, hintEditNom));
+editNom.addEventListener('blur',   () => validateNom(editNom, hintEditNom));
+editPrix.addEventListener('input', () => validatePrix(editPrix, hintEditPrix));
+editPrix.addEventListener('blur',  () => validatePrix(editPrix, hintEditPrix));
+editDesc.addEventListener('input', () => validateDesc(editDesc, hintEditDesc));
+editDesc.addEventListener('blur',  () => validateDesc(editDesc, hintEditDesc));
+
+document.getElementById('editForm').addEventListener('submit', function(e) {
+    const ok = validateNom(editNom, hintEditNom) & validatePrix(editPrix, hintEditPrix) & validateDesc(editDesc, hintEditDesc);
+    if (!ok) e.preventDefault();
+});
+
+// ── MODAL DELETE ──
+let _deleteUrl = null;
+function openDeleteModal(url, nom) {
+    _deleteUrl = url;
+    document.getElementById('deleteText').textContent = 'Vous allez supprimer : "' + nom + '". Cette action est irréversible.';
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; }
+function confirmDelete() { if (_deleteUrl) window.location.href = _deleteUrl; }
+document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
+
+// ── Toast ──
+function dismissToast() {
+    const t = document.getElementById('toastMsg');
+    if (!t) return;
+    t.style.animation = 'toastOut 0.35s ease forwards';
+    setTimeout(() => t.remove(), 380);
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const t = document.getElementById('toastMsg');
+    if (t) setTimeout(dismissToast, 3000);
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,289 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nos Abonnements — MindGrow{% endblock %}
+{% block body %}
+
+<style>
+.plans-hero { text-align:center; padding:52px 0 44px; }
+.plans-hero h1 { font-size:44px; font-weight:800; color:#0b7a8f; letter-spacing:-1px; line-height:1.1; }
+.plans-hero p  { font-size:18px; color:#64748b; margin-top:12px; }
+
+.stats-bar {
+    display:flex; justify-content:center; gap:0; flex-wrap:wrap;
+    background:white; border-radius:16px;
+    box-shadow:0 2px 16px rgba(11,122,143,.08);
+    margin:0 auto 36px; max-width:640px; overflow:hidden;
+}
+.stat-item {
+    text-align:center; padding:24px 36px; flex:1; min-width:160px;
+    border-right:1px solid #f1f5f9;
+}
+.stat-item:last-child { border-right:none; }
+.stat-number { font-size:30px; font-weight:900; color:#0b7a8f; line-height:1; }
+.stat-label  { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:.7px; margin-top:5px; }
+
+.filter-box {
+    max-width:1100px;
+    margin:0 auto 40px;
+    background:white;
+    border-radius:16px;
+    padding:20px 24px;
+    box-shadow:0 2px 16px rgba(11,122,143,.08);
+}
+
+.filter-tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.filter-tag  { background:#e0f5f8; color:#0b7a8f; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+
+.plans-grid {
+    display:flex; flex-wrap:wrap; gap:28px;
+    justify-content:center; padding-bottom:60px;
+}
+.plan-card {
+    background:white; border-radius:24px; padding:36px 28px; width:280px;
+    box-shadow:0 2px 20px rgba(0,0,0,.06); border:2px solid #f1f5f9;
+    transition:all .3s; position:relative; overflow:hidden; display:flex; flex-direction:column;
+}
+.plan-card:hover { border-color:#0b7a8f; transform:translateY(-10px); box-shadow:0 20px 60px rgba(11,122,143,.18); }
+.plan-card.featured { border-color:#0b7a8f; background:linear-gradient(160deg,#f0fdfb 0%,#e0f5f8 100%); transform:scale(1.04); }
+.plan-card.featured:hover { transform:scale(1.04) translateY(-10px); }
+.plan-badge { position:absolute; top:0; right:0; background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white; font-size:10px; font-weight:800; letter-spacing:1px; padding:6px 18px; border-radius:0 0 0 16px; }
+.plan-duration { display:inline-block; background:#e0f5f8; color:#0b7a8f; padding:4px 14px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:20px; text-transform:uppercase; }
+.plan-name { font-size:24px; font-weight:800; color:#1e293b; margin-bottom:4px; }
+.plan-price { display:flex; align-items:baseline; gap:4px; margin:16px 0 4px; }
+.plan-price .amount   { font-size:48px; font-weight:900; color:#0b7a8f; line-height:1; }
+.plan-price .currency { font-size:18px; color:#94a3b8; font-weight:600; }
+.plan-per-month { font-size:12px; color:#94a3b8; margin-bottom:20px; }
+.plan-desc { font-size:14px; color:#64748b; line-height:1.7; border-top:1px solid #f1f5f9; padding-top:16px; margin-bottom:24px; flex:1; }
+.plan-btn { display:block; text-align:center; padding:14px; border-radius:14px; text-decoration:none; font-weight:700; font-size:15px; transition:all .2s; }
+.plan-btn-primary { background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white; box-shadow:0 6px 20px rgba(11,122,143,.3); }
+.plan-btn-primary:hover { box-shadow:0 10px 30px rgba(11,122,143,.45); opacity:.95; }
+.plan-btn-outline { background:transparent; color:#0b7a8f; border:2px solid #0b7a8f; }
+.plan-btn-outline:hover { background:#0b7a8f; color:white; }
+.plan-btn-active { background:#f0fdf4; color:#166534; border:2px solid #bbf7d0; cursor:default; }
+
+.plan-active-banner {
+    background:linear-gradient(135deg,#059669,#047857); color:white; border-radius:16px; padding:20px 28px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    margin:0 auto 36px; max-width:700px; box-shadow:0 8px 30px rgba(5,150,105,.25);
+}
+.plan-active-banner .title { font-size:17px; font-weight:700; }
+.plan-active-banner .sub   { font-size:13px; opacity:.85; margin-top:2px; }
+.plan-active-cancel { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.4); color:white; padding:8px 18px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:600; }
+.plan-active-cancel:hover { background:rgba(255,255,255,.25); }
+.results-info { text-align:center; color:#64748b; margin-bottom:24px; font-size:14px; }
+
+/* ✅ FIX PRINCIPAL — texte noir dans le champ de recherche */
+#fi-search-input {
+    color: #1e293b !important;
+    -webkit-text-fill-color: #1e293b !important;
+}
+#fi-search-input::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1 !important;
+}
+
+/* Override global base.html — neutralise width:100% et margin-bottom:12px */
+.filter-box form input[type="text"],
+.filter-box form select,
+.filter-box form button,
+.filter-box form a {
+    width: auto !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    box-shadow: none !important;
+}
+#fi-search-input:focus {
+    border-color: #0b7a8f !important;
+    box-shadow: 0 0 0 3px rgba(11,122,143,.15) !important;
+    background: white !important;
+}
+</style>
+
+<div class="plans-hero">
+    <h1>Choisissez votre plan</h1>
+    <p>Investissez dans votre bien-être — sans engagement caché</p>
+</div>
+
+{% if achatActif %}
+<div class="plan-active-banner">
+    <div>
+        <div class="title">✅ Abonnement actif</div>
+        <div class="sub">Souscrit le {{ achatActif.dateAchat ? achatActif.dateAchat|date('d/m/Y') : '—' }}</div>
+    </div>
+    <a href="{{ path('abonnement_annuler', {id: achatActif.id}) }}"
+       onclick="return confirm('Annuler votre abonnement actif ?')"
+       class="plan-active-cancel">Annuler l'abonnement</a>
+</div>
+{% endif %}
+
+{% if stats is defined and stats.actifs > 0 %}
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.total_achats }}</div>
+        <div class="stat-label">Souscriptions totales</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.actifs }}</div>
+        <div class="stat-label">Abonnés actifs</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.revenu_total|number_format(0, '.', ' ') }} TND</div>
+        <div class="stat-label">Revenus actifs</div>
+    </div>
+</div>
+{% endif %}
+
+{% set q_val     = app.request.query.get('q', '') %}
+{% set duree_val = app.request.query.get('duree', '0') %}
+{% set tri_val   = app.request.query.get('tri', 'populaire') %}
+{% set filtre_actif = (q_val != '' or (duree_val != '0' and duree_val != '') or (tri_val != 'populaire' and tri_val != '')) %}
+
+<div class="filter-box">
+    <form method="GET" action="{{ path('abonnements') }}" style="margin:0;padding:0;">
+        <div style="display:flex !important; flex-direction:row !important; flex-wrap:wrap !important; align-items:center !important; gap:10px !important; width:100% !important;">
+
+            <input type="text"
+                   name="q"
+                   id="fi-search-input"
+                   value="{{ q_val }}"
+                   placeholder="🔍 Rechercher..."
+                   autocomplete="off"
+                   style="flex:1 1 160px !important; min-width:140px !important; max-width:none !important; width:auto !important; padding:11px 16px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:14px !important; outline:none !important; background:white !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; box-shadow:none !important; color:#1e293b !important; -webkit-text-fill-color:#1e293b !important;">
+
+            <select name="duree"
+                    style="flex:0 0 auto !important; width:155px !important; padding:11px 10px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:13px !important; font-weight:600 !important; color:#334155 !important; background:white !important; cursor:pointer !important; outline:none !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important;">
+                <option value="0"  {{ duree_val == '0' or duree_val == '' ? 'selected' : '' }}>📅 Toutes durées</option>
+                <option value="1"  {{ duree_val == '1'  ? 'selected' : '' }}>1 mois</option>
+                <option value="3"  {{ duree_val == '3'  ? 'selected' : '' }}>3 mois</option>
+                <option value="6"  {{ duree_val == '6'  ? 'selected' : '' }}>6 mois</option>
+                <option value="12" {{ duree_val == '12' ? 'selected' : '' }}>12 mois</option>
+                <option value="24" {{ duree_val == '24' ? 'selected' : '' }}>24 mois</option>
+            </select>
+
+            <select name="tri"
+                    style="flex:0 0 auto !important; width:185px !important; padding:11px 10px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:13px !important; font-weight:600 !important; color:#334155 !important; background:white !important; cursor:pointer !important; outline:none !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important;">
+                <option value="populaire"  {{ tri_val == 'populaire'  or tri_val == '' ? 'selected' : '' }}>⭐ Populaires d'abord</option>
+                <option value="prix_asc"   {{ tri_val == 'prix_asc'   ? 'selected' : '' }}>💰 Prix croissant</option>
+                <option value="prix_desc"  {{ tri_val == 'prix_desc'  ? 'selected' : '' }}>💰 Prix décroissant</option>
+                <option value="duree_asc"  {{ tri_val == 'duree_asc'  ? 'selected' : '' }}>📅 Durée croissante</option>
+                <option value="duree_desc" {{ tri_val == 'duree_desc' ? 'selected' : '' }}>📅 Durée décroissante</option>
+            </select>
+
+            <span style="flex:0 0 1px !important; width:1px !important; height:30px !important; background:#e2e8f0 !important; display:inline-block !important;"></span>
+
+            <select id="deviseSelect" onchange="changerDevise(this.value)"
+                    style="flex:0 0 auto !important; width:155px !important; padding:11px 10px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:13px !important; font-weight:600 !important; color:#0b7a8f !important; background:white !important; cursor:pointer !important; outline:none !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important;">
+                <option value="TND">🇹🇳 Dinar (TND)</option>
+                <option value="EUR">🇪🇺 Euro (EUR)</option>
+                <option value="USD">🇺🇸 Dollar (USD)</option>
+                <option value="GBP">🇬🇧 Livre (GBP)</option>
+            </select>
+
+            <button type="submit"
+                    style="flex:0 0 auto !important; padding:11px 22px !important; background:#0b7a8f !important; color:white !important; border:none !important; border-radius:10px !important; font-weight:700 !important; cursor:pointer !important; font-size:14px !important; white-space:nowrap !important; display:inline-block !important; height:auto !important; line-height:normal !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; width:auto !important;">
+                Filtrer
+            </button>
+
+            {% if filtre_actif %}
+            <a href="{{ path('abonnements') }}"
+               style="flex:0 0 auto !important; padding:11px 16px !important; background:#fee2e2 !important; color:#dc2626 !important; border-radius:10px !important; font-size:13px !important; text-decoration:none !important; font-weight:600 !important; white-space:nowrap !important; display:inline-block !important; line-height:normal !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; width:auto !important;">
+                ✕ Réinitialiser
+            </a>
+            {% endif %}
+
+        </div>
+    </form>
+
+    {% if filtre_actif %}
+    <div class="filter-tags">
+        {% if q_val != '' %}<span class="filter-tag">🔍 "{{ q_val }}"</span>{% endif %}
+        {% if duree_val != '0' and duree_val != '' %}<span class="filter-tag">📅 {{ duree_val }} mois</span>{% endif %}
+        {% if tri_val != 'populaire' and tri_val != '' %}
+            <span class="filter-tag">
+                {% if tri_val == 'prix_asc' %}💰 Prix ↑
+                {% elseif tri_val == 'prix_desc' %}💰 Prix ↓
+                {% elseif tri_val == 'duree_asc' %}📅 Durée ↑
+                {% elseif tri_val == 'duree_desc' %}📅 Durée ↓
+                {% endif %}
+            </span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% if filtre_actif %}
+<p class="results-info">
+    <strong>{{ abonnements|length }}</strong> résultat(s) trouvé(s)
+    {% if q_val != '' %} pour "<strong>{{ q_val }}</strong>"{% endif %}
+</p>
+{% endif %}
+
+<div class="plans-grid">
+{% for abo in abonnements %}
+{% set isFeatured  = (abo.dureeMois == 12 or abo.dureeMois == 6) %}
+{% set isActif     = achatActif and achatActif.idAbonnement == abo.id %}
+{% set prixParMois = abo.dureeMois > 1 ? (abo.prix / abo.dureeMois)|number_format(2) : null %}
+
+<div class="plan-card {{ isFeatured ? 'featured' : '' }}">
+    {% if isFeatured %}<div class="plan-badge">⭐ POPULAIRE</div>{% endif %}
+    <div>
+        <span class="plan-duration">{{ abo.dureeMois }} mois</span>
+        <div class="plan-name">{{ abo.nom }}</div>
+    </div>
+    <div class="plan-price">
+        <span class="amount prix-converti" data-tnd="{{ abo.prix }}">{{ abo.prix }}</span>
+        <span class="currency devise-label-card">TND</span>
+    </div>
+    {% if prixParMois %}
+    <div class="plan-per-month">
+        soit <strong class="mois-converti" data-tnd="{{ prixParMois }}">{{ prixParMois }}</strong>
+        <span class="devise-label-card">TND</span>/mois
+    </div>
+    {% endif %}
+    <div class="plan-desc">{{ abo.description ?? 'Accès complet à toutes les fonctionnalités MindGrow.' }}</div>
+    {% if isActif %}
+        <span class="plan-btn plan-btn-active">✓ Plan actuel</span>
+    {% else %}
+        <a href="{{ path('abonnement_paiement', {id: abo.id}) }}"
+           class="plan-btn {{ isFeatured ? 'plan-btn-primary' : 'plan-btn-outline' }}">
+            Souscrire maintenant →
+        </a>
+    {% endif %}
+</div>
+
+{% else %}
+<p style="text-align:center;color:#94a3b8;padding:80px;font-size:16px;width:100%;">
+    {% if filtre_actif %}
+        😕 Aucun résultat. <a href="{{ path('abonnements') }}" style="color:#0b7a8f;">Voir tous →</a>
+    {% else %}
+        Aucun abonnement disponible.
+    {% endif %}
+</p>
+{% endfor %}
+</div>
+
+<script>
+const taux     = { TND:1, EUR:0.30, USD:0.32, GBP:0.26 };
+const symboles = { TND:'TND', EUR:'€', USD:'$', GBP:'£' };
+function changerDevise(devise) {
+    const t = taux[devise], s = symboles[devise];
+    document.querySelectorAll('.prix-converti').forEach(el => {
+        el.textContent = (parseFloat(el.dataset.tnd) * t).toFixed(2);
+    });
+    document.querySelectorAll('.mois-converti').forEach(el => {
+        el.textContent = (parseFloat(el.dataset.tnd) * t).toFixed(2);
+    });
+    document.querySelectorAll('.devise-label-card').forEach(el => {
+        el.textContent = s;
+    });
+    localStorage.setItem('devise', devise);
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('devise');
+    if (saved && saved !== 'TND') {
+        document.getElementById('deviseSelect').value = saved;
+        changerDevise(saved);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,278 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement sécurisé — {{ abonnement.nom }}{% endblock %}
+{% block body %}
+
+<style>
+.pay-wrap { max-width: 540px; margin: 40px auto 80px; }
+
+.pay-summary {
+    background:linear-gradient(135deg,#0b7a8f,#065f6e);
+    color:white; border-radius:20px; padding:28px 32px;
+    margin-bottom:28px; display:flex; justify-content:space-between;
+    align-items:center; flex-wrap:wrap; gap:16px;
+}
+.pay-summary .plan-label { font-size:13px; opacity:.8; text-transform:uppercase; letter-spacing:.8px; }
+.pay-summary .plan-name  { font-size:22px; font-weight:800; margin-top:4px; }
+.pay-summary .plan-dur   { font-size:13px; opacity:.75; margin-top:2px; }
+.pay-summary .plan-price { text-align:right; }
+.pay-summary .price-amt  { font-size:36px; font-weight:900; line-height:1; }
+.pay-summary .price-cur  { font-size:14px; opacity:.8; }
+.pay-summary .price-exp  { font-size:12px; opacity:.65; margin-top:4px; }
+
+.pay-card {
+    background:white; border-radius:20px; padding:36px 32px;
+    box-shadow:0 8px 48px rgba(0,0,0,.1);
+}
+
+.pay-section-title {
+    font-size:11px; font-weight:700; color:#94a3b8;
+    text-transform:uppercase; letter-spacing:1px;
+    margin-bottom:16px; margin-top:28px;
+    display:flex; align-items:center; gap:8px;
+}
+.pay-section-title:first-of-type { margin-top:0; }
+.pay-section-title::after {
+    content:''; flex:1; height:1px; background:#f1f5f9;
+}
+
+.form-group { position:relative; margin-bottom:16px; }
+.form-group label { display:block; font-size:13px; font-weight:600; color:#475569; margin-bottom:6px; }
+.form-group input {
+    width:100%; box-sizing:border-box; padding:12px 14px;
+    border:1.5px solid #e2e8f0; border-radius:10px;
+    font-size:15px; outline:none;
+    transition: border-color .2s, box-shadow .2s;
+}
+.form-group input:focus { border-color:#0b7a8f; box-shadow:0 0 0 3px rgba(11,122,143,.12); }
+
+/* Stripe Elements container */
+.stripe-element {
+    padding:12px 14px;
+    border:1.5px solid #e2e8f0; border-radius:10px;
+    background:white; transition: border-color .2s, box-shadow .2s;
+}
+.stripe-element.StripeElement--focus { border-color:#0b7a8f; box-shadow:0 0 0 3px rgba(11,122,143,.12); }
+.stripe-element.StripeElement--invalid { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); }
+
+.field-row { display:flex; gap:16px; }
+.field-row .form-group { flex:1; }
+
+.card-error {
+    color:#ef4444; font-size:13px; margin-top:8px; min-height:18px;
+}
+
+.card-visual {
+    background:linear-gradient(135deg,#1e293b,#334155);
+    border-radius:14px; padding:20px 24px; margin-bottom:24px;
+    color:white; position:relative; overflow:hidden; min-height:70px;
+}
+.card-visual::before {
+    content:''; position:absolute; top:-20px; right:-20px;
+    width:100px; height:100px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+}
+.card-visual .chip {
+    width:36px; height:26px; background:linear-gradient(135deg,#d4a843,#e8c563);
+    border-radius:5px; margin-bottom:12px;
+}
+.card-visual .card-num {
+    font-size:15px; letter-spacing:3px; font-family:monospace; font-weight:600;
+}
+.card-visual .card-bottom {
+    display:flex; justify-content:space-between; margin-top:10px;
+    font-size:11px; opacity:.7;
+}
+
+.secure-badge {
+    background:#f0fdf4; border:1px solid #bbf7d0;
+    border-radius:12px; padding:12px 16px;
+    display:flex; align-items:center; gap:10px;
+    margin:24px 0;
+}
+.secure-badge span { font-size:13px; color:#166534; line-height:1.5; }
+
+.pay-btn {
+    width:100%; padding:16px; border:none;
+    background:linear-gradient(135deg,#0b7a8f,#065f6e);
+    color:white; border-radius:14px; font-size:17px; font-weight:800;
+    cursor:pointer; letter-spacing:.4px;
+    box-shadow:0 8px 24px rgba(11,122,143,.35);
+    transition:all .2s;
+}
+.pay-btn:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 12px 32px rgba(11,122,143,.45); }
+.pay-btn:disabled { opacity:.6; cursor:not-allowed; transform:none !important; }
+
+.pay-back { display:block; text-align:center; margin-top:16px; color:#94a3b8; font-size:13px; text-decoration:none; }
+.pay-back:hover { color:#0b7a8f; }
+
+.alert-error {
+    background:#fef2f2; border:1px solid #fecaca;
+    color:#dc2626; border-radius:12px;
+    padding:12px 16px; font-size:14px; font-weight:500;
+    margin-bottom:12px;
+}
+</style>
+
+<div class="pay-wrap">
+
+    <div class="pay-summary">
+        <div>
+            <div class="plan-label">Votre plan</div>
+            <div class="plan-name">{{ abonnement.nom }}</div>
+            <div class="plan-dur">{{ abonnement.dureeMois }} mois · jusqu'au {{ dateExpiration|date('d/m/Y') }}</div>
+        </div>
+        <div class="plan-price">
+            <div class="price-amt">{{ abonnement.prix }}</div>
+            <div class="price-cur">TND</div>
+            <div class="price-exp">paiement unique</div>
+        </div>
+    </div>
+
+    {% for error in errors %}
+    <div class="alert-error">⚠️ {{ error }}</div>
+    {% endfor %}
+
+    <div class="pay-card">
+
+        <div class="card-visual" id="cardPreview">
+            <div class="chip"></div>
+            <div class="card-num" id="cardNumDisplay">•••• •••• •••• ••••</div>
+            <div class="card-bottom">
+                <span id="cardHolderDisplay">NOM PRÉNOM</span>
+                <span id="cardExpiryDisplay">MM/AA</span>
+            </div>
+        </div>
+
+        <form id="payForm" action="{{ path('abonnement_payer', {id: abonnement.id}) }}" method="POST">
+
+            {# Token Stripe — rempli par JS avant soumission #}
+            <input type="hidden" name="stripeToken" id="stripeToken">
+
+            <div class="pay-section-title">👤 Titulaire</div>
+            <div class="form-group">
+                <label for="cardHolder">Nom complet sur la carte</label>
+                <input type="text" id="cardHolder" name="cardHolder"
+                       placeholder="Ahmed Ben Ali"
+                       value="{{ cardHolder ?? '' }}"
+                       autocomplete="cc-name" maxlength="60">
+            </div>
+
+            <div class="pay-section-title">💳 Informations de la carte</div>
+
+            <div class="form-group">
+                <label>Numéro de carte</label>
+                <div id="card-number-element" class="stripe-element"></div>
+            </div>
+
+            <div class="field-row">
+                <div class="form-group">
+                    <label>Date d'expiration</label>
+                    <div id="card-expiry-element" class="stripe-element"></div>
+                </div>
+                <div class="form-group">
+                    <label>CVC</label>
+                    <div id="card-cvc-element" class="stripe-element"></div>
+                </div>
+            </div>
+
+            <div class="card-error" id="cardError"></div>
+
+            <div class="secure-badge">
+                <span style="font-size:22px;">🔐</span>
+                <span>Paiement <strong>100% sécurisé</strong> via Stripe. Vos données bancaires ne sont jamais stockées sur nos serveurs.</span>
+            </div>
+
+            <button type="submit" class="pay-btn" id="payBtn">
+                Payer {{ abonnement.prix }} TND →
+            </button>
+        </form>
+
+        <a href="{{ path('abonnements') }}" class="pay-back">← Retour aux abonnements</a>
+    </div>
+</div>
+
+{# Stripe.js v3 — chargement sécurisé depuis Stripe CDN #}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+const stripe   = Stripe('{{ stripe_public_key }}');
+const elements = stripe.elements();
+
+const style = {
+    base: {
+        fontSize: '15px',
+        fontFamily: '"DM Sans", sans-serif',
+        color: '#1e293b',
+        '::placeholder': { color: '#94a3b8' },
+    },
+    invalid: { color: '#ef4444' },
+};
+
+// Créer les éléments Stripe séparément pour le visuel
+const cardNumber = elements.create('cardNumber', { style, showIcon: true });
+const cardExpiry = elements.create('cardExpiry', { style });
+const cardCvc    = elements.create('cardCvc',    { style });
+
+cardNumber.mount('#card-number-element');
+cardExpiry.mount('#card-expiry-element');
+cardCvc.mount('#card-cvc-element');
+
+// Mise à jour de l'aperçu visuel depuis le champ numéro
+cardNumber.on('change', function(e) {
+    document.getElementById('cardError').textContent = e.error ? e.error.message : '';
+    if (e.brand && e.brand !== 'unknown') {
+        const brands = { visa:'VISA', mastercard:'MASTERCARD', amex:'AMEX', discover:'DISCOVER' };
+        document.getElementById('cardNumDisplay').textContent = '•••• •••• •••• ••••';
+    }
+});
+
+cardExpiry.on('change', function(e) {
+    document.getElementById('cardError').textContent = e.error ? e.error.message : '';
+    if (e.value) {
+        document.getElementById('cardExpiryDisplay').textContent = e.value || 'MM/AA';
+    }
+});
+
+cardCvc.on('change', function(e) {
+    document.getElementById('cardError').textContent = e.error ? e.error.message : '';
+});
+
+// Mise à jour du nom sur la carte visuelle
+document.getElementById('cardHolder').addEventListener('input', function() {
+    const v = this.value.trim().toUpperCase();
+    document.getElementById('cardHolderDisplay').textContent = v || 'NOM PRÉNOM';
+});
+
+// Soumission : créer le token Stripe côté client, puis soumettre
+document.getElementById('payForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Traitement en cours…';
+
+    const cardHolder = document.getElementById('cardHolder').value.trim();
+    if (!cardHolder) {
+        document.getElementById('cardError').textContent = 'Le nom du titulaire est obligatoire.';
+        btn.disabled = false;
+        btn.textContent = 'Payer {{ abonnement.prix }} TND →';
+        return;
+    }
+
+    const { token, error } = await stripe.createToken(cardNumber, {
+        name: cardHolder
+    });
+
+    if (error) {
+        document.getElementById('cardError').textContent = error.message;
+        btn.disabled = false;
+        btn.textContent = 'Payer {{ abonnement.prix }} TND →';
+        return;
+    }
+
+    // Injecter le token dans le formulaire et soumettre
+    document.getElementById('stripeToken').value = token.id;
+    this.submit();
+});
+</script>
+
+{% endblock %}

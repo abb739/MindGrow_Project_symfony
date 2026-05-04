@@ -1,0 +1,697 @@
+{% extends 'base.html.twig' %}
+{% block title %}Nos Abonnements — MindGrow{% endblock %}
+{% block body %}
+
+{# ══════════════════════════════════════════════════════════ #}
+{# CHATBOT IA ABONNEMENT                                      #}
+{# ══════════════════════════════════════════════════════════ #}
+<div id="ia-abo-overlay" onclick="if(event.target===this)fermerIAAbo();" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:24px;width:500px;max-width:95vw;box-shadow:0 24px 80px rgba(0,0,0,.2);overflow:hidden;">
+
+    {# Header #}
+    <div style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);padding:20px 24px;color:white;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:28px;">💳</span>
+      <div>
+        <div style="font-size:17px;font-weight:800;">Conseiller Abonnement IA</div>
+        <div style="font-size:12px;opacity:.85;">Je vous aide à choisir le plan parfait pour vous</div>
+      </div>
+      <button onclick="fermerIAAbo()" style="margin-left:auto;background:none;border:none;color:white;font-size:22px;cursor:pointer;">✕</button>
+    </div>
+
+    {# Suggestions rapides #}
+    <div style="padding:12px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:8px;flex-wrap:wrap;">
+      <span style="font-size:12px;color:#64748b;font-weight:600;align-self:center;">Suggestions :</span>
+      <button onclick="envoyerIAAbo('Quel abonnement est le moins cher ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #a29bfe;border-radius:20px;font-size:12px;color:#6c5ce7;cursor:pointer;font-weight:600;">
+        💰 Le moins cher
+      </button>
+      <button onclick="envoyerIAAbo('Je veux un abonnement longue durée')"
+        style="padding:5px 12px;background:white;border:1.5px solid #a29bfe;border-radius:20px;font-size:12px;color:#6c5ce7;cursor:pointer;font-weight:600;">
+        📅 Longue durée
+      </button>
+      <button onclick="envoyerIAAbo('Quelle est la différence entre les abonnements ?')"
+        style="padding:5px 12px;background:white;border:1.5px solid #a29bfe;border-radius:20px;font-size:12px;color:#6c5ce7;cursor:pointer;font-weight:600;">
+        ❓ Les différences
+      </button>
+    </div>
+
+    {# Messages #}
+    <div id="ia-abo-msgs" style="min-height:100px;max-height:280px;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:85%;">
+        Bonjour ! 💳 Je suis votre conseiller abonnement. Dites-moi votre budget ou vos besoins et je vous recommande le meilleur plan MindGrow.
+      </div>
+    </div>
+
+    {# Input #}
+    <div style="display:flex;gap:8px;padding:14px 16px;border-top:1px solid #e2e8f0;background:white;">
+      <input id="ia-abo-input" type="text" placeholder="Ex: J'ai un budget de 30 TND par mois..."
+        style="flex:1;border:1.5px solid #e2e8f0;border-radius:12px;padding:10px 14px;font-size:13px;outline:none;font-family:inherit;"
+        onkeydown="if(event.key==='Enter') envoyerIAAbo()">
+      <button onclick="envoyerIAAbo()"
+        style="padding:10px 18px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;border:none;border-radius:12px;font-weight:700;cursor:pointer;font-size:13px;">
+        Envoyer
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function ouvrirIAAbonnement() { document.getElementById('ia-abo-overlay').style.display = 'flex'; }
+function fermerIAAbo() { document.getElementById('ia-abo-overlay').style.display = 'none'; }
+
+function envoyerIAAbo(texteFixe) {
+  const input = document.getElementById('ia-abo-input');
+  const msgs  = document.getElementById('ia-abo-msgs');
+  const text  = texteFixe || input.value.trim();
+  if (!text) return;
+
+  msgs.innerHTML += `<div style="background:#6c5ce7;color:white;padding:10px 16px;border-radius:16px 4px 16px 16px;font-size:13px;max-width:82%;align-self:flex-end;margin-left:auto;">${text}</div>`;
+  if (!texteFixe) input.value = '';
+  msgs.scrollTop = msgs.scrollHeight;
+
+  const tid = 'ty-' + Date.now();
+  msgs.innerHTML += `<div id="${tid}" style="background:#f1f5f9;padding:10px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#94a3b8;">⏳ Analyse en cours…</div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  fetch('/chatbot/abonnement', {
+    method:  'POST',
+    headers: {'Content-Type': 'application/json'},
+    body:    JSON.stringify({message: text})
+  })
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById(tid)?.remove();
+    const rep = data.response || data.error || 'Erreur.';
+    msgs.innerHTML += `<div style="background:#f1f5f9;padding:12px 16px;border-radius:4px 16px 16px 16px;font-size:13px;color:#1e293b;max-width:90%;white-space:pre-wrap;">${rep}</div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  })
+  .catch(() => { document.getElementById(tid)?.remove(); });
+}
+</script>
+
+
+{# ── TOASTS FLASH ── #}
+{% for message in app.flashes('success') %}
+<div id="toastMsg" style="position:fixed;top:24px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:16px 22px;border-radius:14px;box-shadow:0 10px 30px rgba(16,185,129,.35);z-index:99999;font-weight:600;font-size:15px;display:flex;align-items:center;gap:10px;animation:toastIn .4s cubic-bezier(.22,1,.36,1);max-width:400px;">
+    <span>{{ message }}</span>
+    <button onclick="dismissToast()" style="margin-left:12px;cursor:pointer;opacity:.7;font-size:18px;background:none;border:none;color:white;padding:0;">✕</button>
+</div>
+{% endfor %}
+
+<style>
+@keyframes toastIn  { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes toastOut { from{transform:translateX(0);opacity:1} to{transform:translateX(110%);opacity:0} }
+.plans-hero { text-align:center; padding:52px 0 44px; }
+.plans-hero h1 { font-size:44px; font-weight:800; color:#0b7a8f; letter-spacing:-1px; line-height:1.1; }
+.plans-hero p  { font-size:18px; color:#64748b; margin-top:12px; }
+
+.stats-bar {
+    display:flex; justify-content:center; gap:0; flex-wrap:wrap;
+    background:white; border-radius:16px;
+    box-shadow:0 2px 16px rgba(11,122,143,.08);
+    margin:0 auto 36px; max-width:640px; overflow:hidden;
+}
+.stat-item {
+    text-align:center; padding:24px 36px; flex:1; min-width:160px;
+    border-right:1px solid #f1f5f9;
+}
+.stat-item:last-child { border-right:none; }
+.stat-number { font-size:30px; font-weight:900; color:#0b7a8f; line-height:1; }
+.stat-label  { font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:.7px; margin-top:5px; }
+
+.filter-box {
+    max-width:1100px;
+    margin:0 auto 40px;
+    background:white;
+    border-radius:16px;
+    padding:20px 24px;
+    box-shadow:0 2px 16px rgba(11,122,143,.08);
+}
+
+.filter-tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.filter-tag  { background:#e0f5f8; color:#0b7a8f; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; }
+
+.plans-grid {
+    display:flex; flex-wrap:wrap; gap:28px;
+    justify-content:center; padding-bottom:60px;
+}
+.plan-card {
+    background:white; border-radius:24px; padding:36px 28px; width:280px;
+    box-shadow:0 2px 20px rgba(0,0,0,.06); border:2px solid #f1f5f9;
+    transition:all .3s; position:relative; overflow:hidden; display:flex; flex-direction:column;
+}
+.plan-card:hover { border-color:#0b7a8f; transform:translateY(-10px); box-shadow:0 20px 60px rgba(11,122,143,.18); }
+.plan-card.featured { border-color:#0b7a8f; background:linear-gradient(160deg,#f0fdfb 0%,#e0f5f8 100%); transform:scale(1.04); }
+.plan-card.featured:hover { transform:scale(1.04) translateY(-10px); }
+.plan-badge { position:absolute; top:0; right:0; background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white; font-size:10px; font-weight:800; letter-spacing:1px; padding:6px 18px; border-radius:0 0 0 16px; }
+.plan-duration { display:inline-block; background:#e0f5f8; color:#0b7a8f; padding:4px 14px; border-radius:20px; font-size:11px; font-weight:700; letter-spacing:1px; margin-bottom:20px; text-transform:uppercase; }
+.plan-name { font-size:24px; font-weight:800; color:#1e293b; margin-bottom:4px; }
+.plan-price { display:flex; align-items:baseline; gap:4px; margin:16px 0 4px; }
+.plan-price .amount   { font-size:48px; font-weight:900; color:#0b7a8f; line-height:1; }
+.plan-price .currency { font-size:18px; color:#94a3b8; font-weight:600; }
+.plan-per-month { font-size:12px; color:#94a3b8; margin-bottom:20px; }
+.plan-desc { font-size:14px; color:#64748b; line-height:1.7; border-top:1px solid #f1f5f9; padding-top:16px; margin-bottom:24px; flex:1; }
+.plan-btn { display:block; text-align:center; padding:14px; border-radius:14px; text-decoration:none; font-weight:700; font-size:15px; transition:all .2s; }
+.plan-btn-primary { background:linear-gradient(135deg,#0b7a8f,#065f6e); color:white; box-shadow:0 6px 20px rgba(11,122,143,.3); }
+.plan-btn-primary:hover { box-shadow:0 10px 30px rgba(11,122,143,.45); opacity:.95; }
+.plan-btn-outline { background:transparent; color:#0b7a8f; border:2px solid #0b7a8f; }
+.plan-btn-outline:hover { background:#0b7a8f; color:white; }
+.plan-btn-active { background:#f0fdf4; color:#166534; border:2px solid #bbf7d0; cursor:default; }
+
+.plan-active-banner {
+    background:linear-gradient(135deg,#059669,#047857); color:white; border-radius:16px; padding:20px 28px;
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;
+    margin:0 auto 36px; max-width:700px; box-shadow:0 8px 30px rgba(5,150,105,.25);
+}
+.plan-active-banner .title { font-size:17px; font-weight:700; }
+.plan-active-banner .sub   { font-size:13px; opacity:.85; margin-top:2px; }
+.plan-active-cancel { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.4); color:white; padding:8px 18px; border-radius:10px; text-decoration:none; font-size:13px; font-weight:600; }
+.plan-active-cancel:hover { background:rgba(255,255,255,.25); }
+.results-info { text-align:center; color:#64748b; margin-bottom:24px; font-size:14px; }
+
+#fi-search-input {
+    color: #1e293b !important;
+    -webkit-text-fill-color: #1e293b !important;
+}
+#fi-search-input::placeholder {
+    color: #94a3b8 !important;
+    -webkit-text-fill-color: #94a3b8 !important;
+    opacity: 1 !important;
+}
+.filter-box form input[type="text"],
+.filter-box form select,
+.filter-box form button,
+.filter-box form a {
+    width: auto !important;
+    margin-bottom: 0 !important;
+    margin-top: 0 !important;
+    box-shadow: none !important;
+}
+#fi-search-input:focus {
+    border-color: #0b7a8f !important;
+    box-shadow: 0 0 0 3px rgba(11,122,143,.15) !important;
+    background: white !important;
+}
+</style>
+
+<div class="plans-hero">
+    <h1>Choisissez votre plan</h1>
+    <p>Investissez dans votre bien-être — sans engagement caché</p>
+</div>
+
+{% if achatActif %}
+<div class="plan-active-banner">
+    <div>
+        <div class="title">✅ Abonnement actif</div>
+        <div class="sub">Souscrit le {{ achatActif.dateAchat ? achatActif.dateAchat|date('d/m/Y') : '—' }}</div>
+    </div>
+    <a href="{{ path('abonnement_recu', {id: achatActif.id}) }}" target="_blank"
+           style="display:inline-block;margin-bottom:10px;padding:8px 18px;background:#0b7a8f;color:white;border-radius:10px;text-decoration:none;font-size:13px;font-weight:600;">
+            📄 Télécharger mon reçu PDF
+        </a><br>
+
+    {# ✅ MODIFIÉ : bouton modale au lieu de confirm() natif #}
+    <button type="button"
+            onclick="ouvrirModalAnnulation('{{ path('abonnement_annuler', {id: achatActif.id}) }}')"
+            class="plan-active-cancel"
+            style="cursor:pointer;">Annuler l'abonnement</button>
+</div>
+{% endif %}
+
+{% if stats is defined and stats.actifs > 0 %}
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.total_achats }}</div>
+        <div class="stat-label">Souscriptions totales</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">{{ stats.actifs }}</div>
+        <div class="stat-label">Abonnés actifs</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number" id="stat-revenu" data-tnd="{{ stats.revenu_total }}">{{ stats.revenu_total|number_format(0, '.', ' ') }} <span id="stat-revenu-devise">TND</span></div>
+        <div class="stat-label">Revenus actifs</div>
+    </div>
+</div>
+{% endif %}
+
+{% set q_val     = app.request.query.get('q', '') %}
+{% set duree_val = app.request.query.get('duree', '0') %}
+{% set tri_val   = app.request.query.get('tri', 'populaire') %}
+{% set filtre_actif = (q_val != '' or (duree_val != '0' and duree_val != '') or (tri_val != 'populaire' and tri_val != '')) %}
+
+<div class="filter-box">
+    <form method="GET" action="{{ path('abonnements') }}" style="margin:0;padding:0;">
+        <div style="display:flex !important; flex-direction:row !important; flex-wrap:wrap !important; align-items:center !important; gap:10px !important; width:100% !important;">
+
+            <input type="text"
+                   name="q"
+                   id="fi-search-input"
+                   value="{{ q_val }}"
+                   placeholder="🔍 Rechercher..."
+                   autocomplete="off"
+                   style="flex:1 1 160px !important; min-width:140px !important; max-width:none !important; width:auto !important; padding:11px 16px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:14px !important; outline:none !important; background:white !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; box-shadow:none !important; color:#1e293b !important; -webkit-text-fill-color:#1e293b !important;">
+
+            <select name="duree"
+                    style="flex:0 0 auto !important; width:155px !important; padding:11px 10px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:13px !important; font-weight:600 !important; color:#334155 !important; background:white !important; cursor:pointer !important; outline:none !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important;">
+                <option value="0"  {{ duree_val == '0' or duree_val == '' ? 'selected' : '' }}>📅 Toutes durées</option>
+                <option value="1"  {{ duree_val == '1'  ? 'selected' : '' }}>1 mois</option>
+                <option value="3"  {{ duree_val == '3'  ? 'selected' : '' }}>3 mois</option>
+                <option value="6"  {{ duree_val == '6'  ? 'selected' : '' }}>6 mois</option>
+                <option value="12" {{ duree_val == '12' ? 'selected' : '' }}>12 mois</option>
+                <option value="24" {{ duree_val == '24' ? 'selected' : '' }}>24 mois</option>
+            </select>
+
+            <select name="tri"
+                    style="flex:0 0 auto !important; width:185px !important; padding:11px 10px !important; border:2px solid #e2e8f0 !important; border-radius:10px !important; font-size:13px !important; font-weight:600 !important; color:#334155 !important; background:white !important; cursor:pointer !important; outline:none !important; display:block !important; height:auto !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important;">
+                <option value="populaire"  {{ tri_val == 'populaire'  or tri_val == '' ? 'selected' : '' }}>⭐ Populaires d'abord</option>
+                <option value="prix_asc"   {{ tri_val == 'prix_asc'   ? 'selected' : '' }}>💰 Prix croissant</option>
+                <option value="prix_desc"  {{ tri_val == 'prix_desc'  ? 'selected' : '' }}>💰 Prix décroissant</option>
+                <option value="duree_asc"  {{ tri_val == 'duree_asc'  ? 'selected' : '' }}>📅 Durée croissante</option>
+                <option value="duree_desc" {{ tri_val == 'duree_desc' ? 'selected' : '' }}>📅 Durée décroissante</option>
+            </select>
+
+            <span style="flex:0 0 1px !important; width:1px !important; height:30px !important; background:#e2e8f0 !important; display:inline-block !important;"></span>
+
+            <div style="flex:0 0 auto !important; display:flex !important; flex-direction:column !important; align-items:flex-start !important; gap:3px !important;">
+                <div style="display:flex !important; align-items:center !important; gap:6px !important;">
+                    {# Hidden real select for JS compatibility #}
+                    <select id="deviseSelect" onchange="changerDevise(this.value)" style="display:none !important;">
+                        {% for code, label in currency_options %}
+                            <option value="{{ code }}">{{ label }}</option>
+                        {% endfor %}
+                    </select>
+
+                    {# Custom flag dropdown #}
+                    <div id="custom-devise-dropdown" style="position:relative; width:220px;">
+                        <button type="button" id="devise-btn"
+                                onclick="toggleDeviseDropdown(event)"
+                                style="width:100%; display:flex; align-items:center; gap:10px; padding:10px 14px;
+                                       border:2px solid #0b7a8f; border-radius:12px; background:white; cursor:pointer;
+                                       font-size:13px; font-weight:600; color:#0b7a8f; outline:none;
+                                       transition:border-color 0.2s, box-shadow 0.2s; box-sizing:border-box;
+                                       box-shadow:0 2px 8px rgba(11,122,143,.12);">
+                            <img id="devise-btn-flag" src="https://flagcdn.com/24x18/tn.png"
+                                 srcset="https://flagcdn.com/48x36/tn.png 2x"
+                                 width="24" height="18" alt="TND"
+                                 style="border-radius:3px; flex-shrink:0; box-shadow:0 1px 3px rgba(0,0,0,.2);">
+                            <span id="devise-btn-label" style="flex:1; text-align:left;">Dinar Tunisien (TND)</span>
+                            <svg id="devise-btn-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#0b7a8f" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0; transition:transform .2s;"><polyline points="6 9 12 15 18 9"/></svg>
+                        </button>
+
+                        <div id="devise-menu"
+                             style="display:none; position:absolute; top:calc(100% + 6px); left:0; right:0;
+                                    background:white; border:2px solid #e2e8f0; border-radius:14px;
+                                    box-shadow:0 8px 32px rgba(0,0,0,0.12); z-index:9999;
+                                    overflow:hidden; animation:deviseMenuIn 0.15s ease;">
+                            {% set devises_meta = {
+                                'TND': {'cc': 'tn', 'nom': 'Dinar Tunisien',   'symbole': 'TND'},
+                                'EUR': {'cc': 'eu', 'nom': 'Euro',             'symbole': '€'},
+                                'USD': {'cc': 'us', 'nom': 'Dollar US',        'symbole': '$'},
+                                'GBP': {'cc': 'gb', 'nom': 'Livre Sterling',   'symbole': '£'},
+                                'SAR': {'cc': 'sa', 'nom': 'Riyal Saoudien',   'symbole': '﷼'},
+                                'MAD': {'cc': 'ma', 'nom': 'Dirham Marocain',  'symbole': 'MAD'},
+                                'CAD': {'cc': 'ca', 'nom': 'Dollar Canadien',  'symbole': 'CA$'},
+                                'JPY': {'cc': 'jp', 'nom': 'Yen Japonais',     'symbole': '¥'},
+                                'CHF': {'cc': 'ch', 'nom': 'Franc Suisse',     'symbole': 'CHF'},
+                                'AED': {'cc': 'ae', 'nom': 'Dirham EAU',       'symbole': 'AED'}
+                            } %}
+                            {% for code, meta in devises_meta %}
+                            <div class="devise-option" data-code="{{ code }}"
+                                 data-cc="{{ meta.cc }}" data-nom="{{ meta.nom }}"
+                                 onclick="selectDevise('{{ code }}', '{{ meta.cc }}', '{{ meta.nom }}')"
+                                 style="display:flex; align-items:center; gap:12px; padding:10px 16px;
+                                        cursor:pointer; transition:background 0.15s; font-size:13px; border-bottom:0.5px solid #f1f5f9;">
+                                <img src="https://flagcdn.com/24x18/{{ meta.cc }}.png"
+                                     srcset="https://flagcdn.com/48x36/{{ meta.cc }}.png 2x"
+                                     width="24" height="18" alt="{{ code }}"
+                                     style="border-radius:3px; flex-shrink:0; box-shadow:0 1px 3px rgba(0,0,0,.15);">
+                                <div style="flex:1;">
+                                    <div style="font-weight:600; color:#1e293b;">{{ meta.nom }}</div>
+                                    <div style="font-size:11px; color:#94a3b8; font-weight:500;">{{ code }} · {{ meta.symbole }}</div>
+                                </div>
+                                <span class="devise-check-{{ code }}" style="display:none; color:#0b7a8f; font-size:16px; font-weight:700;">✓</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <span id="devise-loading-icon" style="display:none; font-size:16px; animation:deviseSpinner 1s linear infinite;">⏳</span>
+                </div>
+                <span id="taux-indicator" style="font-size:11px; color:#64748b; padding-left:4px; height:14px; display:block; font-style:italic;"></span>
+            </div>
+
+<style>
+@keyframes deviseMenuIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+.devise-option:hover { background:#f0fafc !important; }
+.devise-option:hover > div > div:first-child { color:#0b7a8f !important; }
+#devise-btn:focus, #devise-btn:hover { border-color:#0b7a8f !important; box-shadow:0 0 0 3px rgba(11,122,143,0.1) !important; }
+#devise-btn.open { border-color:#0b7a8f !important; box-shadow:0 0 0 3px rgba(11,122,143,0.1) !important; }
+</style>
+
+<script>
+(function(){
+  function toggleDeviseDropdown(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('devise-menu');
+    const btn = document.getElementById('devise-btn');
+    const arrow = document.getElementById('devise-btn-arrow');
+    const open = menu.style.display !== 'none';
+    menu.style.display = open ? 'none' : 'block';
+    btn.classList.toggle('open', !open);
+    arrow.style.transform = open ? '' : 'rotate(180deg)';
+  }
+  window.toggleDeviseDropdown = toggleDeviseDropdown;
+
+  function selectDevise(code, cc, nom) {
+    // Update button display
+    var flagEl = document.getElementById('devise-btn-flag');
+    flagEl.src = 'https://flagcdn.com/24x18/' + cc + '.png';
+    flagEl.srcset = 'https://flagcdn.com/48x36/' + cc + '.png 2x';
+    flagEl.alt = code;
+    document.getElementById('devise-btn-label').textContent = nom + ' (' + code + ')';
+    // Hide menu
+    document.getElementById('devise-menu').style.display = 'none';
+    document.getElementById('devise-btn').classList.remove('open');
+    document.getElementById('devise-btn-arrow').style.transform = '';
+    // Remove all checks
+    document.querySelectorAll('[class^="devise-check-"]').forEach(function(el){ el.style.display='none'; });
+    // Show check on selected
+    const chk = document.querySelector('.devise-check-' + code);
+    if (chk) chk.style.display = 'block';
+    // Sync hidden select + trigger real change
+    const sel = document.getElementById('deviseSelect');
+    sel.value = code;
+    sel.dispatchEvent(new Event('change'));
+  }
+  window.selectDevise = selectDevise;
+
+  // Close on outside click
+  document.addEventListener('click', function(e){
+    const dd = document.getElementById('custom-devise-dropdown');
+    if (dd && !dd.contains(e.target)) {
+      document.getElementById('devise-menu').style.display = 'none';
+      document.getElementById('devise-btn').classList.remove('open');
+      document.getElementById('devise-btn-arrow').style.transform = '';
+    }
+  });
+
+  // Init: mark TND as selected
+  document.addEventListener('DOMContentLoaded', function(){
+    const chk = document.querySelector('.devise-check-TND');
+    if (chk) chk.style.display = 'block';
+  });
+})();
+</script>
+
+            <button type="button" id="btn-aide-ia"
+                onclick="document.getElementById('ia-abo-overlay').style.display='flex';"
+                style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:white;font-weight:700;
+                       border-radius:25px;padding:10px 22px;border:none;cursor:pointer;
+                       box-shadow:0 4px 15px rgba(108,92,231,.35);font-size:14px;">
+                🤖 Aide au choix IA
+            </button>
+            <button type="submit"
+                    style="flex:0 0 auto !important; padding:11px 22px !important; background:#0b7a8f !important; color:white !important; border:none !important; border-radius:10px !important; font-weight:700 !important; cursor:pointer !important; font-size:14px !important; white-space:nowrap !important; display:inline-block !important; height:auto !important; line-height:normal !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; width:auto !important;">
+                Filtrer
+            </button>
+
+            {% if filtre_actif %}
+            <a href="{{ path('abonnements') }}"
+               style="flex:0 0 auto !important; padding:11px 16px !important; background:#fee2e2 !important; color:#dc2626 !important; border-radius:10px !important; font-size:13px !important; text-decoration:none !important; font-weight:600 !important; white-space:nowrap !important; display:inline-block !important; line-height:normal !important; box-sizing:border-box !important; margin-bottom:0 !important; margin-top:0 !important; width:auto !important;">
+                ✕ Réinitialiser
+            </a>
+            {% endif %}
+
+        </div>
+    </form>
+
+    {% if filtre_actif %}
+    <div class="filter-tags">
+        {% if q_val != '' %}<span class="filter-tag">🔍 "{{ q_val }}"</span>{% endif %}
+        {% if duree_val != '0' and duree_val != '' %}<span class="filter-tag">📅 {{ duree_val }} mois</span>{% endif %}
+        {% if tri_val != 'populaire' and tri_val != '' %}
+            <span class="filter-tag">
+                {% if tri_val == 'prix_asc' %}💰 Prix ↑
+                {% elseif tri_val == 'prix_desc' %}💰 Prix ↓
+                {% elseif tri_val == 'duree_asc' %}📅 Durée ↑
+                {% elseif tri_val == 'duree_desc' %}📅 Durée ↓
+                {% endif %}
+            </span>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+{% if filtre_actif %}
+<p class="results-info">
+    <strong>{{ abonnements|length }}</strong> résultat(s) trouvé(s)
+    {% if q_val != '' %} pour "<strong>{{ q_val }}</strong>"{% endif %}
+</p>
+{% endif %}
+
+<div class="plans-grid">
+{% for abo in abonnements %}
+{% set isFeatured  = (abo.dureeMois == 12 or abo.dureeMois == 6) %}
+{% set isActif     = achatActif and achatActif.idAbonnement == abo.id %}
+{% set prixParMois = abo.dureeMois > 1 ? (abo.prix / abo.dureeMois)|number_format(2) : null %}
+
+<div class="plan-card {{ isFeatured ? 'featured' : '' }}">
+    {% if isFeatured %}<div class="plan-badge">⭐ POPULAIRE</div>{% endif %}
+    <div>
+        <span class="plan-duration">{{ abo.dureeMois }} mois</span>
+        <div class="plan-name">{{ abo.nom }}</div>
+    </div>
+    <div class="plan-price">
+        <span class="amount prix-converti" data-tnd="{{ abo.prix }}">{{ abo.prix }}</span>
+        <span class="currency devise-label-card">TND</span>
+    </div>
+    {% if prixParMois %}
+    <div class="plan-per-month">
+        soit <strong class="mois-converti" data-tnd="{{ prixParMois }}">{{ prixParMois }}</strong>
+        <span class="devise-label-card">TND</span>/mois
+    </div>
+    {% endif %}
+    <div class="plan-desc">{{ abo.description ?? 'Accès complet à toutes les fonctionnalités MindGrow.' }}</div>
+    {% if isActif %}
+        <span class="plan-btn plan-btn-active">✓ Plan actuel</span>
+        {% if achatActif and achatActif.idAbonnement == abo.id %}
+        <a href="{{ path('abonnement_recu', {id: achatActif.id}) }}" target="_blank"
+           class="plan-btn" style="background:#f0f9ff;color:#0b7a8f;border:2px solid #bae6fd;margin-top:8px;font-size:13px;text-decoration:none;display:block;text-align:center;border-radius:12px;padding:10px;">
+            📄 Télécharger mon reçu PDF
+        </a>
+        {% endif %}
+    {% else %}
+        <a href="{{ path('abonnement_paiement', {id: abo.id}) }}"
+           class="plan-btn {{ isFeatured ? 'plan-btn-primary' : 'plan-btn-outline' }}">
+            Souscrire maintenant →
+        </a>
+    {% endif %}
+</div>
+
+{% else %}
+<p style="text-align:center;color:#94a3b8;padding:80px;font-size:16px;width:100%;">
+    {% if filtre_actif %}
+        😕 Aucun résultat. <a href="{{ path('abonnements') }}" style="color:#0b7a8f;">Voir tous →</a>
+    {% else %}
+        Aucun abonnement disponible.
+    {% endif %}
+</p>
+{% endfor %}
+</div>
+
+<script>
+const SYMBOLES_FALLBACK = { TND:'TND', EUR:'€', USD:'$', GBP:'£', SAR:'﷼', MAD:'MAD', CAD:'CA$', JPY:'¥', CHF:'CHF', AED:'AED' };
+const DECIMALES_FALLBACK = { TND:3, EUR:2, USD:2, GBP:2, SAR:2, MAD:2, CAD:2, JPY:0, CHF:2, AED:2 };
+
+let tauxData     = null;
+let deviseActive = 'TND';
+
+async function chargerTaux() {
+    const loadIcon  = document.getElementById('devise-loading-icon');
+    const indicator = document.getElementById('taux-indicator');
+    if (loadIcon) loadIcon.style.display = 'inline';
+    try {
+        const res = await fetch('/api/currency/rates', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        if (json.success && json.devises) {
+            tauxData = json;
+            if (indicator) {
+                const isLive = json.source === 'live';
+                indicator.dataset.source = json.source;
+                indicator.style.color = isLive ? '#0b7a8f' : '#94a3b8';
+                const updated = json.updated_at
+                    ? new Date(json.updated_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })
+                    : '';
+                indicator.title = isLive
+                    ? '✅ Taux en temps réel • Mis à jour : ' + updated
+                    : '⚠️ Taux approximatifs (hors ligne)';
+            }
+        } else {
+            throw new Error('Réponse invalide');
+        }
+    } catch(e) {
+        console.warn('[Devise] API interne indisponible, taux statiques utilisés.', e);
+        tauxData = null;
+    } finally {
+        if (loadIcon) loadIcon.style.display = 'none';
+        appliquerDevise(deviseActive);
+    }
+}
+
+function getTaux(devise) {
+    if (tauxData && tauxData.devises[devise]) return tauxData.devises[devise].taux;
+    const fallback = { TND:1, EUR:0.2965, USD:0.32, GBP:0.254, SAR:1.20, MAD:3.21, CAD:0.439, JPY:47.85, CHF:0.289, AED:1.175 };
+    return fallback[devise] || 1;
+}
+
+function getSymbole(devise) {
+    if (tauxData && tauxData.devises[devise]) return tauxData.devises[devise].symbole;
+    return SYMBOLES_FALLBACK[devise] || devise;
+}
+
+function getDecimales(devise) {
+    if (tauxData && tauxData.devises[devise]) return tauxData.devises[devise].decimales;
+    return DECIMALES_FALLBACK[devise] ?? 2;
+}
+
+function formaterMontant(valeur, devise) {
+    const dec = getDecimales(devise);
+    return parseFloat(valeur).toLocaleString('fr-FR', {
+        minimumFractionDigits: dec,
+        maximumFractionDigits: dec
+    });
+}
+
+function appliquerDevise(devise) {
+    deviseActive = devise;
+    const taux    = getTaux(devise);
+    const symbole = getSymbole(devise);
+
+    document.querySelectorAll('.prix-converti').forEach(el => {
+        el.textContent = formaterMontant(parseFloat(el.dataset.tnd) * taux, devise);
+    });
+    document.querySelectorAll('.mois-converti').forEach(el => {
+        el.textContent = formaterMontant(parseFloat(el.dataset.tnd) * taux, devise);
+    });
+    document.querySelectorAll('.devise-label-card').forEach(el => {
+        el.textContent = symbole;
+    });
+
+    const statRevenu   = document.getElementById('stat-revenu');
+    const statDeviseEl = document.getElementById('stat-revenu-devise');
+    if (statRevenu) {
+        const tnd = parseFloat(statRevenu.dataset.tnd);
+        statRevenu.firstChild.textContent = formaterMontant(tnd * taux, devise) + ' ';
+    }
+    if (statDeviseEl) statDeviseEl.textContent = symbole;
+
+    const indicator = document.getElementById('taux-indicator');
+    if (indicator) {
+        if (devise === 'TND') {
+            indicator.textContent = '';
+        } else {
+            const isLive = tauxData && tauxData.source === 'live';
+            indicator.textContent = '1 TND ≈ ' + formaterMontant(taux, devise) + ' ' + symbole;
+            indicator.style.color = isLive ? '#0b7a8f' : '#94a3b8';
+        }
+    }
+    localStorage.setItem('devise', devise);
+}
+
+function changerDevise(devise) { appliquerDevise(devise); }
+
+window.addEventListener('DOMContentLoaded', () => {
+    const saved = localStorage.getItem('devise');
+    if (saved) {
+        deviseActive = saved;
+        const sel = document.getElementById('deviseSelect');
+        if (sel) sel.value = saved;
+    }
+    chargerTaux();
+});
+</script>
+
+<script>
+function dismissToast() {
+    const t = document.getElementById('toastMsg');
+    if (!t) return;
+    t.style.animation = 'toastOut .35s ease forwards';
+    setTimeout(() => t.remove(), 380);
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const t = document.getElementById('toastMsg');
+    if (t) setTimeout(dismissToast, 4000);
+});
+</script>
+
+{# ══════════════════════════════════════════════════════════ #}
+{# ✅ MODALE ANNULATION ABONNEMENT (remplace confirm natif)   #}
+{# ══════════════════════════════════════════════════════════ #}
+<div id="modalAnnulation"
+     style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:99999;
+            align-items:center; justify-content:center;"
+     onclick="if(event.target===this) fermerModalAnnulation();">
+    <div style="background:white; border-radius:20px; padding:36px 32px; width:380px; max-width:92vw;
+                text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.25);
+                animation:cancelModalIn .25s ease;">
+
+        <div style="font-size:52px; margin-bottom:16px;">🗑️</div>
+
+        <h3 style="font-size:20px; font-weight:800; color:#1e293b; margin-bottom:10px;">
+            Annuler l'abonnement ?
+        </h3>
+        <p style="font-size:14px; color:#64748b; line-height:1.6; margin-bottom:28px;">
+            Vous allez annuler votre abonnement actif.<br>
+            <strong style="color:#dc2626;">Cette action est irréversible.</strong>
+        </p>
+
+        <div style="display:flex; gap:12px; justify-content:center;">
+            <a id="modalAnnulationConfirmBtn"
+               href="#"
+               style="display:inline-flex; align-items:center; gap:8px;
+                      background:#fee2e2; color:#dc2626; border:2px solid #fecaca;
+                      padding:12px 24px; border-radius:12px; font-size:14px;
+                      font-weight:700; cursor:pointer; text-decoration:none;
+                      transition:background .2s;"
+               onmouseover="this.style.background='#fecaca'"
+               onmouseout="this.style.background='#fee2e2'">
+                🗑️ Oui, annuler
+            </a>
+            <button onclick="fermerModalAnnulation()"
+                    style="background:#f1f5f9; color:#334155; border:2px solid #e2e8f0;
+                           padding:12px 24px; border-radius:12px; font-size:14px;
+                           font-weight:700; cursor:pointer; transition:background .2s;"
+                    onmouseover="this.style.background='#e2e8f0'"
+                    onmouseout="this.style.background='#f1f5f9'">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes cancelModalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+</style>
+
+<script>
+function ouvrirModalAnnulation(url) {
+    document.getElementById('modalAnnulationConfirmBtn').href = url;
+    const modal = document.getElementById('modalAnnulation');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function fermerModalAnnulation() {
+    document.getElementById('modalAnnulation').style.display = 'none';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') fermerModalAnnulation();
+});
+</script>
+
+{% endblock %}

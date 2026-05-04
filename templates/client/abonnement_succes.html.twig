@@ -1,0 +1,350 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement confirmé !{% endblock %}
+{% block body %}
+
+{# ── Toast paiement réussi ── #}
+<div id="toastMsg" style="position:fixed;top:24px;right:24px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:16px 22px;border-radius:14px;box-shadow:0 10px 30px rgba(16,185,129,.35);z-index:99999;font-weight:600;font-size:15px;display:flex;align-items:center;gap:10px;animation:toastIn .4s cubic-bezier(.22,1,.36,1);max-width:420px;">
+    <span>💳 Paiement de {{ abonnement.prix }} TND confirmé !</span>
+    <button onclick="dismissToast()" style="margin-left:12px;cursor:pointer;opacity:.7;font-size:18px;background:none;border:none;color:white;padding:0;">✕</button>
+</div>
+
+<style>
+@keyframes toastIn  { from{transform:translateX(110%);opacity:0} to{transform:translateX(0);opacity:1} }
+@keyframes toastOut { from{transform:translateX(0);opacity:1} to{transform:translateX(110%);opacity:0} }
+@keyframes popIn    { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+@keyframes fadeUp   { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+@keyframes qrReveal { from { transform:scale(0.7) rotate(-6deg); opacity:0; } to { transform:scale(1) rotate(0deg); opacity:1; } }
+@keyframes shimmer  { 0%{background-position:-200% center} 100%{background-position:200% center} }
+@keyframes pulse    { 0%,100%{box-shadow:0 0 0 0 rgba(11,122,143,.4)} 50%{box-shadow:0 0 0 10px rgba(11,122,143,0)} }
+
+.success-wrap { max-width: 520px; margin: 60px auto 80px; text-align:center; }
+
+.success-icon-wrap {
+    width:90px; height:90px;
+    background:linear-gradient(135deg,#10b981,#059669);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    margin:0 auto 28px; font-size:40px;
+    animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow:0 12px 40px rgba(16,185,129,.35);
+}
+
+.success-card {
+    background:white; border-radius:24px; padding:48px 40px;
+    box-shadow:0 8px 48px rgba(0,0,0,.1);
+    animation: fadeUp .5s .2s ease both;
+}
+.success-card h1 { font-size:28px; font-weight:800; color:#1e293b; margin-bottom:10px; }
+.success-card .sub { color:#64748b; font-size:15px; margin-bottom:32px; }
+
+.receipt {
+    background:#f8fafc; border-radius:16px; padding:20px 24px;
+    margin-bottom:32px; text-align:left;
+}
+.receipt-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:14px;
+}
+.receipt-row:last-child { border-bottom:none; }
+.receipt-row .label { color:#64748b; }
+.receipt-row .value { font-weight:700; color:#1e293b; }
+.receipt-row .value.green { color:#059669; }
+.receipt-row .value.big { font-size:20px; color:#0b7a8f; }
+
+/* ═══════════════════════════════════════
+   QR CODE PREMIUM DESIGN
+═══════════════════════════════════════ */
+.qr-container {
+    position: relative;
+    margin: 0 0 28px 0;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0b7a8f 0%, #065f70 50%, #0e9dbb 100%);
+    padding: 2px;
+    animation: fadeUp .5s .4s ease both;
+}
+
+.qr-inner {
+    background: white;
+    border-radius: 18px;
+    padding: 28px 24px 22px;
+    position: relative;
+}
+
+/* Titre avec badge */
+.qr-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.qr-badge {
+    background: linear-gradient(135deg, #0b7a8f, #0e9dbb);
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+}
+
+/* Cadre du QR */
+.qr-frame {
+    position: relative;
+    display: inline-block;
+    margin: 0 auto 16px;
+    animation: qrReveal .6s .6s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+/* Coins décoratifs */
+.qr-frame::before,
+.qr-frame::after {
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-color: #0b7a8f;
+    border-style: solid;
+    z-index: 2;
+}
+.qr-frame::before {
+    top: -4px; left: -4px;
+    border-width: 3px 0 0 3px;
+    border-radius: 4px 0 0 0;
+}
+.qr-frame::after {
+    bottom: -4px; right: -4px;
+    border-width: 0 3px 3px 0;
+    border-radius: 0 0 4px 0;
+}
+
+.qr-frame .corner-tr,
+.qr-frame .corner-bl {
+    position: absolute;
+    width: 22px; height: 22px;
+    border-color: #0b7a8f;
+    border-style: solid;
+    z-index: 2;
+}
+.qr-frame .corner-tr {
+    top: -4px; right: -4px;
+    border-width: 3px 3px 0 0;
+    border-radius: 0 4px 0 0;
+}
+.qr-frame .corner-bl {
+    bottom: -4px; left: -4px;
+    border-width: 0 0 3px 3px;
+    border-radius: 0 0 0 4px;
+}
+
+/* Image QR */
+.qr-image {
+    display: block;
+    width: 160px;
+    height: 160px;
+    border-radius: 8px;
+    animation: pulse 2.5s 1.5s ease-in-out infinite;
+}
+
+/* Logo centré sur le QR */
+.qr-logo-overlay {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px; height: 36px;
+    background: white;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    font-size: 18px;
+    z-index: 3;
+}
+
+/* Référence avec shimmer */
+.qr-ref {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    background: linear-gradient(90deg, #0b7a8f, #10b981, #0b7a8f);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    margin-bottom: 4px;
+}
+
+.qr-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 6px;
+}
+
+/* Scan line animation */
+.qr-scanline {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(11,122,143,.6), transparent);
+    animation: scan 2.5s ease-in-out infinite;
+    pointer-events: none;
+    border-radius: 1px;
+}
+@keyframes scan {
+    0%   { top: 0%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+/* Download QR button */
+.qr-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 8px 18px;
+    background: linear-gradient(135deg, #0b7a8f, #0e9dbb);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+}
+.qr-download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(11,122,143,.35);
+    color: white;
+}
+
+.success-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+</style>
+
+<div class="success-wrap">
+    <div class="success-icon-wrap">✓</div>
+
+    <div class="success-card">
+        <h1>Paiement confirmé !</h1>
+        <p class="sub">Votre abonnement est maintenant actif. Bienvenue dans l'expérience MindGrow.</p>
+
+        {# Reçu récapitulatif #}
+        <div class="receipt">
+            <div class="receipt-row">
+                <span class="label">Plan</span>
+                <span class="value">{{ abonnement.nom }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Durée</span>
+                <span class="value">{{ abonnement.dureeMois }} mois</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Date d'achat</span>
+                <span class="value">{{ achat.dateAchat ? achat.dateAchat|date('d/m/Y à H:i') : 'aujourd\'hui' }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Expiration</span>
+                <span class="value green">{{ dateExpiration|date('d/m/Y') }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Statut</span>
+                <span class="value green">✅ Actif</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Montant payé</span>
+                <span class="value big">{{ abonnement.prix }} TND</span>
+            </div>
+        </div>
+
+        {# ══════════════════════════════════
+           QR CODE PREMIUM
+        ══════════════════════════════════ #}
+        {% if qrBase64 is defined and qrBase64 %}
+        <div class="qr-container">
+            <div class="qr-inner">
+
+                <div class="qr-header">
+                    <span class="qr-badge">🔐 QR Code de vérification</span>
+                </div>
+
+                <div style="display:flex;flex-direction:column;align-items:center;">
+                    <div class="qr-frame">
+                        {# Coins décoratifs #}
+                        <span class="corner-tr"></span>
+                        <span class="corner-bl"></span>
+
+                        {# QR Image #}
+                        <img src="data:image/svg+xml;base64,{{ qrBase64 }}"
+                             alt="QR Code MindGrow"
+                             class="qr-image"
+                             id="qrImg">
+
+                        {# Logo overlay au centre #}
+                        <div class="qr-logo-overlay">🌱</div>
+
+                        {# Ligne de scan animée #}
+                        <div class="qr-scanline"></div>
+                    </div>
+
+                    {# Référence #}
+                    <div class="qr-ref">{{ numero ?? 'MG-000000' }}</div>
+                    <div class="qr-hint">Scannez pour vérifier votre abonnement</div>
+
+                    {# Bouton télécharger QR #}
+                    <a href="data:image/svg+xml;base64,{{ qrBase64 }}"
+                       download="QR-{{ numero ?? 'mindgrow' }}.svg"
+                       class="qr-download-btn">
+                        ⬇️ Télécharger le QR Code
+                    </a>
+                </div>
+
+            </div>
+        </div>
+        {% endif %}
+
+        {% if emailEnvoye is defined and emailEnvoye %}
+        <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-size:13px;color:#166534;">
+            <span style="font-size:18px;">📧</span>
+            <div>
+                <strong>Email de confirmation envoyé !</strong><br>
+                <span style="opacity:.8;">Un reçu détaillé avec QR Code a été envoyé à {{ emailEnvoye }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="success-actions">
+            <a href="{{ path('client_dashboard') }}" class="btn btn-primary">Accéder à mon espace</a>
+            {% if achat is defined %}
+            <a href="{{ path('abonnement_recu', {id: achat.id}) }}" target="_blank"
+               class="btn" style="background:#0b7a8f;color:white;">
+                📄 Télécharger le reçu PDF
+            </a>
+            <a href="{{ path('abonnement_email_preview', {id: achat.id}) }}" target="_blank"
+               class="btn" style="background:#6c5ce7;color:white;">
+                📧 Voir l'email envoyé
+            </a>
+            {% endif %}
+            <a href="{{ path('abonnements') }}" class="btn" style="background:#f1f5f9; color:#475569;">Voir les plans</a>
+        </div>
+    </div>
+</div>
+
+<script>
+function dismissToast() {
+    const t = document.getElementById('toastMsg');
+    if (!t) return;
+    t.style.animation = 'toastOut .35s ease forwards';
+    setTimeout(() => t.remove(), 380);
+}
+window.addEventListener('DOMContentLoaded', () => {
+    const t = document.getElementById('toastMsg');
+    if (t) setTimeout(dismissToast, 5000);
+});
+</script>
+
+{% endblock %}

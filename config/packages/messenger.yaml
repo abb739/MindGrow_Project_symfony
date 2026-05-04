@@ -1,0 +1,11 @@
+framework:
+    messenger:
+        transports:
+            # sync = envoi immédiat sans BDD, parfait pour développement local
+            sync: 'sync://'
+
+        routing:
+            # Tous les emails envoyés directement (sync) — pas besoin de messenger_messages
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: sync
+            Symfony\Component\Notifier\Message\ChatMessage: sync
+            Symfony\Component\Notifier\Message\SmsMessage: sync

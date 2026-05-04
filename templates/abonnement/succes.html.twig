@@ -1,0 +1,87 @@
+{% extends 'base.html.twig' %}
+{% block title %}Paiement confirmé !{% endblock %}
+{% block body %}
+
+<style>
+@keyframes popIn { from { transform:scale(0); opacity:0; } to { transform:scale(1); opacity:1; } }
+@keyframes fadeUp { from { transform:translateY(24px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+
+.success-wrap { max-width: 500px; margin: 60px auto 80px; text-align:center; }
+
+.success-icon-wrap {
+    width:90px; height:90px;
+    background:linear-gradient(135deg,#10b981,#059669);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    margin:0 auto 28px; font-size:40px;
+    animation: popIn .5s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow:0 12px 40px rgba(16,185,129,.35);
+}
+
+.success-card {
+    background:white; border-radius:24px; padding:48px 40px;
+    box-shadow:0 8px 48px rgba(0,0,0,.1);
+    animation: fadeUp .5s .2s ease both;
+}
+.success-card h1 { font-size:28px; font-weight:800; color:#1e293b; margin-bottom:10px; }
+.success-card .sub { color:#64748b; font-size:15px; margin-bottom:32px; }
+
+.receipt {
+    background:#f8fafc; border-radius:16px; padding:20px 24px;
+    margin-bottom:32px; text-align:left;
+}
+.receipt-row {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:14px;
+}
+.receipt-row:last-child { border-bottom:none; }
+.receipt-row .label { color:#64748b; }
+.receipt-row .value { font-weight:700; color:#1e293b; }
+.receipt-row .value.green { color:#059669; }
+.receipt-row .value.big { font-size:20px; color:#0b7a8f; }
+
+.success-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+</style>
+
+<div class="success-wrap">
+    <div class="success-icon-wrap">✓</div>
+
+    <div class="success-card">
+        <h1>Paiement confirmé !</h1>
+        <p class="sub">Votre abonnement est maintenant actif. Bienvenue dans l'expérience MindGrow.</p>
+
+        {# Reçu récapitulatif #}
+        <div class="receipt">
+            <div class="receipt-row">
+                <span class="label">Plan</span>
+                <span class="value">{{ abonnement.nom }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Durée</span>
+                <span class="value">{{ abonnement.dureeMois }} mois</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Date d'achat</span>
+                <span class="value">{{ achat.dateAchat ? achat.dateAchat|date('d/m/Y à H:i') : 'aujourd\'hui' }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Expiration</span>
+                <span class="value green">{{ dateExpiration|date('d/m/Y') }}</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Statut</span>
+                <span class="value green">✅ Actif</span>
+            </div>
+            <div class="receipt-row">
+                <span class="label">Montant payé</span>
+                <span class="value big">{{ abonnement.prix }} TND</span>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a href="{{ path('client_dashboard') }}" class="btn btn-primary">Accéder à mon espace</a>
+            <a href="{{ path('abonnements') }}" class="btn" style="background:#f1f5f9; color:#475569;">Voir les plans</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
